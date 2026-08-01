@@ -1,0 +1,29 @@
+generated: '2026-07-20'
+method: searched
+source: https://docs.joinpopp.com/docs/mcp
+status: published
+server:
+  name: popp-api
+  transport: http
+  url: https://docs.joinpopp.com/mcp
+  description: >-
+    Popp AI hosts a remote MCP server that lets AI code editors (Cursor,
+    Windsurf) and general-purpose agents (Claude Desktop) interact directly
+    with the Popp API and documentation. Provides direct API access,
+    documentation search, real-time account data, and integration code
+    generation. API-authenticated calls pass credential headers via the MCP
+    client's header configuration.
+capabilities:
+  - direct API access to Popp AI functionality
+  - documentation search
+  - real-time data from the connected Popp AI account
+  - code-generation assistance for Popp integrations
+client_config:
+  cursor: '{"mcpServers":{"popp-api":{"url":"https://docs.joinpopp.com/mcp"}}}'
+  windsurf: '{"mcpServers":{"popp-api":{"url":"https://docs.joinpopp.com/mcp"}}}'
+  claude_desktop: '{"mcpServers":{"popp-api":{"url":"https://docs.joinpopp.com/mcp"}}}'
+authentication:
+  scheme: api-key
+  note: >-
+    API-backed tools require the Popp x-api-key and x-organization-id headers,
+    passed through the MCP client's header/query configuration.

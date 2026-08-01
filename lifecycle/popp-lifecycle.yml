@@ -1,0 +1,21 @@
+generated: '2026-07-20'
+method: searched
+source: https://docs.joinpopp.com/llms.txt
+versioning:
+  scheme: uri-path
+  current: v1
+  api_version_label: v1.1
+  docs: https://docs.joinpopp.com/docs/quickstart
+maturity:
+  beta_surface: true
+  note: >-
+    Document-type endpoints and Process Document are marked (Beta) — endpoint
+    shape, payload, and validation rules may evolve before general availability;
+    a stateful documentTypeId variant of Process Document is planned.
+deprecation:
+  policy_url: null
+  sunset_header: null
+  note: No formal deprecation policy or RFC 8594 Sunset/Deprecation header support was found in the public docs.
+sla:
+  url: null
+status_page: null

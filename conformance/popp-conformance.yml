@@ -1,0 +1,31 @@
+generated: '2026-07-20'
+method: derived
+source: https://docs.joinpopp.com/llms.txt
+description: >-
+  Cross-cutting standards conformance for the Popp API, derived from the
+  developer docs. Absence is honest data — Popp is a REST/JSON API with
+  API-key auth and HMAC-signed webhooks; no OAuth/OIDC/FHIR/etc. surface is
+  documented.
+standards:
+  - id: rest-json
+    conforms: true
+    evidence: JSON over HTTPS REST endpoints under https://api.joinpopp.com/v1
+  - id: api-key-auth
+    conforms: true
+    evidence: x-api-key + x-organization-id header authentication
+  - id: webhook-hmac-sha256
+    conforms: true
+    evidence: Webhook deliveries signed with SHA256 HMAC (webhook-authentication docs)
+  - id: cursor-pagination
+    conforms: true
+    evidence: nextToken cursor pagination across list endpoints
+  - id: oauth2
+    conforms: false
+  - id: oidc
+    conforms: false
+  - id: rfc9457-problem-details
+    conforms: false
+    evidence: Errors use HTTP status codes + JSON bodies; no application/problem+json documented
+  - id: mcp
+    conforms: true
+    evidence: Published remote MCP server at https://docs.joinpopp.com/mcp

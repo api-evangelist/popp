@@ -1,0 +1,34 @@
+generated: '2026-07-20'
+method: searched
+source: https://docs.joinpopp.com/docs/authentication-guide
+docs: https://docs.joinpopp.com/docs/authentication-guide
+summary:
+  types: [apiKey]
+  api_key_in: [header]
+  oauth2_flows: []
+  note: >-
+    Every request requires TWO headers: a secret API key and the caller's
+    Organization ID. No OAuth or OpenID Connect surface is documented.
+schemes:
+  - name: ApiKeyAuth
+    type: apiKey
+    in: header
+    parameter: x-api-key
+    description: Secret key authenticating the request; grants full access to the organization's data.
+    sources: [https://docs.joinpopp.com/docs/authentication-guide]
+  - name: OrganizationId
+    type: apiKey
+    in: header
+    parameter: x-organization-id
+    description: Unique identifier for the caller's subaccount (organization) in Popp; required alongside the API key.
+    sources: [https://docs.joinpopp.com/docs/authentication-guide]
+credentials_portal: https://app.joinpopp.com/developer/keys
+key_management:
+  self_serve: true
+  features: [create, expiry, revocation]
+  docs: https://docs.joinpopp.com/docs/api-key-management
+example_request: |
+  curl -X GET "https://api.joinpopp.com/v1/conversations" \
+    -H "x-api-key: YOUR_API_KEY" \
+    -H "x-organization-id: YOUR_ORGANIZATION_ID" \
+    -H "Content-Type: application/json"

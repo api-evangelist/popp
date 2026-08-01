@@ -1,0 +1,54 @@
+generated: '2026-07-20'
+method: searched
+source: https://docs.joinpopp.com/llms.txt
+docs: https://docs.joinpopp.com/docs/quickstart
+description: Cross-cutting request/response semantics for the Popp API, harvested from the developer docs.
+authentication:
+  style: api-key
+  headers: [x-api-key, x-organization-id]
+  ref: authentication/popp-authentication.yml
+base_url: https://api.joinpopp.com/v1
+versioning:
+  scheme: uri-path
+  current: v1
+  api_version_label: v1.1
+  ref: lifecycle/popp-lifecycle.yml
+pagination:
+  style: cursor
+  request_param: nextToken
+  response_field: nextToken
+  note: >-
+    Cursor-based paging. Endpoints return a nextToken; pass it back as a query
+    parameter to fetch the next page (e.g. list bookings, list workflows,
+    list workflow runs, list ATS jobs where the cursor param is `next`).
+idempotency:
+  key_header: false
+  note: >-
+    No Idempotency-Key request header is documented. Several state-changing
+    operations are individually described as idempotent (archiving an
+    already-archived document type or analysis returns the existing record),
+    but there is no general client-supplied idempotency-key contract.
+external_ids:
+  supported: true
+  note: >-
+    Many resources (workflows, conversations, candidate profiles, document
+    types) accept a caller-supplied externalId for lookup and correlation,
+    unique per organization.
+error_envelope:
+  format: json
+  note: HTTP status codes with JSON error bodies; named error codes on some operations.
+  ref: errors/popp-problem-types.yml
+webhooks:
+  signing: sha256-hmac
+  ref: asyncapi/popp-webhooks.yml
+async_semantics:
+  note: >-
+    Bulk/enrolment operations (start workflow runs, bulk create conversations)
+    are asynchronous — accepted entries are enqueued; inspect the response
+    `summary` rollup plus `errors[]`, `alreadyEnrolled[]`, and
+    `duplicatesInRequest[]` for per-entry dispositions.
+multi_tenancy:
+  note: >-
+    All resources are scoped to the organization tied to the API key; access to
+    another organization's resource returns 404 (existence is not leaked across
+    organizations).

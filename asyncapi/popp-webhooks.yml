@@ -1,0 +1,57 @@
+generated: '2026-07-20'
+method: searched
+source: https://docs.joinpopp.com/docs/webhooks
+spec_type: Webhooks
+description: >-
+  Popp delivers real-time event notifications via HTTP POST to a
+  subscriber-configured endpoint. Webhooks are self-served through the Developer
+  Portal (create endpoints, choose events, send test deliveries, rotate signing
+  secret, delete). Deliveries are signed with SHA256 (HMAC) for verification.
+delivery:
+  transport: https-post
+  signing: sha256-hmac
+  signature_docs: https://docs.joinpopp.com/docs/webhook-authentication
+  event_structure_docs: https://docs.joinpopp.com/docs/webhook-event-structure
+  management_portal: https://app.joinpopp.com/developer/webhooks
+  management_docs: https://docs.joinpopp.com/docs/webhook-management
+management_api:
+  - listWebhooks
+  - createWebhook
+  - updateWebhook
+  - deleteWebhook
+  - listWebhookEvents
+categories:
+  - name: conversation
+    docs: https://docs.joinpopp.com/docs/conversation-events
+    events:
+      - {name: CONVERSATION_QUEUED, description: Conversation is queued and waiting to start}
+      - {name: CONVERSATION_STARTED, description: Conversation has started with the candidate}
+      - {name: CONVERSATION_COMPLETED, description: Conversation completed successfully}
+      - {name: CONVERSATION_NEEDS_REVIEW, description: Conversation requires manual review}
+      - {name: CONVERSATION_OPTED_OUT, description: Candidate opted out of the conversation}
+      - {name: START_CONVERSATION_FAILED, description: Failed to start the conversation}
+  - name: analysis
+    docs: https://docs.joinpopp.com/docs/analysis-events
+    events:
+      - {name: ANALYSIS_CREATED, description: A new analysis batch has been created}
+      - {name: CANDIDATE_ANALYSIS_COMPLETED, description: Analysis for a candidate is complete}
+  - name: scheduling
+    docs: https://docs.joinpopp.com/docs/scheduling-events
+    events:
+      - {name: CALENDAR_MEETING_SCHEDULED, description: A meeting has been scheduled}
+      - {name: CALENDAR_MEETING_CANCELLED, description: A meeting has been cancelled}
+      - {name: CALENDAR_MEETING_RESCHEDULED, description: A meeting has been rescheduled}
+      - {name: CALENDAR_AVAILABILITY_NOT_FOUND, description: No available time slots found}
+      - {name: CALENDAR_NOTE_TAKER_COMPLETED, description: Meeting notes are ready}
+  - name: workflow
+    docs: https://docs.joinpopp.com/docs/workflow-events
+    events:
+      - {name: WORKFLOW_RUN_STARTED, description: A workflow run has begun executing}
+      - {name: WORKFLOW_RUN_COMPLETED, description: A workflow run reached the end of its graph successfully}
+      - {name: WORKFLOW_RUN_FAILED, description: A workflow run failed and could not continue}
+      - {name: WORKFLOW_RUN_CANCELLED, description: A workflow run was cancelled (via API or by archiving the workflow)}
+      - {name: WORKFLOW_NODE_COMPLETED, description: A node in a run completed and produced an outcome}
+      - {name: WORKFLOW_CONTACT_RESOLVED, description: An inline contact was resolved to or created as a candidate profile}
+      - {name: WORKFLOW_CONTACT_RESOLUTION_FAILED, description: An inline contact could not be resolved into a candidate profile}
+      - {name: WORKFLOW_CONTACT_RESOLUTION_SKIPPED, description: An inline contact was skipped because they already had an active run}
+      - {name: WORKFLOW_PUBLISHED, description: A workflow was successfully published}

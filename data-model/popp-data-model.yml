@@ -1,0 +1,70 @@
+generated: '2026-07-20'
+method: derived
+source: https://docs.joinpopp.com/llms.txt
+description: >-
+  Entity-relationship model for the Popp API, derived from the endpoint
+  reference and guides. Popp is a recruitment conversation engine: an
+  Organization runs Campaigns and Workflows that drive Conversations with
+  candidates, collecting Documents, running Analyses, and Scheduling meetings.
+entities:
+  - name: Organization
+    description: Top-level tenant (subaccount) that owns all resources; identified by x-organization-id.
+    key_endpoints: [get-organization, get-organization-config, create-organization-config, update-organization-config]
+  - name: Campaign
+    description: A configured outreach/screening run with interview questions and document requirements.
+    key_endpoints: [create-campaign, get-campaign, list-campaigns, update-campaign, stop-campaign, generate-questions]
+  - name: Conversation
+    description: An individual AI-driven candidate interaction within a campaign; supports human takeover.
+    key_endpoints: [create-conversation, bulk-create-conversations, list-conversations, get-conversation, list-conversation-messages, send-conversation-message, takeover-conversation, hand-conversation-to-agent]
+  - name: Document
+    description: Files collected from candidates (right-to-work, certifications) with media retrieval.
+    key_endpoints: [get-document, list-conversation-documents, get-document-media, download-media]
+  - name: DocumentType
+    description: (Beta) Caller-defined document classification/validation config, referenced by campaign questions.
+    key_endpoints: [process-document, list-document-types, create-document-type, get-document-type, update-document-type, delete-document-type, archive-document-type]
+  - name: Analysis
+    description: A batch that extracts requirements from a job description and scores candidates.
+    key_endpoints: [create-analysis, list-analyses, get-analysis, update-analysis, archive-analysis, generate-requirements, update-requirements-and-reanalyse, create-analysis-candidate]
+  - name: MeetingTemplate
+    description: Reusable meeting configuration (duration, participants, availability, video conferencing).
+    key_endpoints: [create-meeting-template, list-meeting-templates, get-meeting-template, update-meeting-template, delete-meeting-template]
+  - name: Booking
+    description: A scheduled calendar meeting (backed by Nylas) created from a meeting template.
+    key_endpoints: [get-booking, list-bookings, update-booking, cancel-booking, resend-booking-url]
+  - name: UserCalendar
+    description: A participant's connected/virtual calendar holding availability slots.
+    key_endpoints: [list-user-calendars, get-user-calendar, set-user-calendar-availability, parse-availability, invite-calendar-contact, create-scheduling-conversation]
+  - name: Workflow
+    description: A multi-step candidate automation graph; versioned via publish, with draft/published/paused/archived states.
+    key_endpoints: [create-workflow, list-workflows, get-workflow, update-workflow, publish-workflow, archive-workflow, pause-workflow, resume-workflow, get-workflow-by-external-id]
+  - name: WorkflowRun
+    description: An enrolment of a candidate into a published workflow; asynchronous, per-node progress.
+    key_endpoints: [start-workflow-runs, list-workflow-runs, get-workflow-run, cancel-workflow-run]
+  - name: CandidateProfile
+    description: An organization's record of a candidate, addressable by caller-supplied external ID.
+    key_endpoints: [get-candidate-profile-by-external-id]
+  - name: Agent
+    description: An AI agent belonging to the organization that drives conversations.
+    key_endpoints: [list-agents]
+  - name: MessageTemplate
+    description: Reusable message templates owned by the organization.
+    key_endpoints: [list-templates]
+  - name: Webhook
+    description: A subscriber endpoint registration for real-time events.
+    key_endpoints: [list-webhooks, create-webhook, update-webhook, delete-webhook, list-webhook-events]
+  - name: ATSJob
+    description: A job read live from the organization's connected ATS, annotated with Popp connections.
+    key_endpoints: [list-ats-jobs, list-ats-job-stages, list-ats-rejection-reasons]
+relationships:
+  - {from: Campaign, type: belongs_to, to: Organization, via: organizationId}
+  - {from: Conversation, type: belongs_to, to: Campaign, via: campaignId}
+  - {from: Conversation, type: has_many, to: Document, via: conversationId}
+  - {from: Conversation, type: has_many, to: message, via: conversationId}
+  - {from: Campaign, type: has_many, to: DocumentType, via: documentItems.documentTypeId}
+  - {from: Analysis, type: has_many, to: CandidateProfile, via: analysisId}
+  - {from: Booking, type: belongs_to, to: MeetingTemplate, via: templateId}
+  - {from: Booking, type: has_one, to: UserCalendar, via: userCalendarId}
+  - {from: WorkflowRun, type: belongs_to, to: Workflow, via: workflowId}
+  - {from: WorkflowRun, type: belongs_to, to: CandidateProfile, via: candidateProfileId}
+  - {from: Workflow, type: has_one, to: ATSJob, via: atsJobId}
+  - {from: Webhook, type: belongs_to, to: Organization, via: organizationId}

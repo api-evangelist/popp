@@ -1,0 +1,42 @@
+generated: '2026-07-20'
+method: searched
+source: https://docs.joinpopp.com/llms.txt
+format: http-status
+description: >-
+  API error catalog for the Popp API, harvested from the endpoint reference
+  descriptions in the developer docs. Popp signals failures with standard HTTP
+  status codes plus, on specific operations, named application error codes.
+  No RFC 9457 application/problem+json media type is documented.
+status_codes:
+  - status: 400
+    title: Bad Request
+    meaning: Validation failure. On publish workflow, the message lists the configuration problems.
+  - status: 404
+    title: Not Found
+    meaning: >-
+      Resource does not exist, or belongs to a different organization than the
+      one tied to the API key (existence is not leaked across organizations).
+  - status: 409
+    title: Conflict
+    meaning: >-
+      Operation conflicts with resource state — e.g. deleting/renaming a
+      document type referenced by a campaign or workflow, updating an archived
+      document type, deleting a meeting template with future bookings, or
+      cancelling an already-cancelled booking.
+  - status: 422
+    title: Unprocessable Entity
+    meaning: The connected ATS does not support the requested capability (e.g. rejection reasons).
+  - status: 502
+    title: Bad Gateway
+    meaning: The connected ATS integration returned an error (ATS jobs/stages/rejection-reason reads).
+named_errors:
+  - code: ATS_JOB_ALREADY_CONNECTED
+    status: 400
+    title: ATS job already connected
+    meaning: An ATS entry pathway names a job already connected to another workflow, campaign, or analysis.
+    source_operation: reference/publish-workflow
+  - code: RUBRIC_GENERATION_FAILED
+    status: 400
+    title: Rubric generation failed
+    meaning: Automatic rubric generation for a screening node failed during workflow publish.
+    source_operation: reference/publish-workflow

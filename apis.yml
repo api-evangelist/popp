@@ -1,7 +1,29 @@
 aid: popp
+accessModel:
+  pricing: unknown
+  onboarding: self-serve
+  trial: false
+  try_now: false
+  public: false
+  label: Self-serve signup
+  confidence: medium
+  source:
+  - authentication
+  generated: '2026-07-22'
+  method: derived
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/popp.png
 name: Popp
-description: Popp is a company surfaced as a portfolio company of techstars and added to the API Evangelist
-  network as a stub for enrichment. This profile is a lead awaiting the enrichment pipeline.
+description: >-
+  Popp (Popp AI) is an API-first conversation engine for staffing and
+  recruitment firms. It automates high-volume candidate interactions —
+  screening tens of thousands of applicants, collecting and validating
+  right-to-work and certification documents, running AI candidate analysis,
+  auto-scheduling interviews with calendar sync, and re-qualifying dormant
+  candidate databases — through a drag-and-drop workflow builder and a REST
+  API. The platform exposes conversations, campaigns, documents, analysis,
+  scheduling, and multi-step workflows over https://api.joinpopp.com/v1 with
+  API-key authentication, SHA256-signed webhooks across four event categories,
+  and a published remote MCP server for agent access. Backed by Techstars.
 url: https://raw.githubusercontent.com/api-evangelist/popp/refs/heads/main/apis.yml
 x-type: company
 x-source: vc-portfolio
@@ -11,10 +33,50 @@ x-tier: stub
 x-tier-reason: portfolio-lead
 specificationVersion: '0.20'
 created: '2026-07-17'
-modified: '2026-07-17'
+modified: '2026-07-20'
 tags:
 - Company
-apis: []
+- Recruitment
+- Staffing
+- Hiring
+- Conversational AI
+- Automation
+- Scheduling
+- Workflows
+- Webhooks
+- MCP
+- Agents
+apis:
+- name: Popp API
+  description: >-
+    REST API for the Popp recruitment conversation engine — conversations,
+    campaigns, documents, analysis, scheduling/calendar, and workflow
+    automation, authenticated with an x-api-key + x-organization-id header pair.
+  humanURL: https://joinpopp.com/api
+  baseURL: https://api.joinpopp.com/v1
+  properties:
+  - type: Documentation
+    url: https://docs.joinpopp.com/
+  - type: APIReference
+    url: https://docs.joinpopp.com/docs/quickstart
+  - type: GettingStarted
+    url: https://docs.joinpopp.com/docs/quickstart
+  - type: Authentication
+    url: authentication/popp-authentication.yml
+  - type: MCPServer
+    url: mcp/popp-mcp.yml
+  - type: Webhooks
+    url: asyncapi/popp-webhooks.yml
+  - type: Conventions
+    url: conventions/popp-conventions.yml
+  - type: ErrorCatalog
+    url: errors/popp-problem-types.yml
+  - type: Lifecycle
+    url: lifecycle/popp-lifecycle.yml
+  - type: DataModel
+    url: data-model/popp-data-model.yml
+  - type: Conformance
+    url: conformance/popp-conformance.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
@@ -23,3 +85,42 @@ maintainers:
 common:
 - type: Website
   url: https://joinpopp.com/
+- type: DeveloperPortal
+  url: https://app.joinpopp.com/developer/keys
+- type: Documentation
+  url: https://docs.joinpopp.com/
+- type: APIReference
+  url: https://docs.joinpopp.com/docs/quickstart
+- type: GettingStarted
+  url: https://docs.joinpopp.com/docs/quickstart
+- type: SignUp
+  url: https://ai.joinpopp.com/login
+- type: TermsOfService
+  url: https://joinpopp.com/terms-of-service
+- type: PrivacyPolicy
+  url: https://joinpopp.com/privacy-policy
+- type: MCPServer
+  url: mcp/popp-mcp.yml
+- type: Authentication
+  url: authentication/popp-authentication.yml
+- type: Webhooks
+  url: asyncapi/popp-webhooks.yml
+- type: Conventions
+  url: conventions/popp-conventions.yml
+- type: ErrorCatalog
+  url: errors/popp-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/popp-lifecycle.yml
+- type: DataModel
+  url: data-model/popp-data-model.yml
+- type: Conformance
+  url: conformance/popp-conformance.yml
+- type: DomainSecurity
+  url: security/popp-domain-security.yml
+- type: LLMsTxt
+  url: llms/popp-llms.txt
+x-enrichment:
+  date: '2026-07-20'
+  status: enriched
+  pass: local-v1
+  artifacts_added: 10

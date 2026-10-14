@@ -1,4 +1,5 @@
 aid: popp
+
 deliveryModel:
   model: saas
   open_source: false
@@ -10,6 +11,7 @@ deliveryModel:
   - pricing
   generated: '2026-08-28'
   method: derived
+
 accessModel:
   pricing: unknown
   onboarding: unknown
@@ -23,29 +25,37 @@ accessModel:
   - security
   generated: '2026-09-03'
   method: derived
+
 image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/icons/popp.png
+
 name: Popp
-description: >-
-  Popp (Popp AI) is an API-first conversation engine for staffing and
-  recruitment firms. It automates high-volume candidate interactions —
-  screening tens of thousands of applicants, collecting and validating
-  right-to-work and certification documents, running AI candidate analysis,
-  auto-scheduling interviews with calendar sync, and re-qualifying dormant
-  candidate databases — through a drag-and-drop workflow builder and a REST
-  API. The platform exposes conversations, campaigns, documents, analysis,
-  scheduling, and multi-step workflows over https://api.joinpopp.com/v1 with
-  API-key authentication, SHA256-signed webhooks across four event categories,
-  and a published remote MCP server for agent access. Backed by Techstars.
+
+description: Popp (Popp AI) is an API-first conversation engine for staffing and recruitment firms. It automates high-volume candidate interactions
+  — screening tens of thousands of applicants, collecting and validating right-to-work and certification documents, running AI candidate analysis,
+  auto-scheduling interviews with calendar sync, and re-qualifying dormant candidate databases — through a drag-and-drop workflow builder and
+  a REST API. The platform exposes conversations, campaigns, documents, analysis, scheduling, and multi-step workflows over https://api.joinpopp.com/v1
+  with API-key authentication, SHA256-signed webhooks across four event categories, and a published remote MCP server for agent access. Backed
+  by Techstars.
+
 url: https://raw.githubusercontent.com/api-evangelist/popp/refs/heads/main/apis.yml
+
 x-type: company
+
 x-source: vc-portfolio
+
 x-backed-by:
 - techstars
+
 x-tier: stub
+
 x-tier-reason: portfolio-lead
+
 specificationVersion: '0.23'
+
 created: '2026-07-17'
+
 modified: '2026-07-20'
+
 tags:
 - Company
 - Recruiting
@@ -58,6 +68,7 @@ tags:
 - Webhook
 - MCP
 - Agents
+
 tags_raw:
 - Company
 - Recruitment
@@ -70,43 +81,30 @@ tags_raw:
 - Webhooks
 - MCP
 - Agents
-apis:
-- name: Popp API
-  description: >-
-    REST API for the Popp recruitment conversation engine — conversations,
-    campaigns, documents, analysis, scheduling/calendar, and workflow
-    automation, authenticated with an x-api-key + x-organization-id header pair.
-  humanURL: https://joinpopp.com/api
-  baseURL: https://api.joinpopp.com/v1
-  properties:
-  - type: Documentation
-    url: https://docs.joinpopp.com/
-  - type: APIReference
-    url: https://docs.joinpopp.com/docs/quickstart
-  - type: GettingStarted
-    url: https://docs.joinpopp.com/docs/quickstart
-  - type: Authentication
-    url: authentication/popp-authentication.yml
-  - type: MCPServer
-    url: mcp/popp-mcp.yml
-  - type: Webhooks
-    url: asyncapi/popp-webhooks.yml
-  - type: Conventions
-    url: conventions/popp-conventions.yml
-  - type: ErrorCatalog
-    url: errors/popp-problem-types.yml
-  - type: Lifecycle
-    url: lifecycle/popp-lifecycle.yml
-  - type: DataModel
-    url: data-model/popp-data-model.yml
-  - type: Conformance
-    url: conformance/popp-conformance.yml
+
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
+
 common:
+- type: AgenticAccess
+  url: agentic-access/popp-agentic-access.yml
+- type: Spectral
+  url: rules/popp-rules.yml
+- type: JSONLD
+  url: json-ld/popp-context.jsonld
+- type: Vocabulary
+  url: vocabulary/popp-vocabulary.yml
+- type: WellKnown
+  url: well-known/popp-well-known.yml
+- type: Hosts
+  url: hosts/popp-hosts.yml
+- type: Vendors
+  url: vendors/popp-vendors.yml
+- type: Support
+  url: https://support.joinpopp.com/
 - type: Website
   url: https://joinpopp.com/
 - type: DeveloperPortal
@@ -143,8 +141,60 @@ common:
   url: security/popp-domain-security.yml
 - type: LLMsTxt
   url: llms/popp-llms.txt
+
+apis:
+- name: Popp API
+  description: REST API for the Popp recruitment conversation engine — conversations, campaigns, documents, analysis, scheduling/calendar, and
+    workflow automation, authenticated with an x-api-key + x-organization-id header pair.
+  humanURL: https://joinpopp.com/api
+  baseURL: https://api.joinpopp.com/v1
+  properties:
+  - url: openapi/popp-api-openapi.yml
+    type: OpenAPI
+  - type: Documentation
+    url: https://docs.joinpopp.com/
+  - type: APIReference
+    url: https://docs.joinpopp.com/docs/quickstart
+  - type: GettingStarted
+    url: https://docs.joinpopp.com/docs/quickstart
+  - type: Authentication
+    url: authentication/popp-authentication.yml
+  - type: MCPServer
+    url: mcp/popp-mcp.yml
+  - type: Webhooks
+    url: asyncapi/popp-webhooks.yml
+  - type: Conventions
+    url: conventions/popp-conventions.yml
+  - type: ErrorCatalog
+    url: errors/popp-problem-types.yml
+  - type: Lifecycle
+    url: lifecycle/popp-lifecycle.yml
+  - type: DataModel
+    url: data-model/popp-data-model.yml
+  - type: Conformance
+    url: conformance/popp-conformance.yml
+  - type: JSONSchema
+    url: json-schema/popp-update-meeting-template-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-meeting-template-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-scheduling-conversation-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-campaign-request-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-list-campaigns-response-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-list-ats-jobs-response-schema.json
+  aid: popp:popp-api
+
 x-enrichment:
   date: '2026-07-20'
   status: enriched
   pass: local-v1
   artifacts_added: 10
+
+x-readme-harvest:
+  date: '2026-10-14'
+  ops: 149
+  tool: harvest-readme-openapi.py
+  portal: https://docs.joinpopp.com

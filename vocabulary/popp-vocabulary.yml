@@ -1,0 +1,433 @@
+generated: '2026-10-14'
+method: derived
+generator: derive-vocabulary.py
+source: openapi/popp-api-openapi.yml
+vocabulary:
+  name: Popp Domain Vocabulary
+  description: 'Terms declared by Popp''s own API contract: its resource groups, objects and enumerations, with the contract''s definitions. Derived,
+    not authored.'
+  version: '2026-10-14'
+  terms:
+  - term: CreateConversationInput
+    definition: 'Object declared by the contract with fields: phoneNumber, shouldSendDuringBusinessHours, countryCode, firstName, lastName, emailAddress,
+      campaignId, externalId, externalCampaignId, applicationSource, skipDuplicationCheck, closePreviousConversations. (2 more)'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/CreateConversationInput
+  - term: Conversation
+    definition: 'Object declared by the contract with fields: id, organizationId, campaignId, participantPhoneNumber, participantFirstName, participantLastName,
+      participantEmailAddress, createdAt, updatedAt, needsReview, isHumanTakeover, screeningQuestionsOutcome. (13 more)'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/Conversation
+  - term: ListConversationsResponse
+    definition: 'Object declared by the contract with fields: data, nextToken.'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/ListConversationsResponse
+  - term: status
+    definition: 'Enumeration declared by the contract with values: COMPLETED_SCREENING_PASSED, CLOSED, COMPLETED_SCREENING_FAILED, OPTED_OUT,
+      ONGOING, CREATED, QUEUED, DELIVERY_FAILED.'
+    tags:
+    - Enumeration
+    source: openapi/popp-api-openapi.yml#/components/schemas/status
+  - term: sortDirection
+    definition: 'Enumeration declared by the contract with values: ASC, DESC.'
+    tags:
+    - Enumeration
+    source: openapi/popp-api-openapi.yml#/components/schemas/sortDirection
+  - term: ListConversationMessagesResponse
+    definition: 'Object declared by the contract with fields: data, nextToken.'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/ListConversationMessagesResponse
+  - term: SendConversationMessageRequest
+    definition: Request to send a message on a conversation
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/SendConversationMessageRequest
+  - term: MessageResponse
+    definition: Response containing the created message
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/MessageResponse
+  - term: ConversationUpdateResponse
+    definition: Response from updating a conversation (takeover or hand-to-agent)
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/ConversationUpdateResponse
+  - term: BulkCreateConversationsInput
+    definition: 'Object declared by the contract with fields: campaignId, externalCampaignId, shouldSendDuringBusinessHours, skipDuplicationCheck,
+      contacts.'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/BulkCreateConversationsInput
+  - term: BulkCreateConversationsResponse
+    definition: 'Object declared by the contract with fields: message, total, queued, failed, results.'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/BulkCreateConversationsResponse
+  - term: Campaign
+    definition: Schema for a campaign
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/Campaign
+  - term: CreateCampaignRequest
+    definition: Request to create a new campaign
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/CreateCampaignRequest
+  - term: Create Campaign Response
+    definition: Response for creating a new campaign
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/CreateCampaignResponse
+  - term: List Campaigns Response
+    definition: Response for listing campaigns
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/ListCampaignsResponse
+  - term: campaignStatus
+    definition: 'Enumeration declared by the contract with values: ARCHIVED, DISCONNECTED, DRAFT, FINISHED_GENERATING, FINISHED_SENDING, GENERATING_MESSAGES,
+      LIVE, PAUSED, PROCESSING, SCHEDULED, SENDING_MESSAGES.'
+    tags:
+    - Enumeration
+    source: openapi/popp-api-openapi.yml#/components/schemas/campaignStatus
+  - term: campaignType-3b31177b-4f80-4990-b9e7-b07ee5ae2ade
+    definition: 'Enumeration declared by the contract with values: APPLICANT_OUTREACH, ENGAGEMENT_OUTREACH, NEW_CANDIDATE_OUTREACH.'
+    tags:
+    - Enumeration
+    source: openapi/popp-api-openapi.yml#/components/schemas/campaignType-3b31177b-4f80-4990-b9e7-b07ee5ae2ade
+  - term: channel-d7b2fd6e-9a72-4b90-adf5-a8c00a58fa0d
+    definition: 'Enumeration declared by the contract with values: SMS, WEB_CHAT, WEB_CHAT_VIA_EMAIL, WHATSAPP.'
+    tags:
+    - Enumeration
+    source: openapi/popp-api-openapi.yml#/components/schemas/channel-d7b2fd6e-9a72-4b90-adf5-a8c00a58fa0d
+  - term: needsReview
+    definition: 'Enumeration declared by the contract with values: true, false.'
+    tags:
+    - Enumeration
+    source: openapi/popp-api-openapi.yml#/components/schemas/needsReview
+  - term: closingMethod
+    definition: 'Enumeration declared by the contract with values: CUSTOM, CALENDAR_MEETING_INTEGRATION.'
+    tags:
+    - Enumeration
+    source: openapi/popp-api-openapi.yml#/components/schemas/closingMethod
+  - term: GenerateQuestionsInput
+    definition: 'Object declared by the contract with fields: jobDescription.'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/GenerateQuestionsInput
+  - term: GenerateQuestionsResponse
+    definition: 'Object declared by the contract with fields: closedQuestions, openEndedQuestions.'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/GenerateQuestionsResponse
+  - term: StopCampaignRequest
+    definition: Request to stop a campaign
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/StopCampaignRequest
+  - term: StopCampaignResponse
+    definition: Response from stopping a campaign
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/StopCampaignResponse
+  - term: UpdateCampaignRequest
+    definition: 'Object declared by the contract with fields: campaignTitle, campaignDescription, campaignStatus, language, additionalContext,
+      rejectionMessage, closingMessage, customMessage, openingMessageTemplateId, channel, emailChannelFallbackEnabled, conversationTimeout.'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/UpdateCampaignRequest
+  - term: Update Campaign Response
+    definition: Response for updating a campaign
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/UpdateCampaignResponse
+  - term: GeneratePreferredAnswerRequirementsInput
+    definition: 'Object declared by the contract with fields: content, preferredAnswerText.'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/GeneratePreferredAnswerRequirementsInput
+  - term: GeneratePreferredAnswerRequirementsResponse
+    definition: 'Object declared by the contract with fields: preferredAnswerRequirements.'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/GeneratePreferredAnswerRequirementsResponse
+  - term: Document
+    definition: 'Object declared by the contract with fields: id, fileName, classifiedDocumentType, contentType, size.'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/Document
+  - term: ListConversationDocumentsResponse
+    definition: 'Object declared by the contract with fields: data, nextToken.'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/ListConversationDocumentsResponse
+  - term: Media
+    definition: 'Object declared by the contract with fields: fileName, tempUrl, contentType, size, createdAt, updatedAt.'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/Media
+  - term: ProcessDocumentRequest
+    definition: 'Request to classify and validate a document. Beta endpoint. Two modes: supply the definition inline via `documentType` (stateless),
+      or reference a stored DocumentType via `documentTypeId` (stateful) — exactly one of the two is required. Supply the document itself via
+      `documentBase64` (inline) or `documentUrl` (server downloads); again, exactly one of the two is required. Supported formats: PDF, JP'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/ProcessDocumentRequest
+  - term: ProcessDocumentResponse
+    definition: Result of a /v1/documents/process call.
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/ProcessDocumentResponse
+  - term: ListDocumentTypesResponse
+    definition: 'Object declared by the contract with fields: data, nextToken.'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/ListDocumentTypesResponse
+  - term: isArchived
+    definition: 'Enumeration declared by the contract with values: true, false.'
+    tags:
+    - Enumeration
+    source: openapi/popp-api-openapi.yml#/components/schemas/isArchived
+  - term: isUsedInCampaign
+    definition: 'Enumeration declared by the contract with values: true, false.'
+    tags:
+    - Enumeration
+    source: openapi/popp-api-openapi.yml#/components/schemas/isUsedInCampaign
+  - term: DocumentType
+    definition: 'Object declared by the contract with fields: id, organizationId, name, validation, classificationRules, validationSettings, externalId,
+      isArchived, isUsedInCampaign, createdAt, updatedAt.'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/DocumentType
+  - term: CreateDocumentTypeRequest
+    definition: 'Object declared by the contract with fields: name, validation, classificationRules, validationSettings, externalId.'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/CreateDocumentTypeRequest
+  - term: UpdateDocumentTypeRequest
+    definition: 'Object declared by the contract with fields: name, validation, classificationRules, validationSettings, externalId.'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/UpdateDocumentTypeRequest
+  - term: ListTemplatesResponse
+    definition: 'Object declared by the contract with fields: data, nextToken.'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/ListTemplatesResponse
+  - term: type
+    definition: 'Enumeration declared by the contract with values: NUDGE_MESSAGE_1, NUDGE_MESSAGE_2, NUDGE_MESSAGE_3, OPENING_MESSAGE, RESTART_OPEN_MESSAGE,
+      CALENDAR_BOOKING_CANCELLED, CALENDAR_BOOKING_CONFIRMATION, CALENDAR_BOOKING_NUDGE_1, CALENDAR_BOOKING_NUDGE_2, CALENDAR_BOOKING_NUDGE_3,
+      CALENDAR_BOOKING_REMINDER, CALENDAR_BOOKING_RESCHEDULE_CONFIRMATION. (2 more)'
+    tags:
+    - Enumeration
+    source: openapi/popp-api-openapi.yml#/components/schemas/type
+  - term: channel
+    definition: 'Enumeration declared by the contract with values: SMS, WHATSAPP.'
+    tags:
+    - Enumeration
+    source: openapi/popp-api-openapi.yml#/components/schemas/channel
+  - term: campaignType
+    definition: 'Enumeration declared by the contract with values: APPLICANT_OUTREACH, ENGAGEMENT_OUTREACH, NEW_CANDIDATE_OUTREACH, SCHEDULING.'
+    tags:
+    - Enumeration
+    source: openapi/popp-api-openapi.yml#/components/schemas/campaignType
+  - term: ListAgentsResponse
+    definition: 'Object declared by the contract with fields: data.'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/ListAgentsResponse
+  - term: ListWebhooksResponse
+    definition: Response containing list of webhooks
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/ListWebhooksResponse
+  - term: CreateWebhookRequest
+    definition: Request to create a webhook
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/CreateWebhookRequest
+  - term: CreateWebhookResponse
+    definition: Response after creating a webhook
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/CreateWebhookResponse
+  - term: Webhook
+    definition: Webhook configuration
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/Webhook
+  - term: UpdateWebhookRequest
+    definition: Request to update a webhook
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/UpdateWebhookRequest
+  - term: ListWebhookEventsResponse
+    definition: Response containing the list of available webhook events
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/ListWebhookEventsResponse
+  - term: OrganizationConfig
+    definition: 'Object declared by the contract with fields: id, conversationTimeout, closingMessage, rejectionMessage, globalContext, emailChannelFallbackEnabled,
+      agent, templates, protectedCharacteristics.'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/OrganizationConfig
+  - term: CreateOrganizationConfigRequest
+    definition: 'Object declared by the contract with fields: agentId, agentName, agentTone, conversationTimeout, rejectionMessage, closingMessage,
+      globalContext, templates, protectedCharacteristics.'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/CreateOrganizationConfigRequest
+  - term: UpdateOrganizationConfigRequest
+    definition: 'Object declared by the contract with fields: agentId, agentName, agentTone, conversationTimeout, rejectionMessage, closingMessage,
+      globalContext, templates, protectedCharacteristics.'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/UpdateOrganizationConfigRequest
+  - term: CreateAnalysisCandidateInput
+    definition: 'Object declared by the contract with fields: analysisId, externalAnalysisId, documentUrl, documentBase64, firstName, lastName,
+      phoneNumber, emailAddress, externalId, documentType.'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/CreateAnalysisCandidateInput
+  - term: CreateAnalysisCandidateResponse
+    definition: 'Object declared by the contract with fields: message.'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/CreateAnalysisCandidateResponse
+  - term: GenerateRequirementsInput
+    definition: 'Object declared by the contract with fields: jobDescription.'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/GenerateRequirementsInput
+  - term: GenerateRequirementsResponse
+    definition: 'Object declared by the contract with fields: requirements.'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/GenerateRequirementsResponse
+  - term: Analysis
+    definition: 'Object declared by the contract with fields: id, title, jobDescription, status, requirements, candidatesCount, candidatesRequirementsMetCount,
+      candidatesRequirementsNotMetCount, externalId, isWorkflowManaged, workflowId, workflowVersionId. (5 more)'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/Analysis
+  - term: CreateAnalysisInput
+    definition: 'Object declared by the contract with fields: title, jobDescription, requirements, externalId.'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/CreateAnalysisInput
+  - term: ListAnalysesResponse
+    definition: 'Object declared by the contract with fields: data, nextToken.'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/ListAnalysesResponse
+  - term: status-3c845253-19cc-46fa-bf36-1e2b52143644
+    definition: 'Enumeration declared by the contract with values: DRAFT, PROCESSING, LIVE, ARCHIVED.'
+    tags:
+    - Enumeration
+    source: openapi/popp-api-openapi.yml#/components/schemas/status-3c845253-19cc-46fa-bf36-1e2b52143644
+  - term: UpdateAnalysisInput
+    definition: 'Object declared by the contract with fields: title, jobDescription, externalId.'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/UpdateAnalysisInput
+  - term: UpdateRequirementsInput
+    definition: 'Object declared by the contract with fields: requirements.'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/UpdateRequirementsInput
+  - term: CreateSchedulingConversationInput
+    definition: Request body for creating an auto-schedule conversation. Requires a campaign (campaignId or externalCampaignId), a way to reach
+      the candidate (phoneNumber or emailAddress), the meeting participants, and the meeting configuration.
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/CreateSchedulingConversationInput
+  - term: CreateSchedulingConversationResponse
+    definition: 'Object declared by the contract with fields: message.'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/CreateSchedulingConversationResponse
+  - term: InviteCalendarContactInput
+    definition: 'Object declared by the contract with fields: email, name, reference, isSharedMailbox.'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/InviteCalendarContactInput
+  - term: InviteCalendarContactResponse
+    definition: 'Object declared by the contract with fields: message, data.'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/InviteCalendarContactResponse
+  - term: ListMeetingTemplatesResponse
+    definition: 'Object declared by the contract with fields: data, nextToken, total.'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/ListMeetingTemplatesResponse
+  - term: status-68e07924-ed96-48a5-906e-ede3549d53d4
+    definition: 'Enumeration declared by the contract with values: ACTIVE, ARCHIVED.'
+    tags:
+    - Enumeration
+    source: openapi/popp-api-openapi.yml#/components/schemas/status-68e07924-ed96-48a5-906e-ede3549d53d4
+  - term: GetMeetingTemplateResponse
+    definition: 'Object declared by the contract with fields: id, status, createdAt, updatedAt, guestLabel, title, description, videoConferencing,
+      videoConferencingProvider, duration, location, timezone. (8 more)'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/GetMeetingTemplateResponse
+  - term: CreateMeetingTemplateInput
+    definition: 'Object declared by the contract with fields: meetingParticipants, availabilityMethod, title, description, openHours, timezone,
+      duration, videoConferencing, videoConferencingProvider, location, buffer, reminderMinutesBeforeMeeting. (4 more)'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/CreateMeetingTemplateInput
+  - term: CreateMeetingTemplateResponse
+    definition: 'Object declared by the contract with fields: message, data.'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/CreateMeetingTemplateResponse
+  - term: Resend Booking URL Input
+    definition: Input for resending a booking URL to a conversation. Provide either conversationId OR externalConversationId to identify the conversation,
+      and either calendarMeetingTemplateId OR meetingConfiguration with meetingParticipants for the meeting setup.
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/ResendBookingUrlInput
+  - term: Resend Booking URL Response
+    definition: Response from the resend booking URL endpoint.
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/ResendBookingUrlResponse
+  - term: UpdateMeetingTemplateInput
+    definition: 'Object declared by the contract with fields: meetingParticipants, availabilityMethod, title, description, openHours, timezone,
+      duration, videoConferencing, videoConferencingProvider, location, buffer, reminderMinutesBeforeMeeting. (4 more)'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/UpdateMeetingTemplateInput
+  - term: UpdateMeetingTemplateResponse
+    definition: 'Object declared by the contract with fields: message, data.'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/UpdateMeetingTemplateResponse
+  - term: UpdateBookingInput
+    definition: 'Object declared by the contract with fields: title, startDateTime, duration, description, location, attendees, sendNotification.'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/UpdateBookingInput
+  - term: BookingResponse
+    definition: 'Object declared by the contract with fields: bookingId, conversationId, campaignId, title, startDateTime, endDateTime, description,
+      location, attendees, status.'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/BookingResponse
+  - term: Booking
+    definition: 'Object declared by the contract with fields: bookingId, conversationId, campaignId, calendarMeetingTemplateId, title, startTime,
+      endTime, status, location, conferenceUrl, participants, createdAt. (1 more)'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/Booking
+  - term: BookingList
+    definition: 'Object declared by the contract with fields: data, nextToken.'
+    tags:
+    - Object
+    source: openapi/popp-api-openapi.yml#/components/schemas/BookingList

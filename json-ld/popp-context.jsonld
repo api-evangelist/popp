@@ -1,0 +1,991 @@
+{
+  "@context": {
+    "@vocab": "https://joinpopp.com/schema#",
+    "schema": "https://schema.org/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "dcterms": "http://purl.org/dc/terms/",
+    "popp": "https://joinpopp.com/schema#",
+    "CreateConversationInput": "popp:CreateConversationInput",
+    "phoneNumber": {
+      "@id": "popp:phoneNumber",
+      "@type": "xsd:string"
+    },
+    "shouldSendDuringBusinessHours": {
+      "@id": "popp:shouldSendDuringBusinessHours",
+      "@type": "xsd:boolean"
+    },
+    "countryCode": {
+      "@id": "popp:countryCode",
+      "@type": "xsd:string"
+    },
+    "firstName": {
+      "@id": "popp:firstName",
+      "@type": "xsd:string"
+    },
+    "lastName": {
+      "@id": "popp:lastName",
+      "@type": "xsd:string"
+    },
+    "emailAddress": {
+      "@id": "popp:emailAddress",
+      "@type": "xsd:string"
+    },
+    "campaignId": {
+      "@id": "popp:campaignId",
+      "@type": "xsd:string"
+    },
+    "externalId": {
+      "@id": "popp:externalId",
+      "@type": "xsd:string"
+    },
+    "externalCampaignId": {
+      "@id": "popp:externalCampaignId",
+      "@type": "xsd:string"
+    },
+    "applicationSource": {
+      "@id": "popp:applicationSource",
+      "@type": "xsd:string"
+    },
+    "skipDuplicationCheck": {
+      "@id": "popp:skipDuplicationCheck",
+      "@type": "xsd:boolean"
+    },
+    "closePreviousConversations": {
+      "@id": "popp:closePreviousConversations",
+      "@type": "xsd:boolean"
+    },
+    "openingMessage": {
+      "@id": "popp:openingMessage",
+      "@type": "xsd:string"
+    },
+    "additionalContext": {
+      "@id": "popp:additionalContext",
+      "@type": "xsd:string"
+    },
+    "Conversation": "popp:Conversation",
+    "id": {
+      "@id": "popp:id",
+      "@type": "xsd:string"
+    },
+    "organizationId": {
+      "@id": "popp:organizationId",
+      "@type": "xsd:string"
+    },
+    "participantPhoneNumber": {
+      "@id": "popp:participantPhoneNumber",
+      "@type": "xsd:string"
+    },
+    "participantFirstName": {
+      "@id": "popp:participantFirstName",
+      "@type": "xsd:string"
+    },
+    "participantLastName": {
+      "@id": "popp:participantLastName",
+      "@type": "xsd:string"
+    },
+    "participantEmailAddress": {
+      "@id": "popp:participantEmailAddress",
+      "@type": "xsd:string"
+    },
+    "createdAt": {
+      "@id": "popp:createdAt",
+      "@type": "xsd:dateTime"
+    },
+    "updatedAt": {
+      "@id": "popp:updatedAt",
+      "@type": "xsd:dateTime"
+    },
+    "needsReview": {
+      "@id": "popp:needsReview",
+      "@type": "xsd:boolean"
+    },
+    "isHumanTakeover": {
+      "@id": "popp:isHumanTakeover",
+      "@type": "xsd:boolean"
+    },
+    "screeningQuestionsOutcome": {
+      "@id": "popp:screeningQuestionsOutcome",
+      "@container": "@list"
+    },
+    "sentAt": {
+      "@id": "popp:sentAt",
+      "@type": "xsd:dateTime"
+    },
+    "completedAt": {
+      "@id": "popp:completedAt",
+      "@type": "xsd:dateTime"
+    },
+    "timeToFirstResponse": {
+      "@id": "popp:timeToFirstResponse",
+      "@type": "xsd:decimal"
+    },
+    "timeToComplete": {
+      "@id": "popp:timeToComplete",
+      "@type": "xsd:decimal"
+    },
+    "messagesCount": {
+      "@id": "popp:messagesCount",
+      "@type": "xsd:integer"
+    },
+    "repliesCount": {
+      "@id": "popp:repliesCount",
+      "@type": "xsd:integer"
+    },
+    "conversationStatus": {
+      "@id": "popp:conversationStatus",
+      "@type": "xsd:string"
+    },
+    "scorecardTotalValue": {
+      "@id": "popp:scorecardTotalValue",
+      "@type": "xsd:decimal"
+    },
+    "workflowRunId": {
+      "@id": "popp:workflowRunId",
+      "@type": "xsd:string"
+    },
+    "workflowNodeId": {
+      "@id": "popp:workflowNodeId",
+      "@type": "xsd:string"
+    },
+    "bookingId": {
+      "@id": "popp:bookingId",
+      "@type": "xsd:string"
+    },
+    "scoreCardOutcomes": {
+      "@id": "popp:scoreCardOutcomes",
+      "@container": "@list"
+    },
+    "ListConversationsResponse": "popp:ListConversationsResponse",
+    "data": {
+      "@id": "popp:data",
+      "@container": "@list"
+    },
+    "nextToken": {
+      "@id": "popp:nextToken",
+      "@type": "xsd:string"
+    },
+    "status": "popp:status",
+    "sortDirection": "popp:sortDirection",
+    "ListConversationMessagesResponse": "popp:ListConversationMessagesResponse",
+    "SendConversationMessageRequest": "popp:SendConversationMessageRequest",
+    "messageBody": {
+      "@id": "popp:messageBody",
+      "@type": "xsd:string"
+    },
+    "templateId": {
+      "@id": "popp:templateId",
+      "@type": "xsd:string"
+    },
+    "MessageResponse": "popp:MessageResponse",
+    "conversationId": {
+      "@id": "popp:conversationId",
+      "@type": "xsd:string"
+    },
+    "body": {
+      "@id": "popp:body",
+      "@type": "xsd:string"
+    },
+    "sender": {
+      "@id": "popp:sender",
+      "@type": "xsd:string"
+    },
+    "ConversationUpdateResponse": "popp:ConversationUpdateResponse",
+    "stage": {
+      "@id": "popp:stage",
+      "@type": "xsd:string"
+    },
+    "calendarMeetingTemplateId": {
+      "@id": "popp:calendarMeetingTemplateId",
+      "@type": "xsd:string"
+    },
+    "BulkCreateConversationsInput": "popp:BulkCreateConversationsInput",
+    "contacts": {
+      "@id": "popp:contacts",
+      "@container": "@list"
+    },
+    "BulkCreateConversationsResponse": "popp:BulkCreateConversationsResponse",
+    "message": {
+      "@id": "popp:message",
+      "@type": "xsd:string"
+    },
+    "total": {
+      "@id": "popp:total",
+      "@type": "xsd:integer"
+    },
+    "queued": {
+      "@id": "popp:queued",
+      "@type": "xsd:integer"
+    },
+    "failed": {
+      "@id": "popp:failed",
+      "@type": "xsd:integer"
+    },
+    "results": {
+      "@id": "popp:results",
+      "@container": "@list"
+    },
+    "Campaign": "popp:Campaign",
+    "type": {
+      "@id": "popp:type",
+      "@type": "xsd:string"
+    },
+    "channel": {
+      "@id": "popp:channel",
+      "@type": "xsd:string"
+    },
+    "emailChannelFallbackEnabled": {
+      "@id": "popp:emailChannelFallbackEnabled",
+      "@type": "xsd:boolean"
+    },
+    "closingMethod": {
+      "@id": "popp:closingMethod",
+      "@type": "xsd:string"
+    },
+    "campaignTitle": {
+      "@id": "popp:campaignTitle",
+      "@type": "xsd:string"
+    },
+    "campaignDescription": {
+      "@id": "popp:campaignDescription",
+      "@type": "xsd:string"
+    },
+    "isWorkflowManaged": {
+      "@id": "popp:isWorkflowManaged",
+      "@type": "xsd:boolean"
+    },
+    "workflowId": {
+      "@id": "popp:workflowId",
+      "@type": "xsd:string"
+    },
+    "workflowVersionId": {
+      "@id": "popp:workflowVersionId",
+      "@type": "xsd:string"
+    },
+    "conversationTimeout": {
+      "@id": "popp:conversationTimeout",
+      "@type": "xsd:decimal"
+    },
+    "owner": {
+      "@id": "popp:owner",
+      "@type": "xsd:string"
+    },
+    "rejectionMessage": {
+      "@id": "popp:rejectionMessage",
+      "@type": "xsd:string"
+    },
+    "closingMessage": {
+      "@id": "popp:closingMessage",
+      "@type": "xsd:string"
+    },
+    "customRequest": {
+      "@id": "popp:customRequest",
+      "@type": "xsd:string"
+    },
+    "campaignStatus": {
+      "@id": "popp:campaignStatus",
+      "@type": "xsd:string"
+    },
+    "disableNudging": {
+      "@id": "popp:disableNudging",
+      "@type": "xsd:boolean"
+    },
+    "nudgeSettings": {
+      "@id": "popp:nudgeSettings",
+      "@container": "@list"
+    },
+    "jobDescriptionParsed": {
+      "@id": "popp:jobDescriptionParsed"
+    },
+    "agent": {
+      "@id": "popp:agent"
+    },
+    "questions": {
+      "@id": "popp:questions",
+      "@container": "@list"
+    },
+    "language": {
+      "@id": "popp:language",
+      "@type": "xsd:string"
+    },
+    "CreateCampaignRequest": "popp:CreateCampaignRequest",
+    "campaignType": {
+      "@id": "popp:campaignType",
+      "@type": "xsd:string"
+    },
+    "customMessage": {
+      "@id": "popp:customMessage",
+      "@type": "xsd:string"
+    },
+    "company": {
+      "@id": "popp:company",
+      "@type": "xsd:string"
+    },
+    "location": {
+      "@id": "popp:location",
+      "@type": "xsd:string"
+    },
+    "contractType": {
+      "@id": "popp:contractType",
+      "@type": "xsd:string"
+    },
+    "openingMessageTemplateId": {
+      "@id": "popp:openingMessageTemplateId",
+      "@type": "xsd:string"
+    },
+    "customTemplatedMessage": {
+      "@id": "popp:customTemplatedMessage",
+      "@type": "xsd:string"
+    },
+    "customTemplatedSubjectLine": {
+      "@id": "popp:customTemplatedSubjectLine",
+      "@type": "xsd:string"
+    },
+    "agentName": {
+      "@id": "popp:agentName",
+      "@type": "xsd:string"
+    },
+    "agentTone": {
+      "@id": "popp:agentTone",
+      "@type": "xsd:string"
+    },
+    "CreateCampaignResponse": "popp:CreateCampaignResponse",
+    "ListCampaignsResponse": "popp:ListCampaignsResponse",
+    "campaignType-3b31177b-4f80-4990-b9e7-b07ee5ae2ade": "popp:campaignType-3b31177b-4f80-4990-b9e7-b07ee5ae2ade",
+    "channel-d7b2fd6e-9a72-4b90-adf5-a8c00a58fa0d": "popp:channel-d7b2fd6e-9a72-4b90-adf5-a8c00a58fa0d",
+    "GenerateQuestionsInput": "popp:GenerateQuestionsInput",
+    "jobDescription": {
+      "@id": "popp:jobDescription",
+      "@type": "xsd:string"
+    },
+    "GenerateQuestionsResponse": "popp:GenerateQuestionsResponse",
+    "closedQuestions": {
+      "@id": "popp:closedQuestions",
+      "@container": "@list"
+    },
+    "openEndedQuestions": {
+      "@id": "popp:openEndedQuestions",
+      "@container": "@list"
+    },
+    "StopCampaignRequest": "popp:StopCampaignRequest",
+    "sendCancellationMessage": {
+      "@id": "popp:sendCancellationMessage",
+      "@type": "xsd:boolean"
+    },
+    "cancellationMessage": {
+      "@id": "popp:cancellationMessage",
+      "@type": "xsd:string"
+    },
+    "availabilityOutreachCancellationMessage": {
+      "@id": "popp:availabilityOutreachCancellationMessage",
+      "@type": "xsd:string"
+    },
+    "StopCampaignResponse": "popp:StopCampaignResponse",
+    "UpdateCampaignRequest": "popp:UpdateCampaignRequest",
+    "UpdateCampaignResponse": "popp:UpdateCampaignResponse",
+    "GeneratePreferredAnswerRequirementsInput": "popp:GeneratePreferredAnswerRequirementsInput",
+    "content": {
+      "@id": "popp:content",
+      "@type": "xsd:string"
+    },
+    "preferredAnswerText": {
+      "@id": "popp:preferredAnswerText",
+      "@type": "xsd:string"
+    },
+    "GeneratePreferredAnswerRequirementsResponse": "popp:GeneratePreferredAnswerRequirementsResponse",
+    "preferredAnswerRequirements": {
+      "@id": "popp:preferredAnswerRequirements",
+      "@container": "@list"
+    },
+    "Document": "popp:Document",
+    "fileName": {
+      "@id": "popp:fileName",
+      "@type": "xsd:string"
+    },
+    "classifiedDocumentType": {
+      "@id": "popp:classifiedDocumentType",
+      "@type": "xsd:string"
+    },
+    "contentType": {
+      "@id": "popp:contentType",
+      "@type": "xsd:string"
+    },
+    "size": {
+      "@id": "popp:size",
+      "@type": "xsd:integer"
+    },
+    "ListConversationDocumentsResponse": "popp:ListConversationDocumentsResponse",
+    "Media": "popp:Media",
+    "tempUrl": {
+      "@id": "popp:tempUrl",
+      "@type": "@id"
+    },
+    "ProcessDocumentRequest": "popp:ProcessDocumentRequest",
+    "documentBase64": {
+      "@id": "popp:documentBase64",
+      "@type": "xsd:string"
+    },
+    "documentUrl": {
+      "@id": "popp:documentUrl",
+      "@type": "@id"
+    },
+    "candidateName": {
+      "@id": "popp:candidateName",
+      "@type": "xsd:string"
+    },
+    "documentTypeId": {
+      "@id": "popp:documentTypeId",
+      "@type": "xsd:string"
+    },
+    "documentType": {
+      "@id": "popp:documentType"
+    },
+    "ProcessDocumentResponse": "popp:ProcessDocumentResponse",
+    "passedValidation": {
+      "@id": "popp:passedValidation",
+      "@type": "xsd:boolean"
+    },
+    "documentTypes": {
+      "@id": "popp:documentTypes",
+      "@container": "@list"
+    },
+    "validationErrors": {
+      "@id": "popp:validationErrors",
+      "@container": "@list"
+    },
+    "failedClassificationRules": {
+      "@id": "popp:failedClassificationRules",
+      "@container": "@list"
+    },
+    "ListDocumentTypesResponse": "popp:ListDocumentTypesResponse",
+    "isArchived": "popp:isArchived",
+    "isUsedInCampaign": "popp:isUsedInCampaign",
+    "DocumentType": "popp:DocumentType",
+    "name": {
+      "@id": "popp:name",
+      "@type": "xsd:string"
+    },
+    "validation": {
+      "@id": "popp:validation",
+      "@container": "@list"
+    },
+    "classificationRules": {
+      "@id": "popp:classificationRules",
+      "@container": "@list"
+    },
+    "validationSettings": {
+      "@id": "popp:validationSettings",
+      "@type": "xsd:string"
+    },
+    "CreateDocumentTypeRequest": "popp:CreateDocumentTypeRequest",
+    "UpdateDocumentTypeRequest": "popp:UpdateDocumentTypeRequest",
+    "ListTemplatesResponse": "popp:ListTemplatesResponse",
+    "ListAgentsResponse": "popp:ListAgentsResponse",
+    "ListWebhooksResponse": "popp:ListWebhooksResponse",
+    "CreateWebhookRequest": "popp:CreateWebhookRequest",
+    "url": {
+      "@id": "popp:url",
+      "@type": "@id"
+    },
+    "subscribedEvents": {
+      "@id": "popp:subscribedEvents",
+      "@container": "@list"
+    },
+    "CreateWebhookResponse": "popp:CreateWebhookResponse",
+    "signingSecret": {
+      "@id": "popp:signingSecret",
+      "@type": "xsd:string"
+    },
+    "Webhook": "popp:Webhook",
+    "UpdateWebhookRequest": "popp:UpdateWebhookRequest",
+    "ListWebhookEventsResponse": "popp:ListWebhookEventsResponse",
+    "OrganizationConfig": "popp:OrganizationConfig",
+    "globalContext": {
+      "@id": "popp:globalContext",
+      "@type": "xsd:string"
+    },
+    "templates": {
+      "@id": "popp:templates",
+      "@container": "@list"
+    },
+    "protectedCharacteristics": {
+      "@id": "popp:protectedCharacteristics"
+    },
+    "CreateOrganizationConfigRequest": "popp:CreateOrganizationConfigRequest",
+    "agentId": {
+      "@id": "popp:agentId",
+      "@type": "xsd:string"
+    },
+    "UpdateOrganizationConfigRequest": "popp:UpdateOrganizationConfigRequest",
+    "CreateAnalysisCandidateInput": "popp:CreateAnalysisCandidateInput",
+    "analysisId": {
+      "@id": "popp:analysisId",
+      "@type": "xsd:string"
+    },
+    "externalAnalysisId": {
+      "@id": "popp:externalAnalysisId",
+      "@type": "xsd:string"
+    },
+    "CreateAnalysisCandidateResponse": "popp:CreateAnalysisCandidateResponse",
+    "GenerateRequirementsInput": "popp:GenerateRequirementsInput",
+    "GenerateRequirementsResponse": "popp:GenerateRequirementsResponse",
+    "requirements": {
+      "@id": "popp:requirements",
+      "@container": "@list"
+    },
+    "Analysis": "popp:Analysis",
+    "title": {
+      "@id": "popp:title",
+      "@type": "xsd:string"
+    },
+    "candidatesCount": {
+      "@id": "popp:candidatesCount",
+      "@type": "xsd:integer"
+    },
+    "candidatesRequirementsMetCount": {
+      "@id": "popp:candidatesRequirementsMetCount",
+      "@type": "xsd:integer"
+    },
+    "candidatesRequirementsNotMetCount": {
+      "@id": "popp:candidatesRequirementsNotMetCount",
+      "@type": "xsd:integer"
+    },
+    "workflowNodeSlug": {
+      "@id": "popp:workflowNodeSlug",
+      "@type": "xsd:string"
+    },
+    "CreateAnalysisInput": "popp:CreateAnalysisInput",
+    "ListAnalysesResponse": "popp:ListAnalysesResponse",
+    "status-3c845253-19cc-46fa-bf36-1e2b52143644": "popp:status-3c845253-19cc-46fa-bf36-1e2b52143644",
+    "UpdateAnalysisInput": "popp:UpdateAnalysisInput",
+    "UpdateRequirementsInput": "popp:UpdateRequirementsInput",
+    "CreateSchedulingConversationInput": "popp:CreateSchedulingConversationInput",
+    "meetingParticipants": {
+      "@id": "popp:meetingParticipants",
+      "@container": "@list"
+    },
+    "meetingConfiguration": {
+      "@id": "popp:meetingConfiguration"
+    },
+    "CreateSchedulingConversationResponse": "popp:CreateSchedulingConversationResponse",
+    "InviteCalendarContactInput": "popp:InviteCalendarContactInput",
+    "email": {
+      "@id": "popp:email",
+      "@type": "xsd:string"
+    },
+    "reference": {
+      "@id": "popp:reference",
+      "@type": "xsd:string"
+    },
+    "isSharedMailbox": {
+      "@id": "popp:isSharedMailbox",
+      "@type": "xsd:boolean"
+    },
+    "InviteCalendarContactResponse": "popp:InviteCalendarContactResponse",
+    "ListMeetingTemplatesResponse": "popp:ListMeetingTemplatesResponse",
+    "status-68e07924-ed96-48a5-906e-ede3549d53d4": "popp:status-68e07924-ed96-48a5-906e-ede3549d53d4",
+    "GetMeetingTemplateResponse": "popp:GetMeetingTemplateResponse",
+    "guestLabel": {
+      "@id": "popp:guestLabel",
+      "@type": "xsd:string"
+    },
+    "description": {
+      "@id": "popp:description",
+      "@type": "xsd:string"
+    },
+    "videoConferencing": {
+      "@id": "popp:videoConferencing",
+      "@type": "xsd:boolean"
+    },
+    "videoConferencingProvider": {
+      "@id": "popp:videoConferencingProvider",
+      "@type": "xsd:string"
+    },
+    "duration": {
+      "@id": "popp:duration",
+      "@type": "xsd:integer"
+    },
+    "timezone": {
+      "@id": "popp:timezone",
+      "@type": "xsd:string"
+    },
+    "buffer": {
+      "@id": "popp:buffer",
+      "@type": "xsd:integer"
+    },
+    "noticePeriodMinutes": {
+      "@id": "popp:noticePeriodMinutes",
+      "@type": "xsd:integer"
+    },
+    "availableDaysInTheFuture": {
+      "@id": "popp:availableDaysInTheFuture",
+      "@type": "xsd:integer"
+    },
+    "reminderMinutesBeforeMeeting": {
+      "@id": "popp:reminderMinutesBeforeMeeting",
+      "@type": "xsd:integer"
+    },
+    "availabilityOutreachSettings": {
+      "@id": "popp:availabilityOutreachSettings"
+    },
+    "openHours": {
+      "@id": "popp:openHours",
+      "@container": "@list"
+    },
+    "availability": {
+      "@id": "popp:availability"
+    },
+    "CreateMeetingTemplateInput": "popp:CreateMeetingTemplateInput",
+    "availabilityMethod": {
+      "@id": "popp:availabilityMethod",
+      "@type": "xsd:string"
+    },
+    "CreateMeetingTemplateResponse": "popp:CreateMeetingTemplateResponse",
+    "ResendBookingUrlInput": "popp:ResendBookingUrlInput",
+    "externalConversationId": {
+      "@id": "popp:externalConversationId",
+      "@type": "xsd:string"
+    },
+    "ResendBookingUrlResponse": "popp:ResendBookingUrlResponse",
+    "UpdateMeetingTemplateInput": "popp:UpdateMeetingTemplateInput",
+    "UpdateMeetingTemplateResponse": "popp:UpdateMeetingTemplateResponse",
+    "UpdateBookingInput": "popp:UpdateBookingInput",
+    "startDateTime": {
+      "@id": "popp:startDateTime",
+      "@type": "xsd:dateTime"
+    },
+    "attendees": {
+      "@id": "popp:attendees",
+      "@container": "@list"
+    },
+    "sendNotification": {
+      "@id": "popp:sendNotification",
+      "@type": "xsd:boolean"
+    },
+    "BookingResponse": "popp:BookingResponse",
+    "endDateTime": {
+      "@id": "popp:endDateTime",
+      "@type": "xsd:dateTime"
+    },
+    "Booking": "popp:Booking",
+    "startTime": {
+      "@id": "popp:startTime",
+      "@type": "xsd:dateTime"
+    },
+    "endTime": {
+      "@id": "popp:endTime",
+      "@type": "xsd:dateTime"
+    },
+    "conferenceUrl": {
+      "@id": "popp:conferenceUrl",
+      "@type": "xsd:string"
+    },
+    "participants": {
+      "@id": "popp:participants",
+      "@container": "@list"
+    },
+    "BookingList": "popp:BookingList",
+    "status-fdf66607-6c16-48bb-bc03-7dea3c78657e": "popp:status-fdf66607-6c16-48bb-bc03-7dea3c78657e",
+    "CancelBookingInput": "popp:CancelBookingInput",
+    "reason": {
+      "@id": "popp:reason",
+      "@type": "xsd:string"
+    },
+    "sendCancellationNotification": {
+      "@id": "popp:sendCancellationNotification",
+      "@type": "xsd:boolean"
+    },
+    "CancelBookingResponse": "popp:CancelBookingResponse",
+    "cancelledAt": {
+      "@id": "popp:cancelledAt",
+      "@type": "xsd:dateTime"
+    },
+    "ParseAvailabilityInput": "popp:ParseAvailabilityInput",
+    "messages": {
+      "@id": "popp:messages",
+      "@container": "@list"
+    },
+    "context": {
+      "@id": "popp:context"
+    },
+    "ParseAvailabilityResponse": "popp:ParseAvailabilityResponse",
+    "confidence": {
+      "@id": "popp:confidence",
+      "@type": "xsd:decimal"
+    },
+    "SetUserCalendarAvailabilityInput": "popp:SetUserCalendarAvailabilityInput",
+    "timeSlots": {
+      "@id": "popp:timeSlots",
+      "@container": "@list"
+    },
+    "SetUserCalendarAvailabilityResponse": "popp:SetUserCalendarAvailabilityResponse",
+    "ListUserCalendarsResponse": "popp:ListUserCalendarsResponse",
+    "items": {
+      "@id": "popp:items",
+      "@container": "@list"
+    },
+    "provider": "popp:provider",
+    "status-e42c6b84-3eed-4a37-8a05-cf2140d60597": "popp:status-e42c6b84-3eed-4a37-8a05-cf2140d60597",
+    "UserCalendar": "popp:UserCalendar",
+    "ListOrganizationsResponse": "popp:ListOrganizationsResponse",
+    "UpdateOrganizationRequest": "popp:UpdateOrganizationRequest",
+    "externalOrganizationId": {
+      "@id": "popp:externalOrganizationId",
+      "@type": "xsd:string"
+    },
+    "OrganizationSummary": "popp:OrganizationSummary",
+    "organizationGroupId": {
+      "@id": "popp:organizationGroupId",
+      "@type": "xsd:string"
+    },
+    "isHidden": {
+      "@id": "popp:isHidden",
+      "@type": "xsd:boolean"
+    },
+    "User": "popp:User",
+    "organizationGroupRole": {
+      "@id": "popp:organizationGroupRole",
+      "@type": "xsd:string"
+    },
+    "organizations": {
+      "@id": "popp:organizations",
+      "@container": "@list"
+    },
+    "ListUsersResponse": "popp:ListUsersResponse",
+    "UpdateUserRequest": "popp:UpdateUserRequest",
+    "CreateUserRequest": "popp:CreateUserRequest",
+    "sendInvite": {
+      "@id": "popp:sendInvite",
+      "@type": "xsd:boolean"
+    },
+    "ReactivateUserRequest": "popp:ReactivateUserRequest",
+    "Workflow": "popp:Workflow",
+    "configuration": {
+      "@id": "popp:configuration",
+      "@type": "xsd:string"
+    },
+    "settings": {
+      "@id": "popp:settings",
+      "@type": "xsd:string"
+    },
+    "liveWorkflowVersionId": {
+      "@id": "popp:liveWorkflowVersionId",
+      "@type": "xsd:string"
+    },
+    "createdByUserId": {
+      "@id": "popp:createdByUserId",
+      "@type": "xsd:string"
+    },
+    "CreateWorkflowInput": "popp:CreateWorkflowInput",
+    "PublishWorkflowInput": "popp:PublishWorkflowInput",
+    "changeNotes": {
+      "@id": "popp:changeNotes",
+      "@type": "xsd:string"
+    },
+    "PublishWorkflowResponse": "popp:PublishWorkflowResponse",
+    "versionId": {
+      "@id": "popp:versionId",
+      "@type": "xsd:string"
+    },
+    "versionNumber": {
+      "@id": "popp:versionNumber",
+      "@type": "xsd:integer"
+    },
+    "publishedAt": {
+      "@id": "popp:publishedAt",
+      "@type": "xsd:dateTime"
+    },
+    "PublishWorkflowRefusedResponse": "popp:PublishWorkflowRefusedResponse",
+    "ListWorkflowsResponse": "popp:ListWorkflowsResponse",
+    "UpdateWorkflowInput": "popp:UpdateWorkflowInput",
+    "CandidateProfile": "popp:CandidateProfile",
+    "organizationIds": {
+      "@id": "popp:organizationIds",
+      "@container": "@list"
+    },
+    "ArchiveWorkflowResponse": "popp:ArchiveWorkflowResponse",
+    "archivedAt": {
+      "@id": "popp:archivedAt",
+      "@type": "xsd:dateTime"
+    },
+    "WorkflowStatusActionResponse": "popp:WorkflowStatusActionResponse",
+    "StartWorkflowRunsInput": "popp:StartWorkflowRunsInput",
+    "candidateProfileIds": {
+      "@id": "popp:candidateProfileIds",
+      "@container": "@list"
+    },
+    "candidateProfileExternalIds": {
+      "@id": "popp:candidateProfileExternalIds",
+      "@container": "@list"
+    },
+    "triggerMetadata": {
+      "@id": "popp:triggerMetadata",
+      "@type": "xsd:string"
+    },
+    "StartWorkflowRunsResponse": "popp:StartWorkflowRunsResponse",
+    "summary": {
+      "@id": "popp:summary"
+    },
+    "errors": {
+      "@id": "popp:errors",
+      "@container": "@list"
+    },
+    "alreadyEnrolled": {
+      "@id": "popp:alreadyEnrolled",
+      "@container": "@list"
+    },
+    "duplicatesInRequest": {
+      "@id": "popp:duplicatesInRequest",
+      "@container": "@list"
+    },
+    "ListWorkflowRunsResponse": "popp:ListWorkflowRunsResponse",
+    "WorkflowRun": "popp:WorkflowRun",
+    "workflowVersionNumber": {
+      "@id": "popp:workflowVersionNumber",
+      "@type": "xsd:integer"
+    },
+    "candidateProfileId": {
+      "@id": "popp:candidateProfileId",
+      "@type": "xsd:string"
+    },
+    "candidateProfileName": {
+      "@id": "popp:candidateProfileName",
+      "@type": "xsd:string"
+    },
+    "candidateProfileFirstName": {
+      "@id": "popp:candidateProfileFirstName",
+      "@type": "xsd:string"
+    },
+    "candidateProfileLastName": {
+      "@id": "popp:candidateProfileLastName",
+      "@type": "xsd:string"
+    },
+    "currentNodeId": {
+      "@id": "popp:currentNodeId",
+      "@type": "xsd:string"
+    },
+    "runVersion": {
+      "@id": "popp:runVersion",
+      "@type": "xsd:integer"
+    },
+    "errorCode": {
+      "@id": "popp:errorCode",
+      "@type": "xsd:string"
+    },
+    "errorMessage": {
+      "@id": "popp:errorMessage",
+      "@type": "xsd:string"
+    },
+    "lastFailedNodeId": {
+      "@id": "popp:lastFailedNodeId",
+      "@type": "xsd:string"
+    },
+    "hasPartialFailures": {
+      "@id": "popp:hasPartialFailures",
+      "@type": "xsd:boolean"
+    },
+    "failedNodeIds": {
+      "@id": "popp:failedNodeIds",
+      "@container": "@list"
+    },
+    "CancelWorkflowRunInput": "popp:CancelWorkflowRunInput",
+    "closeActiveConversations": {
+      "@id": "popp:closeActiveConversations",
+      "@type": "xsd:boolean"
+    },
+    "CancelWorkflowRunResponse": "popp:CancelWorkflowRunResponse",
+    "WorkflowAnalysis": "popp:WorkflowAnalysis",
+    "workflowNodeLabel": {
+      "@id": "popp:workflowNodeLabel",
+      "@type": "xsd:string"
+    },
+    "isActive": {
+      "@id": "popp:isActive",
+      "@type": "xsd:boolean"
+    },
+    "isRecalculatingScores": {
+      "@id": "popp:isRecalculatingScores",
+      "@type": "xsd:boolean"
+    },
+    "candidatesAnalysisErrorCount": {
+      "@id": "popp:candidatesAnalysisErrorCount",
+      "@type": "xsd:integer"
+    },
+    "scoreBands": {
+      "@id": "popp:scoreBands",
+      "@container": "@list"
+    },
+    "ListWorkflowAnalysisApplicationsResponse": "popp:ListWorkflowAnalysisApplicationsResponse",
+    "WorkflowAnalysisApplication": "popp:WorkflowAnalysisApplication",
+    "candidateId": {
+      "@id": "popp:candidateId",
+      "@type": "xsd:string"
+    },
+    "totalScoreScaled": {
+      "@id": "popp:totalScoreScaled",
+      "@type": "xsd:decimal"
+    },
+    "isAllRequirementsMet": {
+      "@id": "popp:isAllRequirementsMet",
+      "@type": "xsd:boolean"
+    },
+    "analysisErrorCode": {
+      "@id": "popp:analysisErrorCode",
+      "@type": "xsd:string"
+    },
+    "metRequirementSlugs": {
+      "@id": "popp:metRequirementSlugs",
+      "@container": "@list"
+    },
+    "unmetRequirementSlugs": {
+      "@id": "popp:unmetRequirementSlugs",
+      "@container": "@list"
+    },
+    "analysisOutcomeActedOnAt": {
+      "@id": "popp:analysisOutcomeActedOnAt",
+      "@type": "xsd:dateTime"
+    },
+    "requirementOutcomes": {
+      "@id": "popp:requirementOutcomes",
+      "@container": "@list"
+    },
+    "ListWorkflowAnalysisApplicationHistoryResponse": "popp:ListWorkflowAnalysisApplicationHistoryResponse",
+    "ListAtsJobsResponse": "popp:ListAtsJobsResponse",
+    "jobs": {
+      "@id": "popp:jobs",
+      "@container": "@list"
+    },
+    "next": {
+      "@id": "popp:next",
+      "@type": "xsd:string"
+    },
+    "status-8a98e189-83b3-4600-a5a6-22ce67b183c7": "popp:status-8a98e189-83b3-4600-a5a6-22ce67b183c7",
+    "ListAtsJobStagesResponse": "popp:ListAtsJobStagesResponse",
+    "stages": {
+      "@id": "popp:stages",
+      "@container": "@list"
+    },
+    "ListAtsRejectionReasonsResponse": "popp:ListAtsRejectionReasonsResponse",
+    "rejectionReasons": {
+      "@id": "popp:rejectionReasons",
+      "@container": "@list"
+    },
+    "DocumentCredential": "popp:DocumentCredential",
+    "headerTokenKey": {
+      "@id": "popp:headerTokenKey",
+      "@type": "xsd:string"
+    },
+    "CreateDocumentCredentialRequest": "popp:CreateDocumentCredentialRequest",
+    "token": {
+      "@id": "popp:token",
+      "@type": "xsd:string"
+    },
+    "ListDocumentCredentialsResponse": "popp:ListDocumentCredentialsResponse"
+  },
+  "@type": "schema:Dataset",
+  "schema:name": "Popp API JSON-LD context",
+  "schema:description": "A JSON-LD @context for the objects Popp's own API contract declares: one class per component schema, one property per declared field, typed from the contract. Derived by script (derive-json-ld.py, 2026-10-14) from openapi/popp-api-openapi.yml.",
+  "dcterms:created": "2026-10-14",
+  "dcterms:source": [
+    "openapi/popp-api-openapi.yml"
+  ]
+}

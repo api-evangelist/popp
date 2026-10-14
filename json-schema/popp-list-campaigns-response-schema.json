@@ -1,0 +1,493 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/popp/main/json-schema/popp-list-campaigns-response-schema.json",
+  "title": "List Campaigns Response",
+  "description": "Response for listing campaigns",
+  "x-generated": "2026-10-14",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/popp-api-openapi.yml#/components/schemas/ListCampaignsResponse",
+  "type": "object",
+  "properties": {
+    "data": {
+      "type": "array",
+      "items": {
+        "title": "Campaign",
+        "description": "Schema for a campaign",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Unique identifier for the campaign"
+          },
+          "organizationId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Identifier of the organization that owns the campaign"
+          },
+          "type": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "APPLICANT_OUTREACH",
+              "NEW_CANDIDATE_OUTREACH",
+              "ENGAGEMENT_OUTREACH"
+            ],
+            "description": "Type of the campaign"
+          },
+          "channel": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "SMS",
+              "WHATSAPP",
+              "WEB_CHAT",
+              "WEB_CHAT_VIA_EMAIL"
+            ],
+            "description": "Channel through which the campaign is conducted"
+          },
+          "emailChannelFallbackEnabled": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "description": "Campaign-level email fallback setting. null means the campaign inherits the organization-level setting; true or false is an explicit campaign override."
+          },
+          "closingMethod": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "CUSTOM",
+              "CALENDAR_MEETING_INTEGRATION"
+            ],
+            "description": "Closing method for the campaign"
+          },
+          "templateId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "ID of the template used for the campaign"
+          },
+          "campaignTitle": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Title of the campaign"
+          },
+          "campaignDescription": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Description of the job for the campaign"
+          },
+          "additionalContext": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Additional context or notes for the campaign"
+          },
+          "externalId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "External identifier for the campaign"
+          },
+          "isWorkflowManaged": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "description": "True when the campaign is managed by Workflow Builder. Mutation endpoints (POST /v1/conversations, POST /v1/conversations/bulk, POST /v1/conversations/scheduling, PATCH /v1/campaigns/{id}, POST /v1/campaigns/{id}/stop) reject such campaigns with 400 — start work via POST /v1/workflows/{workflowId}/runs instead. See the Workflow Builder guide."
+          },
+          "workflowId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Identifier of the workflow that owns this campaign. Null when the campaign is not workflow-managed."
+          },
+          "workflowVersionId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Identifier of the workflow version that owns this campaign. Null when the campaign is not workflow-managed."
+          },
+          "workflowNodeId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Identifier of the workflow node that owns this campaign. Null when the campaign is not workflow-managed."
+          },
+          "conversationTimeout": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Time in hours to automatically close conversations"
+          },
+          "owner": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "email",
+            "description": "Owner's email address"
+          },
+          "rejectionMessage": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Message sent upon rejection"
+          },
+          "closingMessage": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Message sent when the campaign is closed"
+          },
+          "customRequest": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Custom request for the campaign"
+          },
+          "campaignStatus": {
+            "type": "string",
+            "enum": [
+              "ARCHIVED",
+              "DISCONNECTED",
+              "DRAFT",
+              "FINISHED_GENERATING",
+              "FINISHED_SENDING",
+              "GENERATING_MESSAGES",
+              "LIVE",
+              "PAUSED",
+              "PROCESSING",
+              "SCHEDULED",
+              "SENDING_MESSAGES"
+            ],
+            "description": "Current status of the campaign"
+          },
+          "needsReview": {
+            "type": "boolean",
+            "description": "Indicates if the campaign needs review"
+          },
+          "disableNudging": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "description": "When true, automatic follow-up messages (nudges) are disabled for all conversations in this campaign"
+          },
+          "nudgeSettings": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "description": "Custom nudge timing configuration. Each entry represents one follow-up nudge. Null when using default behavior (3 nudges at 24-hour intervals). Note: for WhatsApp campaigns, nudges are only sent after the candidate replies.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "delayHours": {
+                  "type": "integer",
+                  "description": "Hours to wait since the previous message before sending this nudge.",
+                  "minimum": 1
+                }
+              }
+            }
+          },
+          "jobDescriptionParsed": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "Parsed job description details",
+            "required": [
+              "employerName",
+              "jobTitle",
+              "summaryOfRole"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "employerName": {
+                "type": "string",
+                "description": "Name of the employer"
+              },
+              "jobTitle": {
+                "type": "string",
+                "description": "Title of the job"
+              },
+              "summaryOfRole": {
+                "type": "string",
+                "description": "Summary of the role"
+              }
+            }
+          },
+          "agent": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "Agent managing the campaign",
+            "required": [
+              "id",
+              "agentName"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "description": "ID of the agent"
+              },
+              "agentName": {
+                "type": "string",
+                "description": "Name of the agent"
+              },
+              "agentTone": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "enum": [
+                  "CASUAL",
+                  "PROFESSIONAL",
+                  "NEUTRAL",
+                  "FRIENDLY",
+                  "MOTIVATIONAL",
+                  "CUSTOM",
+                  "ENCOURAGING"
+                ],
+                "description": "Tone used by the agent"
+              }
+            }
+          },
+          "questions": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "description": "List of screening questions for the campaign",
+            "items": {
+              "type": "object",
+              "oneOf": [
+                {
+                  "properties": {
+                    "questionType": {
+                      "type": "string",
+                      "enum": [
+                        "TEXT"
+                      ],
+                      "description": "Type of the question"
+                    },
+                    "isMandatory": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "Indicates if the question is mandatory"
+                    },
+                    "content": {
+                      "type": "string",
+                      "description": "Content of the question"
+                    },
+                    "documentTypes": {
+                      "type": [
+                        "array",
+                        "null"
+                      ],
+                      "description": "Deprecated free-text list of document types required. Null on TEXT questions and on DOCUMENT questions that use `documentItems` instead.",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "documentItems": {
+                      "type": [
+                        "array",
+                        "null"
+                      ],
+                      "description": "Typed references to DocumentType records. Null on TEXT questions and on DOCUMENT questions that use the deprecated `documentTypes` field instead.",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "documentTypeId": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "documentTypeName": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "hasPreferredAnswer": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "Whether this question has preferred answer criteria"
+                    },
+                    "preferredAnswerRequirements": {
+                      "type": [
+                        "array",
+                        "null"
+                      ],
+                      "description": "List of requirements the preferred answer should meet",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "preferredAnswerText": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Example of a preferred answer text"
+                    }
+                  },
+                  "required": [
+                    "questionType",
+                    "isMandatory",
+                    "content"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "properties": {
+                    "questionType": {
+                      "type": "string",
+                      "enum": [
+                        "DOCUMENT"
+                      ],
+                      "description": "Type of the question"
+                    },
+                    "isMandatory": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "Indicates if the question is mandatory"
+                    },
+                    "content": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Content of the question"
+                    },
+                    "documentTypes": {
+                      "type": [
+                        "array",
+                        "null"
+                      ],
+                      "description": "Deprecated free-text list of document types required. Null when the question uses `documentItems` instead.",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "documentItems": {
+                      "type": [
+                        "array",
+                        "null"
+                      ],
+                      "description": "Typed references to DocumentType records. Null when the question uses the deprecated `documentTypes` field instead.",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "documentTypeId": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "documentTypeName": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "required": [
+                    "questionType",
+                    "isMandatory"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            }
+          },
+          "language": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "en_ca",
+              "en_gb",
+              "en_us",
+              "de",
+              "es",
+              "fr",
+              "it",
+              "nl",
+              "nl_be",
+              "pt",
+              "pt_br",
+              "zh_hk",
+              "ar",
+              "ja",
+              "ko",
+              "ru",
+              "pl",
+              "tr",
+              "hu",
+              "sv",
+              "no",
+              "da"
+            ],
+            "description": "Language the campaign operates in: en_ca (Canadian English), en_gb (British English), en_us (American English), de (German), es (Spanish), fr (French), it (Italian), nl (Dutch), nl_be (Flemish), pt (Portuguese), pt_br (Brazilian Portuguese), zh_hk (Chinese), ar (Arabic), ja (Japanese), ko (Korean), ru (Russian), pl (Polish), tr (Turkish), hu (Hungarian), sv (Swedish), no (Norwegian), da (Danish)."
+          }
+        },
+        "required": [
+          "id",
+          "organizationId",
+          "status",
+          "needsReview"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "nextToken": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Token for retrieving the next page of results"
+    }
+  },
+  "required": [
+    "data"
+  ],
+  "additionalProperties": false
+}

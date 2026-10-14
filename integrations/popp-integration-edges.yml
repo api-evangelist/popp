@@ -1,0 +1,16 @@
+generated: '2026-10-14'
+method: none
+source:
+- https://zapier.com/apps/popp/integrations
+- https://n8n.io/integrations/popp/
+- https://composio.dev/toolkits/popp
+- https://monid.ai/tools/popp
+checked:
+- https://composio.dev/toolkits/popp
+- https://monid.ai/tools/popp
+- https://n8n.io/integrations/popp/
+- https://zapier.com/apps/popp/integrations
+summary: null
+marketplace_apps: []
+edges: []
+templates: []

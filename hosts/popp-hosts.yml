@@ -1,0 +1,67 @@
+generated: '2026-10-14'
+method: derived
+source: the pre-flight dossier, apis.yml pointers, spec servers, well-known, vendors -- nothing fetched here
+generator: derive-hosts.py
+summary:
+  hosts: 5
+  own: 5
+  other_domain: 0
+  platform: 0
+  roles:
+  - api
+  - docs
+  - identity
+  - portal
+  - website
+hosts:
+- host: ai.joinpopp.com
+  found_by:
+  - pointer
+  types:
+  - SignUp
+  serves: []
+  registrable_domain: joinpopp.com
+  role: identity
+  relation: own
+- host: api.joinpopp.com
+  found_by:
+  - apis[]
+  types: []
+  serves:
+  - api
+  registrable_domain: joinpopp.com
+  role: api
+  relation: own
+- host: app.joinpopp.com
+  found_by:
+  - pointer
+  types:
+  - DeveloperPortal
+  serves: []
+  registrable_domain: joinpopp.com
+  role: portal
+  relation: own
+- host: docs.joinpopp.com
+  found_by:
+  - pointer
+  types:
+  - Documentation
+  - APIReference
+  - GettingStarted
+  serves: []
+  registrable_domain: joinpopp.com
+  role: docs
+  relation: own
+- host: joinpopp.com
+  found_by:
+  - pointer
+  - apis[]
+  types:
+  - Website
+  - TermsOfService
+  - PrivacyPolicy
+  serves:
+  - docs
+  registrable_domain: joinpopp.com
+  role: website
+  relation: own

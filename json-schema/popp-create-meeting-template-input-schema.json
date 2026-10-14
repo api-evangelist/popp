@@ -1,0 +1,347 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/popp/main/json-schema/popp-create-meeting-template-input-schema.json",
+  "title": "CreateMeetingTemplateInput",
+  "x-generated": "2026-10-14",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/popp-api-openapi.yml#/components/schemas/CreateMeetingTemplateInput",
+  "type": "object",
+  "properties": {
+    "meetingParticipants": {
+      "type": "array",
+      "title": "Meeting Participants",
+      "description": "List of participants for the meeting. For a COLLECTIVE meeting (the default) exactly one participant must be marked as organizer; for a round-robin availabilityMethod the pool must contain 2 to 10 participants and no organizer is required. Every participant must be able to supply availability one of three ways: a connected calendar (isCalendarConnected true), pre-defined availability.timeSlots, or autoCollectAvailability. Any combination of the three across the panel is allowed.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "isOrganizer": {
+            "type": "boolean",
+            "title": "Is Organizer",
+            "description": "Whether this participant is the meeting organizer. Defaults to false when omitted. Exactly one participant must be the organizer for a COLLECTIVE meeting; a round-robin availabilityMethod needs none.",
+            "default": false
+          },
+          "isCalendarConnected": {
+            "type": "boolean",
+            "title": "Is Calendar Connected",
+            "description": "Whether this participant has a connected calendar in Popp."
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "The full name of the participant."
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email",
+            "description": "The email address of the participant."
+          },
+          "autoCollectAvailability": {
+            "type": "boolean",
+            "title": "Auto Collect Availability",
+            "description": "If true, Popp emails this participant to ask for their availability instead of reading a calendar. Requires isCalendarConnected to be false. Any number of participants on the template can have this enabled — for a COLLECTIVE meeting Popp collects from each of them and books a slot that works for the whole panel."
+          },
+          "availabilityOutreachSettings": {
+            "type": "object",
+            "title": "Availability Outreach Settings",
+            "description": "Per-participant overrides for availability outreach. Fields not specified fall back to template-level settings, then system defaults.",
+            "properties": {
+              "requiredHours": {
+                "type": "integer",
+                "description": "Hours of availability to ask this participant for. A target the agent nudges toward, not a minimum that gates booking — Popp will book inside a shorter overlap if that is all it has.",
+                "minimum": 1,
+                "maximum": 168
+              },
+              "periodDays": {
+                "type": "integer",
+                "description": "The window this participant is asked to offer availability within, in days, and the window their reply is read against. Distinct from the top-level availableDaysInTheFuture, which controls how far ahead a candidate may book.",
+                "minimum": 7,
+                "maximum": 60
+              },
+              "customTemplatedSubjectLine": {
+                "type": "string",
+                "description": "Custom email subject line for the outreach email to this participant. Supports placeholders: {{INTERVIEWER_NAME}}, {{CANDIDATE_FIRST_NAME}}, {{AGENT_NAME}}, {{ORGANIZATION_NAME}}, {{CAMPAIGN_OWNER_NAME}}, {{MEETING_AVAILABILITY_TEXT}}."
+              },
+              "customTemplatedMessage": {
+                "type": "string",
+                "description": "Custom email body for the outreach email to this participant. Supports the same placeholders as customTemplatedSubjectLine. {{MEETING_AVAILABILITY_TEXT}} expands to the concrete ask (window, hours, timezone) derived from requiredHours and periodDays; it is optional and not validated, so a message that omits it is accepted and the participant receives no concrete availability request."
+              },
+              "nudgeSettings": {
+                "type": "array",
+                "description": "Follow-up nudge configuration. Each entry represents one nudge with a delayHours field. Array length determines total nudges. Empty array disables nudging.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "delayHours": {
+                      "type": "integer",
+                      "description": "Hours to wait since the previous message before sending this nudge.",
+                      "minimum": 1
+                    }
+                  },
+                  "required": [
+                    "delayHours"
+                  ]
+                },
+                "maxItems": 10
+              },
+              "additionalRecipients": {
+                "type": "array",
+                "description": "Email addresses CC'd on all outreach communications (initial email, reply-backs, nudges, cancellation).",
+                "items": {
+                  "type": "string",
+                  "format": "email"
+                }
+              }
+            }
+          },
+          "availability": {
+            "type": "object",
+            "title": "Availability",
+            "description": "Pre-defined availability time slots for the participant. Only applicable when isCalendarConnected is false.",
+            "properties": {
+              "timezone": {
+                "type": "string",
+                "title": "Timezone",
+                "description": "IANA timezone string (e.g., 'America/New_York', 'Europe/London'). Must be a valid IANA timezone identifier."
+              },
+              "timeSlots": {
+                "type": "array",
+                "title": "Time Slots",
+                "description": "Array of available time windows. All time slots must be in the future.",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "date": {
+                      "type": "string",
+                      "pattern": "^\\d{4}-([0][1-9]|1[0-2])-([0][1-9]|[12]\\d|3[01])$",
+                      "title": "Date",
+                      "description": "The date in YYYY-MM-DD format (e.g., '2025-01-15')."
+                    },
+                    "startTime": {
+                      "type": "string",
+                      "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$",
+                      "title": "Start Time",
+                      "description": "The start time in HH:mm format (e.g., '09:00')."
+                    },
+                    "endTime": {
+                      "type": "string",
+                      "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$",
+                      "title": "End Time",
+                      "description": "The end time in HH:mm format (e.g., '17:00')."
+                    }
+                  },
+                  "required": [
+                    "date",
+                    "startTime",
+                    "endTime"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "timezone",
+              "timeSlots"
+            ]
+          }
+        },
+        "required": [
+          "isCalendarConnected",
+          "name",
+          "email"
+        ]
+      }
+    },
+    "availabilityMethod": {
+      "type": "string",
+      "title": "Availability Method",
+      "description": "Determines who must attend the meeting. COLLECTIVE books a slot that works for every participant on the panel and requires exactly one organizer. ROUND_ROBIN_MAX_AVAILABILITY routes each meeting to a single participant from a pool of 2 to 10, chosen to give the candidate the widest choice of slots, and requires no organizer.",
+      "enum": [
+        "COLLECTIVE",
+        "ROUND_ROBIN_MAX_AVAILABILITY"
+      ],
+      "default": "COLLECTIVE"
+    },
+    "title": {
+      "type": "string",
+      "title": "Title",
+      "description": "The title of the meeting."
+    },
+    "description": {
+      "type": "string",
+      "title": "Description",
+      "description": "A description for the meeting that will be included in the calendar invite."
+    },
+    "openHours": {
+      "type": "array",
+      "title": "Open Hours",
+      "description": "Available time windows for scheduling the meeting.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "days": {
+            "type": "array",
+            "title": "Days",
+            "description": "Array of day numbers (0=Sunday, 1=Monday, ..., 6=Saturday).",
+            "items": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 6
+            },
+            "minItems": 1
+          },
+          "start": {
+            "type": "string",
+            "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$",
+            "title": "Start Time",
+            "description": "The start time in HH:mm format."
+          },
+          "end": {
+            "type": "string",
+            "pattern": "^([01]\\d|2[0-3]):([0-5]\\d)$",
+            "title": "End Time",
+            "description": "The end time in HH:mm format."
+          }
+        },
+        "required": [
+          "days",
+          "start",
+          "end"
+        ]
+      }
+    },
+    "timezone": {
+      "type": "string",
+      "title": "Timezone",
+      "description": "IANA timezone string for the meeting."
+    },
+    "duration": {
+      "type": "integer",
+      "title": "Duration",
+      "description": "The duration of the meeting in minutes.",
+      "minimum": 1,
+      "maximum": 1440
+    },
+    "videoConferencing": {
+      "type": "boolean",
+      "title": "Video Conferencing",
+      "description": "Whether to include video conferencing for the meeting. If true, videoConferencingProvider is required and location cannot be specified. If false, location is required."
+    },
+    "videoConferencingProvider": {
+      "type": "string",
+      "title": "Video Conferencing Provider",
+      "description": "The video conferencing provider to use. Required when videoConferencing is true.",
+      "enum": [
+        "Google Meet",
+        "Microsoft Teams"
+      ]
+    },
+    "location": {
+      "type": "string",
+      "title": "Location",
+      "description": "The physical location for the meeting. Required when videoConferencing is false; must contain at least one non-space character and is trimmed. Cannot be used when videoConferencing is enabled."
+    },
+    "buffer": {
+      "type": "integer",
+      "title": "Buffer",
+      "description": "Buffer time in minutes before/after meetings. Must be a multiple of 5.",
+      "minimum": 0,
+      "maximum": 120,
+      "default": 0,
+      "multipleOf": 5
+    },
+    "reminderMinutesBeforeMeeting": {
+      "type": "integer",
+      "title": "Reminder Minutes Before Meeting",
+      "description": "How many minutes before the meeting to send a reminder notification.",
+      "minimum": 1,
+      "default": 1440
+    },
+    "noticePeriodMinutes": {
+      "type": "integer",
+      "title": "Notice Period Minutes",
+      "description": "Minimum notice required for booking in minutes.",
+      "minimum": 0,
+      "default": 0
+    },
+    "availableDaysInTheFuture": {
+      "type": "integer",
+      "title": "Available Days In The Future",
+      "description": "How far ahead a candidate may book on the booking page, in days. Distinct from availabilityOutreachSettings.periodDays, which controls the window interviewers are asked to offer availability within. Neither field caps the other.",
+      "minimum": 1,
+      "default": 30
+    },
+    "guestLabel": {
+      "type": "string",
+      "title": "Guest Label",
+      "description": "Noun used in the availability-outreach email for the counterparty the interviewer is scheduled to meet — the person who books the slot. Applies to the whole meeting. Defaults to \"candidate\"; override with e.g. \"recruiter\". Must not begin with \"the\" (Popp prefixes it automatically).",
+      "minLength": 1,
+      "maxLength": 50
+    },
+    "availabilityOutreachSettings": {
+      "type": "object",
+      "title": "Availability Outreach Settings",
+      "description": "Template-level settings for availability outreach emails sent to participants with autoCollectAvailability enabled. Per-participant overrides take priority over these values. See the Scheduling with Availability Collection guide for details.",
+      "properties": {
+        "requiredHours": {
+          "type": "integer",
+          "description": "Hours of availability to ask for. Default: 6. A target the agent nudges toward, not a minimum that gates booking — Popp will book inside a shorter overlap if that is all it has.",
+          "minimum": 1,
+          "maximum": 168
+        },
+        "periodDays": {
+          "type": "integer",
+          "description": "The window interviewers are asked to offer availability within, in days, and the window their replies are read against. Default: 14. Distinct from the top-level availableDaysInTheFuture, which controls how far ahead a candidate may book.",
+          "minimum": 7,
+          "maximum": 60
+        },
+        "customTemplatedSubjectLine": {
+          "type": "string",
+          "description": "Custom email subject line. Supports placeholders: {{INTERVIEWER_NAME}}, {{CANDIDATE_FIRST_NAME}}, {{AGENT_NAME}}, {{ORGANIZATION_NAME}}, {{CAMPAIGN_OWNER_NAME}}, {{MEETING_AVAILABILITY_TEXT}}."
+        },
+        "customTemplatedMessage": {
+          "type": "string",
+          "description": "Custom email body. Supports the same placeholders as customTemplatedSubjectLine. {{MEETING_AVAILABILITY_TEXT}} expands to the concrete ask (window, hours, timezone) derived from requiredHours and periodDays; it is optional and not validated, so a message that omits it is accepted and the interviewer receives no concrete availability request."
+        },
+        "nudgeSettings": {
+          "type": "array",
+          "description": "Follow-up nudge configuration. Each entry represents one nudge. Array length determines total nudges. Default: 3 nudges at 24h intervals.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "delayHours": {
+                "type": "integer",
+                "description": "Hours to wait since the previous message before sending this nudge.",
+                "minimum": 1
+              }
+            },
+            "required": [
+              "delayHours"
+            ]
+          },
+          "maxItems": 10
+        },
+        "additionalRecipients": {
+          "type": "array",
+          "description": "Email addresses CC'd on all outreach communications.",
+          "items": {
+            "type": "string",
+            "format": "email"
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "meetingParticipants",
+    "title",
+    "openHours",
+    "timezone",
+    "duration",
+    "videoConferencing"
+  ],
+  "additionalProperties": false
+}

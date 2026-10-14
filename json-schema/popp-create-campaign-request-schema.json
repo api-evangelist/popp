@@ -1,0 +1,309 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/popp/main/json-schema/popp-create-campaign-request-schema.json",
+  "title": "CreateCampaignRequest",
+  "description": "Request to create a new campaign",
+  "x-generated": "2026-10-14",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/popp-api-openapi.yml#/components/schemas/CreateCampaignRequest",
+  "type": "object",
+  "properties": {
+    "campaignType": {
+      "title": "Campaign Type",
+      "description": "The type of campaign to create",
+      "type": "string",
+      "enum": [
+        "APPLICANT_OUTREACH",
+        "NEW_CANDIDATE_OUTREACH",
+        "ENGAGEMENT_OUTREACH",
+        "SCHEDULING"
+      ]
+    },
+    "closingMethod": {
+      "title": "Closing Method",
+      "description": "How the campaign conversation should be closed. Defaults to CALENDAR_MEETING_INTEGRATION for SCHEDULING campaigns. CUSTOM requires `customMessage`; CALENDAR_MEETING_INTEGRATION requires `calendarMeetingTemplateId`.",
+      "type": "string",
+      "enum": [
+        "CUSTOM",
+        "CALENDAR_MEETING_INTEGRATION"
+      ]
+    },
+    "channel": {
+      "title": "Channel",
+      "description": "Communication channel used for the campaign",
+      "type": "string",
+      "enum": [
+        "SMS",
+        "WHATSAPP",
+        "EMAIL"
+      ]
+    },
+    "emailChannelFallbackEnabled": {
+      "type": "boolean",
+      "description": "Controls falling back to email when an SMS or WhatsApp message cannot be delivered (invalid or missing phone number). When omitted, the campaign inherits the organization-level email fallback setting, including future changes to it. An explicit value overrides the organization setting in either direction: true enables fallback for this campaign even if the organization has it disabled, false disables it even if the organization has it enabled. Not applicable to EMAIL channel campaigns."
+    },
+    "campaignTitle": {
+      "type": "string",
+      "description": "Title of the campaign"
+    },
+    "campaignDescription": {
+      "type": "string",
+      "description": "Detailed description of the campaign",
+      "format": "textarea"
+    },
+    "closingMessage": {
+      "type": "string",
+      "description": "Message sent when the candidate is not interested."
+    },
+    "rejectionMessage": {
+      "type": "string",
+      "description": "Message sent when a candidate is rejected (fails mandatory/knockout questions)."
+    },
+    "customMessage": {
+      "type": "string",
+      "description": "Message sent to the candidate when they successfully complete the conversation. Required when closingMethod is CUSTOM."
+    },
+    "company": {
+      "type": "string",
+      "description": "Company name for the role."
+    },
+    "location": {
+      "type": "string",
+      "description": "Location of the role."
+    },
+    "contractType": {
+      "type": "string",
+      "description": "Contract type for the role (e.g. Permanent, Contract, Temporary). Only used for APPLICANT_OUTREACH and NEW_CANDIDATE_OUTREACH campaigns. When provided, it overrides the contract type Popp would otherwise infer from campaignDescription."
+    },
+    "questions": {
+      "type": "array",
+      "description": "List of screening questions included in the campaign. Not allowed for SCHEDULING campaigns.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "oneOf": [
+          {
+            "title": "Text Question",
+            "description": "A text-based screening question",
+            "type": "object",
+            "properties": {
+              "questionType": {
+                "type": "string",
+                "enum": [
+                  "TEXT"
+                ]
+              },
+              "isMandatory": {
+                "type": "boolean",
+                "description": "When true, failing this question will reject the candidate (knockout question)"
+              },
+              "content": {
+                "type": "string",
+                "description": "The question text"
+              },
+              "preferredAnswerRequirements": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1,
+                "description": "List of preferred answer criteria for scoring"
+              },
+              "preferredAnswerText": {
+                "type": "string",
+                "description": "Description of the preferred answer"
+              }
+            },
+            "required": [
+              "questionType",
+              "isMandatory",
+              "content"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "title": "Document Request",
+            "description": "A document upload request",
+            "type": "object",
+            "properties": {
+              "questionType": {
+                "type": "string",
+                "enum": [
+                  "DOCUMENT"
+                ]
+              },
+              "isMandatory": {
+                "type": "boolean",
+                "description": "When true, the document is required to proceed"
+              },
+              "documentTypes": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Deprecated free-text list of accepted document types (e.g. 'CV', 'Passport'). Provide `documentItems` instead to reference DocumentType records by id. A question must carry either `documentTypes` or `documentItems`, never both.",
+                "minItems": 1
+              },
+              "documentItems": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "documentTypeId": {
+                      "type": "string",
+                      "format": "uuid",
+                      "description": "Id of a DocumentType in the caller's organization (created via `POST /v1/document-types`). Must not be archived."
+                    }
+                  },
+                  "required": [
+                    "documentTypeId"
+                  ],
+                  "additionalProperties": false
+                },
+                "description": "Typed references to DocumentType records. The server resolves each id to its canonical name and rejects unknown / archived ids with 400. A question must carry either `documentTypes` or `documentItems`, never both.",
+                "minItems": 1
+              }
+            },
+            "required": [
+              "questionType",
+              "isMandatory"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    },
+    "additionalContext": {
+      "type": "string",
+      "description": "Additional context or instructions for the AI agent (minimum 10 characters)",
+      "format": "textarea"
+    },
+    "conversationTimeout": {
+      "type": "integer",
+      "minimum": 24,
+      "description": "Timeout for conversations in hours (minimum 24 hours). Defaults to 48 hours."
+    },
+    "owner": {
+      "type": "string",
+      "format": "email",
+      "description": "Email address of the campaign owner. Must be a user in the organization."
+    },
+    "campaignStatus": {
+      "type": "string",
+      "enum": [
+        "LIVE",
+        "DRAFT"
+      ],
+      "description": "Status of the campaign. DRAFT creates the campaign without sending. Defaults to LIVE.",
+      "default": "LIVE"
+    },
+    "openingMessageTemplateId": {
+      "type": "string",
+      "description": "ID of the opening message template. Must match the specified channel and campaignType. Mutually exclusive with customTemplatedMessage.",
+      "format": "uuid"
+    },
+    "customTemplatedMessage": {
+      "type": "string",
+      "description": "Custom opening message template text (minimum 10 characters). SMS and Email channels only. Mutually exclusive with openingMessageTemplateId. Must contain the word STOP (uppercase) for opt-out compliance. Supports {{SCREAMING_SNAKE_CASE}} placeholders, filled in per candidate; which ones are available depends on campaignType, so see \"Personalising the Opening Message\" in the Campaigns guide for the table. {{CANDIDATE_FIRST_NAME}}, {{CANDIDATE_LAST_NAME}}, {{AGENT_NAME}} and {{ORGANIZATION_NAME}} work on every campaign type; SCHEDULING campaigns must also include {{MEETING_URL}}. An unrecognised name returns 400 \"Unknown placeholder found\"; a valid name that campaignType cannot fill returns 400 \"Missing value for template variable\"."
+    },
+    "customTemplatedSubjectLine": {
+      "type": "string",
+      "description": "Subject line for Email campaigns using customTemplatedMessage. Required when using customTemplatedMessage with Email channel. Maximum 200 characters. Takes the same placeholder names as customTemplatedMessage; an unrecognised name returns 400 \"Invalid placeholder in subject line\". Note that only the name is validated here, not whether campaignType can fill it.",
+      "maxLength": 200
+    },
+    "agentName": {
+      "type": "string",
+      "description": "AI agent name (case-insensitive, Unicode letters only, maximum 3 words). There is no agentId field — an agent cannot be referenced by ID; supply agentName together with agentTone instead. If the pair does not match your organization's default agent, a new agent is created with this name and tone."
+    },
+    "agentTone": {
+      "type": "string",
+      "description": "Tone used by the AI agent. Must be provided together with agentName.",
+      "enum": [
+        "CASUAL",
+        "ENCOURAGING",
+        "FRIENDLY",
+        "MOTIVATIONAL",
+        "NEUTRAL",
+        "PROFESSIONAL"
+      ]
+    },
+    "externalId": {
+      "type": "string",
+      "title": "External ID",
+      "description": "Your unique identifier for the campaign in your external system."
+    },
+    "calendarMeetingTemplateId": {
+      "type": "string",
+      "title": "Calendar Meeting Template ID",
+      "description": "ID of the calendar meeting template. Used when closingMethod is CALENDAR_MEETING_INTEGRATION.",
+      "format": "uuid"
+    },
+    "disableNudging": {
+      "type": "boolean",
+      "description": "When true, automatic follow-up messages (nudges) will be disabled for all conversations in this campaign. Defaults to false. Cannot be used together with a non-empty nudgeSettings array.",
+      "default": false
+    },
+    "nudgeSettings": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "description": "Custom nudge timing configuration. Each entry represents one follow-up nudge with a delayHours field specifying the wait time since the previous message. The array length determines the total number of nudges. An empty array disables nudging. A non-empty array cannot be used together with disableNudging: true. When omitted, defaults to 3 nudges at 24-hour intervals. Note: for WhatsApp campaigns, nudges are only sent after the candidate replies.",
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "properties": {
+          "delayHours": {
+            "type": "integer",
+            "description": "Hours to wait since the previous message before sending this nudge.",
+            "minimum": 1
+          }
+        },
+        "required": [
+          "delayHours"
+        ]
+      }
+    },
+    "language": {
+      "type": "string",
+      "enum": [
+        "en_ca",
+        "en_gb",
+        "en_us",
+        "de",
+        "es",
+        "fr",
+        "it",
+        "nl",
+        "nl_be",
+        "pt",
+        "pt_br",
+        "zh_hk",
+        "ar",
+        "ja",
+        "ko",
+        "ru",
+        "pl",
+        "tr",
+        "hu",
+        "sv",
+        "no",
+        "da"
+      ],
+      "description": "Language the campaign operates in: en_ca (Canadian English), en_gb (British English), en_us (American English), de (German), es (Spanish), fr (French), it (Italian), nl (Dutch), nl_be (Flemish), pt (Portuguese), pt_br (Brazilian Portuguese), zh_hk (Chinese), ar (Arabic), ja (Japanese), ko (Korean), ru (Russian), pl (Polish), tr (Turkish), hu (Hungarian), sv (Swedish), no (Norwegian), da (Danish). When omitted, it is derived from the language of openingMessageTemplateId, then from the organization's language when it supports only one, and finally defaults to en_us. WHATSAPP campaigns are rejected with a 400 when the language has no approved WhatsApp templates for the organization, because WhatsApp follow-up messages require a pre-approved template in the campaign language; set disableNudging to true to opt out of follow-ups and skip that check.",
+      "default": "en_us"
+    }
+  },
+  "required": [
+    "campaignType",
+    "closingMethod",
+    "channel",
+    "campaignTitle",
+    "campaignDescription",
+    "closingMessage",
+    "rejectionMessage",
+    "agentName",
+    "agentTone"
+  ]
+}

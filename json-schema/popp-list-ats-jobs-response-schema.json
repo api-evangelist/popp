@@ -1,0 +1,497 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/popp/main/json-schema/popp-list-ats-jobs-response-schema.json",
+  "title": "ListAtsJobsResponse",
+  "description": "A page of your organization's ATS jobs, read live from your connected ATS and annotated with what each job is connected to in Popp (`workflow`, `campaign`, or `analysis`). Cursor-paginated: pass the returned `next` value back as the `next` query parameter for the following page. Filtering by a single `atsJobId` returns an array of length 0 or 1 (never a bare object or a 404). Use an `atsJobId` to connect a workflow to that job via an ATS entry pathway.",
+  "x-generated": "2026-10-14",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/popp-api-openapi.yml#/components/schemas/ListAtsJobsResponse",
+  "type": "object",
+  "properties": {
+    "jobs": {
+      "type": "array",
+      "title": "Jobs",
+      "description": "ATS jobs on this page.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "atsJobId": {
+            "type": "string",
+            "title": "ATS Job ID",
+            "description": "The job's identifier in your ATS. Use this to connect a workflow to the job via an ATS entry pathway."
+          },
+          "title": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "title": "Title",
+            "description": "Job title."
+          },
+          "atsJobReference": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "title": "ATS Job Reference",
+            "description": "Your ATS's requisition or job code for the role, when provided."
+          },
+          "status": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "OPEN",
+              "CLOSED",
+              "DRAFT",
+              "ARCHIVED"
+            ],
+            "title": "Status",
+            "description": "Normalized job status, or `null` when your ATS's value doesn't map to one of these (see `rawStatus`)."
+          },
+          "rawStatus": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "title": "Raw Status",
+            "description": "The verbatim status string from your ATS, before normalization."
+          },
+          "remoteWorkStatus": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "REMOTE",
+              "HYBRID",
+              "TEMPORARY",
+              "ON_SITE"
+            ],
+            "title": "Remote Work Status",
+            "description": "Normalized remote-work arrangement for the role, when available."
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "title": "Description",
+            "description": "Job description. May contain HTML."
+          },
+          "department": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "title": "Department",
+            "description": "Department the role sits in, when provided."
+          },
+          "category": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "title": "Category",
+            "description": "Job category, when provided."
+          },
+          "experienceLevel": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "title": "Experience Level",
+            "description": "Experience level for the role, when provided."
+          },
+          "employmentType": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "title": "Employment Type",
+            "description": "Employment type passed through from your ATS (e.g. `FULL_TIME`, `PART_TIME`, `CONTRACT`)."
+          },
+          "visibility": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "title": "Visibility",
+            "description": "Posting visibility passed through from your ATS (e.g. `PUBLIC`, `INTERNAL`)."
+          },
+          "weeklyHours": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "title": "Weekly Hours",
+            "description": "Contracted weekly hours, when provided."
+          },
+          "postUrl": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "title": "Post URL",
+            "description": "Public posting URL, when provided."
+          },
+          "remoteUrl": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "title": "Remote URL",
+            "description": "Provider-hosted job URL, when provided."
+          },
+          "location": {
+            "type": "object",
+            "title": "Location",
+            "description": "Job location, decomposed. Each field is `null` when your ATS doesn't provide it.",
+            "properties": {
+              "city": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "title": "City"
+              },
+              "state": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "title": "State"
+              },
+              "country": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "title": "Country"
+              }
+            },
+            "required": [
+              "city",
+              "state",
+              "country"
+            ],
+            "additionalProperties": false
+          },
+          "salary": {
+            "type": "object",
+            "title": "Salary",
+            "description": "Salary information, when provided by your ATS. Each field is `null` when unavailable.",
+            "properties": {
+              "amount": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "title": "Amount"
+              },
+              "from": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "title": "From"
+              },
+              "to": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "title": "To"
+              },
+              "currency": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "title": "Currency"
+              },
+              "period": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "title": "Period",
+                "description": "Salary period passed through from your ATS (e.g. `YEAR`, `MONTH`, `HOUR`)."
+              }
+            },
+            "required": [
+              "amount",
+              "from",
+              "to",
+              "currency",
+              "period"
+            ],
+            "additionalProperties": false
+          },
+          "openedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "title": "Opened At",
+            "description": "When the job was opened in your ATS, when provided."
+          },
+          "closedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "title": "Closed At",
+            "description": "When the job was closed in your ATS, when provided."
+          },
+          "remoteUpdatedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time",
+            "title": "Remote Updated At",
+            "description": "When the job was last updated in your ATS, when provided."
+          },
+          "customFields": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "title": "Custom Fields",
+            "description": "Arbitrary custom fields configured in your ATS, as key-value pairs. `null` when none.",
+            "additionalProperties": true
+          },
+          "stages": {
+            "type": "array",
+            "title": "Stages",
+            "description": "The job's hiring-pipeline stages.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "atsStageId": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "title": "ATS Stage ID"
+                },
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "title": "Name"
+                },
+                "index": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "title": "Index",
+                  "description": "Order within the pipeline, when provided."
+                }
+              },
+              "required": [
+                "atsStageId",
+                "name",
+                "index"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "screeningQuestions": {
+            "type": "array",
+            "title": "Screening Questions",
+            "description": "The job's screening questions.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "atsQuestionId": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "title": "ATS Question ID"
+                },
+                "title": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "title": "Title"
+                },
+                "description": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "title": "Description",
+                  "description": "Question help text. May contain HTML."
+                },
+                "type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "title": "Type",
+                  "description": "Answer format (e.g. `TEXT`, `SINGLE_SELECT`, `MULTI_SELECT`)."
+                },
+                "required": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "title": "Required"
+                },
+                "options": {
+                  "type": "array",
+                  "title": "Options",
+                  "description": "Choices for `SINGLE_SELECT` / `MULTI_SELECT` questions.",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "atsOptionId": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "title": "ATS Option ID"
+                      },
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "title": "Name"
+                      }
+                    },
+                    "required": [
+                      "atsOptionId",
+                      "name"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "atsQuestionId",
+                "title",
+                "description",
+                "type",
+                "required",
+                "options"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "isConnected": {
+            "type": "boolean",
+            "title": "Is Connected",
+            "description": "True when the job is connected to a workflow, campaign, or analysis."
+          },
+          "workflow": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "title": "Connected Workflow",
+            "description": "The workflow this job is connected to, or `null`. A job connected to a workflow cannot also be connected to a campaign or analysis.",
+            "required": [
+              "id",
+              "name"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "title": "ID",
+                "description": "Identifier of the connected workflow."
+              },
+              "name": {
+                "type": "string",
+                "title": "Name",
+                "description": "Human-readable label for the connected workflow."
+              }
+            }
+          },
+          "campaign": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "title": "Connected Campaign",
+            "description": "The campaign this job is connected to, or `null`.",
+            "required": [
+              "id",
+              "name"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "title": "ID",
+                "description": "Identifier of the connected campaign."
+              },
+              "name": {
+                "type": "string",
+                "title": "Name",
+                "description": "Human-readable label for the connected campaign."
+              }
+            }
+          },
+          "analysis": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "title": "Connected Analysis",
+            "description": "The analysis this job is connected to, or `null`.",
+            "required": [
+              "id",
+              "name"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "title": "ID",
+                "description": "Identifier of the connected analysis."
+              },
+              "name": {
+                "type": "string",
+                "title": "Name",
+                "description": "Human-readable label for the connected analysis."
+              }
+            }
+          }
+        },
+        "required": [
+          "atsJobId",
+          "isConnected",
+          "location",
+          "salary",
+          "stages",
+          "screeningQuestions"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "next": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "title": "Next",
+      "description": "Pagination cursor. Pass as the `next` query parameter to fetch the following page; `null` on the last page."
+    }
+  },
+  "required": [
+    "jobs"
+  ],
+  "additionalProperties": false
+}

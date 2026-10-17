@@ -143,14 +143,16 @@ common:
   url: llms/popp-llms.txt
 
 apis:
-- name: Popp API
-  description: REST API for the Popp recruitment conversation engine — conversations, campaigns, documents, analysis, scheduling/calendar, and
-    workflow automation, authenticated with an x-api-key + x-organization-id header pair.
+- aid: popp:popp-agents-api
+  name: Popp Agents API
+  description: The Agents API from Popp — 1 operation(s) for agents.
   humanURL: https://joinpopp.com/api
   baseURL: https://api.joinpopp.com/v1
+  tags:
+  - Agents
   properties:
-  - url: openapi/popp-api-openapi.yml
-    type: OpenAPI
+  - type: OpenAPI
+    url: openapi/popp-agents-api-openapi.yml
   - type: Documentation
     url: https://docs.joinpopp.com/
   - type: APIReference
@@ -159,8 +161,6 @@ apis:
     url: https://docs.joinpopp.com/docs/quickstart
   - type: Authentication
     url: authentication/popp-authentication.yml
-  - type: MCPServer
-    url: mcp/popp-mcp.yml
   - type: Webhooks
     url: asyncapi/popp-webhooks.yml
   - type: Conventions
@@ -185,8 +185,721 @@ apis:
     url: json-schema/popp-list-campaigns-response-schema.json
   - type: JSONSchema
     url: json-schema/popp-list-ats-jobs-response-schema.json
-  aid: popp:popp-api
-
+- aid: popp:popp-analysis-api
+  name: Popp Analysis API
+  description: The Analysis API from Popp — 6 operation(s) for analysis.
+  humanURL: https://joinpopp.com/api
+  baseURL: https://api.joinpopp.com/v1
+  tags:
+  - Analysis
+  properties:
+  - type: OpenAPI
+    url: openapi/popp-analysis-api-openapi.yml
+  - type: Documentation
+    url: https://docs.joinpopp.com/
+  - type: APIReference
+    url: https://docs.joinpopp.com/docs/quickstart
+  - type: GettingStarted
+    url: https://docs.joinpopp.com/docs/quickstart
+  - type: Authentication
+    url: authentication/popp-authentication.yml
+  - type: Webhooks
+    url: asyncapi/popp-webhooks.yml
+  - type: Conventions
+    url: conventions/popp-conventions.yml
+  - type: ErrorCatalog
+    url: errors/popp-problem-types.yml
+  - type: Lifecycle
+    url: lifecycle/popp-lifecycle.yml
+  - type: DataModel
+    url: data-model/popp-data-model.yml
+  - type: Conformance
+    url: conformance/popp-conformance.yml
+  - type: JSONSchema
+    url: json-schema/popp-update-meeting-template-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-meeting-template-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-scheduling-conversation-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-campaign-request-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-list-campaigns-response-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-list-ats-jobs-response-schema.json
+- aid: popp:popp-ats-api
+  name: Popp ATS API
+  description: The ATS API from Popp — 3 operation(s) for ats.
+  humanURL: https://joinpopp.com/api
+  baseURL: https://api.joinpopp.com/v1
+  tags:
+  - ATS
+  properties:
+  - type: OpenAPI
+    url: openapi/popp-ats-api-openapi.yml
+  - type: Documentation
+    url: https://docs.joinpopp.com/
+  - type: APIReference
+    url: https://docs.joinpopp.com/docs/quickstart
+  - type: GettingStarted
+    url: https://docs.joinpopp.com/docs/quickstart
+  - type: Authentication
+    url: authentication/popp-authentication.yml
+  - type: Webhooks
+    url: asyncapi/popp-webhooks.yml
+  - type: Conventions
+    url: conventions/popp-conventions.yml
+  - type: ErrorCatalog
+    url: errors/popp-problem-types.yml
+  - type: Lifecycle
+    url: lifecycle/popp-lifecycle.yml
+  - type: DataModel
+    url: data-model/popp-data-model.yml
+  - type: Conformance
+    url: conformance/popp-conformance.yml
+  - type: JSONSchema
+    url: json-schema/popp-update-meeting-template-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-meeting-template-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-scheduling-conversation-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-campaign-request-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-list-campaigns-response-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-list-ats-jobs-response-schema.json
+- aid: popp:popp-campaigns-api
+  name: Popp Campaigns API
+  description: The Campaigns API from Popp — 5 operation(s) for campaigns.
+  humanURL: https://joinpopp.com/api
+  baseURL: https://api.joinpopp.com/v1
+  tags:
+  - Campaigns
+  properties:
+  - type: OpenAPI
+    url: openapi/popp-campaigns-api-openapi.yml
+  - type: Documentation
+    url: https://docs.joinpopp.com/
+  - type: APIReference
+    url: https://docs.joinpopp.com/docs/quickstart
+  - type: GettingStarted
+    url: https://docs.joinpopp.com/docs/quickstart
+  - type: Authentication
+    url: authentication/popp-authentication.yml
+  - type: Webhooks
+    url: asyncapi/popp-webhooks.yml
+  - type: Conventions
+    url: conventions/popp-conventions.yml
+  - type: ErrorCatalog
+    url: errors/popp-problem-types.yml
+  - type: Lifecycle
+    url: lifecycle/popp-lifecycle.yml
+  - type: DataModel
+    url: data-model/popp-data-model.yml
+  - type: Conformance
+    url: conformance/popp-conformance.yml
+  - type: JSONSchema
+    url: json-schema/popp-update-meeting-template-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-meeting-template-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-scheduling-conversation-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-campaign-request-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-list-campaigns-response-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-list-ats-jobs-response-schema.json
+- aid: popp:popp-candidate-lists-api
+  name: Popp Candidate Lists API
+  description: The Candidate Lists API from Popp — 5 operation(s) for candidate lists.
+  humanURL: https://joinpopp.com/api
+  baseURL: https://api.joinpopp.com/v1
+  tags:
+  - Candidate Lists
+  properties:
+  - type: OpenAPI
+    url: openapi/popp-candidate-lists-api-openapi.yml
+  - type: Documentation
+    url: https://docs.joinpopp.com/
+  - type: APIReference
+    url: https://docs.joinpopp.com/docs/quickstart
+  - type: GettingStarted
+    url: https://docs.joinpopp.com/docs/quickstart
+  - type: Authentication
+    url: authentication/popp-authentication.yml
+  - type: Webhooks
+    url: asyncapi/popp-webhooks.yml
+  - type: Conventions
+    url: conventions/popp-conventions.yml
+  - type: ErrorCatalog
+    url: errors/popp-problem-types.yml
+  - type: Lifecycle
+    url: lifecycle/popp-lifecycle.yml
+  - type: DataModel
+    url: data-model/popp-data-model.yml
+  - type: Conformance
+    url: conformance/popp-conformance.yml
+  - type: JSONSchema
+    url: json-schema/popp-update-meeting-template-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-meeting-template-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-scheduling-conversation-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-campaign-request-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-list-campaigns-response-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-list-ats-jobs-response-schema.json
+- aid: popp:popp-candidates-api
+  name: Popp Candidates API
+  description: The Candidates API from Popp — 12 operation(s) for candidates.
+  humanURL: https://joinpopp.com/api
+  baseURL: https://api.joinpopp.com/v1
+  tags:
+  - Candidates
+  properties:
+  - type: OpenAPI
+    url: openapi/popp-candidates-api-openapi.yml
+  - type: Documentation
+    url: https://docs.joinpopp.com/
+  - type: APIReference
+    url: https://docs.joinpopp.com/docs/quickstart
+  - type: GettingStarted
+    url: https://docs.joinpopp.com/docs/quickstart
+  - type: Authentication
+    url: authentication/popp-authentication.yml
+  - type: Webhooks
+    url: asyncapi/popp-webhooks.yml
+  - type: Conventions
+    url: conventions/popp-conventions.yml
+  - type: ErrorCatalog
+    url: errors/popp-problem-types.yml
+  - type: Lifecycle
+    url: lifecycle/popp-lifecycle.yml
+  - type: DataModel
+    url: data-model/popp-data-model.yml
+  - type: Conformance
+    url: conformance/popp-conformance.yml
+  - type: JSONSchema
+    url: json-schema/popp-update-meeting-template-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-meeting-template-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-scheduling-conversation-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-campaign-request-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-list-campaigns-response-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-list-ats-jobs-response-schema.json
+- aid: popp:popp-conversations-api
+  name: Popp Conversations API
+  description: The Conversations API from Popp — 6 operation(s) for conversations.
+  humanURL: https://joinpopp.com/api
+  baseURL: https://api.joinpopp.com/v1
+  tags:
+  - Conversations
+  properties:
+  - type: OpenAPI
+    url: openapi/popp-conversations-api-openapi.yml
+  - type: Documentation
+    url: https://docs.joinpopp.com/
+  - type: APIReference
+    url: https://docs.joinpopp.com/docs/quickstart
+  - type: GettingStarted
+    url: https://docs.joinpopp.com/docs/quickstart
+  - type: Authentication
+    url: authentication/popp-authentication.yml
+  - type: Webhooks
+    url: asyncapi/popp-webhooks.yml
+  - type: Conventions
+    url: conventions/popp-conventions.yml
+  - type: ErrorCatalog
+    url: errors/popp-problem-types.yml
+  - type: Lifecycle
+    url: lifecycle/popp-lifecycle.yml
+  - type: DataModel
+    url: data-model/popp-data-model.yml
+  - type: Conformance
+    url: conformance/popp-conformance.yml
+  - type: JSONSchema
+    url: json-schema/popp-update-meeting-template-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-meeting-template-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-scheduling-conversation-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-campaign-request-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-list-campaigns-response-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-list-ats-jobs-response-schema.json
+- aid: popp:popp-custom-fields-beta-api
+  name: Popp Custom Fields (Beta) API
+  description: The Custom Fields (Beta) API from Popp — 2 operation(s) for custom fields (beta).
+  humanURL: https://joinpopp.com/api
+  baseURL: https://api.joinpopp.com/v1
+  tags:
+  - Custom Fields (Beta)
+  properties:
+  - type: OpenAPI
+    url: openapi/popp-custom-fields-beta-api-openapi.yml
+  - type: Documentation
+    url: https://docs.joinpopp.com/
+  - type: APIReference
+    url: https://docs.joinpopp.com/docs/quickstart
+  - type: GettingStarted
+    url: https://docs.joinpopp.com/docs/quickstart
+  - type: Authentication
+    url: authentication/popp-authentication.yml
+  - type: Webhooks
+    url: asyncapi/popp-webhooks.yml
+  - type: Conventions
+    url: conventions/popp-conventions.yml
+  - type: ErrorCatalog
+    url: errors/popp-problem-types.yml
+  - type: Lifecycle
+    url: lifecycle/popp-lifecycle.yml
+  - type: DataModel
+    url: data-model/popp-data-model.yml
+  - type: Conformance
+    url: conformance/popp-conformance.yml
+  - type: JSONSchema
+    url: json-schema/popp-update-meeting-template-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-meeting-template-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-scheduling-conversation-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-campaign-request-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-list-campaigns-response-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-list-ats-jobs-response-schema.json
+- aid: popp:popp-document-credentials-api
+  name: Popp Document Credentials API
+  description: The Document Credentials API from Popp — 2 operation(s) for document credentials.
+  humanURL: https://joinpopp.com/api
+  baseURL: https://api.joinpopp.com/v1
+  tags:
+  - Document Credentials
+  properties:
+  - type: OpenAPI
+    url: openapi/popp-document-credentials-api-openapi.yml
+  - type: Documentation
+    url: https://docs.joinpopp.com/
+  - type: APIReference
+    url: https://docs.joinpopp.com/docs/quickstart
+  - type: GettingStarted
+    url: https://docs.joinpopp.com/docs/quickstart
+  - type: Authentication
+    url: authentication/popp-authentication.yml
+  - type: Webhooks
+    url: asyncapi/popp-webhooks.yml
+  - type: Conventions
+    url: conventions/popp-conventions.yml
+  - type: ErrorCatalog
+    url: errors/popp-problem-types.yml
+  - type: Lifecycle
+    url: lifecycle/popp-lifecycle.yml
+  - type: DataModel
+    url: data-model/popp-data-model.yml
+  - type: Conformance
+    url: conformance/popp-conformance.yml
+  - type: JSONSchema
+    url: json-schema/popp-update-meeting-template-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-meeting-template-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-scheduling-conversation-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-campaign-request-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-list-campaigns-response-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-list-ats-jobs-response-schema.json
+- aid: popp:popp-documents-api
+  name: Popp Documents API
+  description: The Documents API from Popp — 8 operation(s) for documents.
+  humanURL: https://joinpopp.com/api
+  baseURL: https://api.joinpopp.com/v1
+  tags:
+  - Documents
+  properties:
+  - type: OpenAPI
+    url: openapi/popp-documents-api-openapi.yml
+  - type: Documentation
+    url: https://docs.joinpopp.com/
+  - type: APIReference
+    url: https://docs.joinpopp.com/docs/quickstart
+  - type: GettingStarted
+    url: https://docs.joinpopp.com/docs/quickstart
+  - type: Authentication
+    url: authentication/popp-authentication.yml
+  - type: Webhooks
+    url: asyncapi/popp-webhooks.yml
+  - type: Conventions
+    url: conventions/popp-conventions.yml
+  - type: ErrorCatalog
+    url: errors/popp-problem-types.yml
+  - type: Lifecycle
+    url: lifecycle/popp-lifecycle.yml
+  - type: DataModel
+    url: data-model/popp-data-model.yml
+  - type: Conformance
+    url: conformance/popp-conformance.yml
+  - type: JSONSchema
+    url: json-schema/popp-update-meeting-template-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-meeting-template-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-scheduling-conversation-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-campaign-request-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-list-campaigns-response-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-list-ats-jobs-response-schema.json
+- aid: popp:popp-organization-configuration-api
+  name: Popp Organization Configuration API
+  description: >-
+    The Organization Configuration API from Popp — 2 operation(s) for organization configuration.
+  humanURL: https://joinpopp.com/api
+  baseURL: https://api.joinpopp.com/v1
+  tags:
+  - Organization Configuration
+  properties:
+  - type: OpenAPI
+    url: openapi/popp-organization-configuration-api-openapi.yml
+  - type: Documentation
+    url: https://docs.joinpopp.com/
+  - type: APIReference
+    url: https://docs.joinpopp.com/docs/quickstart
+  - type: GettingStarted
+    url: https://docs.joinpopp.com/docs/quickstart
+  - type: Authentication
+    url: authentication/popp-authentication.yml
+  - type: Webhooks
+    url: asyncapi/popp-webhooks.yml
+  - type: Conventions
+    url: conventions/popp-conventions.yml
+  - type: ErrorCatalog
+    url: errors/popp-problem-types.yml
+  - type: Lifecycle
+    url: lifecycle/popp-lifecycle.yml
+  - type: DataModel
+    url: data-model/popp-data-model.yml
+  - type: Conformance
+    url: conformance/popp-conformance.yml
+  - type: JSONSchema
+    url: json-schema/popp-update-meeting-template-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-meeting-template-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-scheduling-conversation-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-campaign-request-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-list-campaigns-response-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-list-ats-jobs-response-schema.json
+- aid: popp:popp-organizations-api
+  name: Popp Organizations API
+  description: The Organizations API from Popp — 2 operation(s) for organizations.
+  humanURL: https://joinpopp.com/api
+  baseURL: https://api.joinpopp.com/v1
+  tags:
+  - Organizations
+  properties:
+  - type: OpenAPI
+    url: openapi/popp-organizations-api-openapi.yml
+  - type: Documentation
+    url: https://docs.joinpopp.com/
+  - type: APIReference
+    url: https://docs.joinpopp.com/docs/quickstart
+  - type: GettingStarted
+    url: https://docs.joinpopp.com/docs/quickstart
+  - type: Authentication
+    url: authentication/popp-authentication.yml
+  - type: Webhooks
+    url: asyncapi/popp-webhooks.yml
+  - type: Conventions
+    url: conventions/popp-conventions.yml
+  - type: ErrorCatalog
+    url: errors/popp-problem-types.yml
+  - type: Lifecycle
+    url: lifecycle/popp-lifecycle.yml
+  - type: DataModel
+    url: data-model/popp-data-model.yml
+  - type: Conformance
+    url: conformance/popp-conformance.yml
+  - type: JSONSchema
+    url: json-schema/popp-update-meeting-template-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-meeting-template-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-scheduling-conversation-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-campaign-request-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-list-campaigns-response-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-list-ats-jobs-response-schema.json
+- aid: popp:popp-scheduling-api
+  name: Popp Scheduling API
+  description: The Scheduling API from Popp — 12 operation(s) for scheduling.
+  humanURL: https://joinpopp.com/api
+  baseURL: https://api.joinpopp.com/v1
+  tags:
+  - Scheduling
+  properties:
+  - type: OpenAPI
+    url: openapi/popp-scheduling-api-openapi.yml
+  - type: Documentation
+    url: https://docs.joinpopp.com/
+  - type: APIReference
+    url: https://docs.joinpopp.com/docs/quickstart
+  - type: GettingStarted
+    url: https://docs.joinpopp.com/docs/quickstart
+  - type: Authentication
+    url: authentication/popp-authentication.yml
+  - type: Webhooks
+    url: asyncapi/popp-webhooks.yml
+  - type: Conventions
+    url: conventions/popp-conventions.yml
+  - type: ErrorCatalog
+    url: errors/popp-problem-types.yml
+  - type: Lifecycle
+    url: lifecycle/popp-lifecycle.yml
+  - type: DataModel
+    url: data-model/popp-data-model.yml
+  - type: Conformance
+    url: conformance/popp-conformance.yml
+  - type: JSONSchema
+    url: json-schema/popp-update-meeting-template-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-meeting-template-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-scheduling-conversation-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-campaign-request-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-list-campaigns-response-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-list-ats-jobs-response-schema.json
+- aid: popp:popp-tags-api
+  name: Popp Tags API
+  description: The Tags API from Popp — 2 operation(s) for tags.
+  humanURL: https://joinpopp.com/api
+  baseURL: https://api.joinpopp.com/v1
+  tags:
+  - Tags
+  properties:
+  - type: OpenAPI
+    url: openapi/popp-tags-api-openapi.yml
+  - type: Documentation
+    url: https://docs.joinpopp.com/
+  - type: APIReference
+    url: https://docs.joinpopp.com/docs/quickstart
+  - type: GettingStarted
+    url: https://docs.joinpopp.com/docs/quickstart
+  - type: Authentication
+    url: authentication/popp-authentication.yml
+  - type: Webhooks
+    url: asyncapi/popp-webhooks.yml
+  - type: Conventions
+    url: conventions/popp-conventions.yml
+  - type: ErrorCatalog
+    url: errors/popp-problem-types.yml
+  - type: Lifecycle
+    url: lifecycle/popp-lifecycle.yml
+  - type: DataModel
+    url: data-model/popp-data-model.yml
+  - type: Conformance
+    url: conformance/popp-conformance.yml
+  - type: JSONSchema
+    url: json-schema/popp-update-meeting-template-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-meeting-template-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-scheduling-conversation-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-campaign-request-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-list-campaigns-response-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-list-ats-jobs-response-schema.json
+- aid: popp:popp-templates-api
+  name: Popp Templates API
+  description: The Templates API from Popp — 1 operation(s) for templates.
+  humanURL: https://joinpopp.com/api
+  baseURL: https://api.joinpopp.com/v1
+  tags:
+  - Templates
+  properties:
+  - type: OpenAPI
+    url: openapi/popp-templates-api-openapi.yml
+  - type: Documentation
+    url: https://docs.joinpopp.com/
+  - type: APIReference
+    url: https://docs.joinpopp.com/docs/quickstart
+  - type: GettingStarted
+    url: https://docs.joinpopp.com/docs/quickstart
+  - type: Authentication
+    url: authentication/popp-authentication.yml
+  - type: Webhooks
+    url: asyncapi/popp-webhooks.yml
+  - type: Conventions
+    url: conventions/popp-conventions.yml
+  - type: ErrorCatalog
+    url: errors/popp-problem-types.yml
+  - type: Lifecycle
+    url: lifecycle/popp-lifecycle.yml
+  - type: DataModel
+    url: data-model/popp-data-model.yml
+  - type: Conformance
+    url: conformance/popp-conformance.yml
+  - type: JSONSchema
+    url: json-schema/popp-update-meeting-template-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-meeting-template-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-scheduling-conversation-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-campaign-request-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-list-campaigns-response-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-list-ats-jobs-response-schema.json
+- aid: popp:popp-users-api
+  name: Popp Users API
+  description: The Users API from Popp — 10 operation(s) for users.
+  humanURL: https://joinpopp.com/api
+  baseURL: https://api.joinpopp.com/v1
+  tags:
+  - Users
+  properties:
+  - type: OpenAPI
+    url: openapi/popp-users-api-openapi.yml
+  - type: Documentation
+    url: https://docs.joinpopp.com/
+  - type: APIReference
+    url: https://docs.joinpopp.com/docs/quickstart
+  - type: GettingStarted
+    url: https://docs.joinpopp.com/docs/quickstart
+  - type: Authentication
+    url: authentication/popp-authentication.yml
+  - type: Webhooks
+    url: asyncapi/popp-webhooks.yml
+  - type: Conventions
+    url: conventions/popp-conventions.yml
+  - type: ErrorCatalog
+    url: errors/popp-problem-types.yml
+  - type: Lifecycle
+    url: lifecycle/popp-lifecycle.yml
+  - type: DataModel
+    url: data-model/popp-data-model.yml
+  - type: Conformance
+    url: conformance/popp-conformance.yml
+  - type: JSONSchema
+    url: json-schema/popp-update-meeting-template-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-meeting-template-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-scheduling-conversation-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-campaign-request-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-list-campaigns-response-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-list-ats-jobs-response-schema.json
+- aid: popp:popp-webhooks-api
+  name: Popp Webhooks API
+  description: The Webhooks API from Popp — 3 operation(s) for webhooks.
+  humanURL: https://joinpopp.com/api
+  baseURL: https://api.joinpopp.com/v1
+  tags:
+  - Webhooks
+  properties:
+  - type: OpenAPI
+    url: openapi/popp-webhooks-api-openapi.yml
+  - type: Documentation
+    url: https://docs.joinpopp.com/
+  - type: APIReference
+    url: https://docs.joinpopp.com/docs/quickstart
+  - type: GettingStarted
+    url: https://docs.joinpopp.com/docs/quickstart
+  - type: Authentication
+    url: authentication/popp-authentication.yml
+  - type: Webhooks
+    url: asyncapi/popp-webhooks.yml
+  - type: Conventions
+    url: conventions/popp-conventions.yml
+  - type: ErrorCatalog
+    url: errors/popp-problem-types.yml
+  - type: Lifecycle
+    url: lifecycle/popp-lifecycle.yml
+  - type: DataModel
+    url: data-model/popp-data-model.yml
+  - type: Conformance
+    url: conformance/popp-conformance.yml
+  - type: JSONSchema
+    url: json-schema/popp-update-meeting-template-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-meeting-template-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-scheduling-conversation-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-campaign-request-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-list-campaigns-response-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-list-ats-jobs-response-schema.json
+- aid: popp:popp-workflows-api
+  name: Popp Workflows API
+  description: The Workflows API from Popp — 20 operation(s) for workflows.
+  humanURL: https://joinpopp.com/api
+  baseURL: https://api.joinpopp.com/v1
+  tags:
+  - Workflows
+  properties:
+  - type: OpenAPI
+    url: openapi/popp-workflows-api-openapi.yml
+  - type: Documentation
+    url: https://docs.joinpopp.com/
+  - type: APIReference
+    url: https://docs.joinpopp.com/docs/quickstart
+  - type: GettingStarted
+    url: https://docs.joinpopp.com/docs/quickstart
+  - type: Authentication
+    url: authentication/popp-authentication.yml
+  - type: Webhooks
+    url: asyncapi/popp-webhooks.yml
+  - type: Conventions
+    url: conventions/popp-conventions.yml
+  - type: ErrorCatalog
+    url: errors/popp-problem-types.yml
+  - type: Lifecycle
+    url: lifecycle/popp-lifecycle.yml
+  - type: DataModel
+    url: data-model/popp-data-model.yml
+  - type: Conformance
+    url: conformance/popp-conformance.yml
+  - type: JSONSchema
+    url: json-schema/popp-update-meeting-template-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-meeting-template-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-scheduling-conversation-input-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-create-campaign-request-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-list-campaigns-response-schema.json
+  - type: JSONSchema
+    url: json-schema/popp-list-ats-jobs-response-schema.json
 x-enrichment:
   date: '2026-07-20'
   status: enriched

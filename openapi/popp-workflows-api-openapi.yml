@@ -1,0 +1,3364 @@
+openapi: 3.2.0
+info:
+  title: Popp Workflows API
+  description: Popp API documentation
+  version: '1'
+servers:
+- url: https://api.joinpopp.com
+  description: Development server
+security:
+- popp_api_key: []
+  organization_id: []
+tags:
+- name: Workflows
+paths:
+  /v1/candidate-profiles/by-external-id/{externalId}:
+    get:
+      summary: Get candidate profile by external ID
+      description: Returns the candidate profile in the caller's organization group with the given external ID. Returns 404 when no profile matches.
+      operationId: get-candidate-profile-by-external-id
+      parameters:
+      - name: externalId
+        in: path
+        description: Caller-supplied external identifier matching ^[\w.-]+$ (1-256 characters).
+        required: true
+        schema:
+          $ref: '#/components/schemas/externalId-0bcf915f-e8ad-4225-b43f-89471a8edea4'
+      tags:
+      - Workflows
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CandidateProfile'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+  /v1/workflow-runs/{runId}:
+    get:
+      summary: Get workflow run
+      description: Returns a workflow run by ID, including its full `context` JSON string.
+      operationId: get-workflow-run
+      parameters:
+      - name: runId
+        in: path
+        description: The run ID. Some older run IDs contain reserved characters such as `#`. URL-encode them in the path (`#` becomes `%23`).
+        required: true
+        example: 60c912c1-db30-4415-8486-103d059e1c87
+        schema:
+          $ref: '#/components/schemas/runId'
+      tags:
+      - Workflows
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowRun'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+  /v1/workflow-runs/{runId}/cancel:
+    post:
+      summary: Cancel workflow run
+      description: Cancels a workflow run in progress.
+      operationId: cancel-workflow-run
+      parameters:
+      - name: runId
+        in: path
+        description: The run ID. Some older run IDs contain reserved characters such as `#`. URL-encode them in the path (`#` becomes `%23`).
+        required: true
+        example: 60c912c1-db30-4415-8486-103d059e1c87
+        schema:
+          $ref: '#/components/schemas/runId'
+      tags:
+      - Workflows
+      requestBody:
+        description: Optional.
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CancelWorkflowRunInput'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CancelWorkflowRunResponse'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+  /v1/workflows:
+    post:
+      summary: Create workflow
+      description: 'Creates a workflow in the `UNPUBLISHED` state. It accepts runs once you publish it.
+
+
+        Workflow configuration describes the `configuration` format. Some checks, such as analysis node slugs, run only at publish.'
+      operationId: create-workflow
+      parameters: []
+      tags:
+      - Workflows
+      requestBody:
+        description: The workflow to create.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWorkflowInput'
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Workflow'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+    get:
+      summary: List workflows
+      description: Lists your organization's workflows, most recently updated first.
+      operationId: list-workflows
+      parameters:
+      - name: limit
+        in: query
+        description: Maximum number of workflows to return per page.
+        required: false
+        schema:
+          $ref: '#/components/schemas/limit'
+      - name: nextToken
+        in: query
+        description: Pagination cursor returned by the previous call.
+        required: false
+        schema:
+          $ref: '#/components/schemas/nextToken'
+      - name: status
+        in: query
+        description: 'Comma-separated list of statuses to filter by. Allowed values: `UNPUBLISHED`, `PUBLISHED`, `PAUSED`, `ARCHIVED`. Example: `PUBLISHED,PAUSED`.'
+        required: false
+        schema:
+          $ref: '#/components/schemas/status-4a2a30ad-8ae1-4aa0-b803-3b9cea83720a'
+      tags:
+      - Workflows
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListWorkflowsResponse'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+  /v1/workflows/by-external-id/{externalId}:
+    get:
+      summary: Get workflow by external ID
+      description: Same as Get workflow, but finds the workflow by your external ID.
+      operationId: get-workflow-by-external-id
+      parameters:
+      - name: externalId
+        in: path
+        description: Your external ID for the workflow.
+        required: true
+        schema:
+          $ref: '#/components/schemas/externalId-78d822e1-15b1-4cbe-95c7-b08c04b3c084'
+      tags:
+      - Workflows
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Workflow'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+    patch:
+      summary: Update workflow by external ID
+      description: Same as Update workflow, but finds the workflow by your external ID.
+      operationId: update-workflow-by-external-id
+      parameters:
+      - name: externalId
+        in: path
+        description: Your external ID for the workflow.
+        required: true
+        schema:
+          $ref: '#/components/schemas/externalId-cf970db4-b45b-4b86-9c70-a0eeecfb2777'
+      tags:
+      - Workflows
+      requestBody:
+        description: The fields to change.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateWorkflowInput'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Workflow'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+  /v1/workflows/by-external-id/{externalId}/archive:
+    post:
+      summary: Archive workflow by external ID
+      description: Same as Archive workflow, but finds the workflow by your external ID.
+      operationId: archive-workflow-by-external-id
+      parameters:
+      - name: externalId
+        in: path
+        description: Your external ID for the workflow.
+        required: true
+        schema:
+          $ref: '#/components/schemas/externalId-2cda2fc2-7679-4d1a-b9f9-7c4279e73956'
+      tags:
+      - Workflows
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArchiveWorkflowResponse'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+  /v1/workflows/by-external-id/{externalId}/pause:
+    post:
+      summary: Pause workflow by external ID
+      description: Same as Pause workflow, but finds the workflow by your external ID.
+      operationId: pause-workflow-by-external-id
+      parameters:
+      - name: externalId
+        in: path
+        description: Your external ID for the workflow.
+        required: true
+        schema:
+          $ref: '#/components/schemas/externalId-2798ed29-5811-4c0a-b03f-8f56f0dcc756'
+      tags:
+      - Workflows
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowStatusActionResponse'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+  /v1/workflows/by-external-id/{externalId}/publish:
+    post:
+      summary: Publish workflow by external ID
+      description: Same as Publish workflow, but finds the workflow by your external ID.
+      operationId: publish-workflow-by-external-id
+      parameters:
+      - name: externalId
+        in: path
+        description: Your external ID for the workflow.
+        required: true
+        schema:
+          $ref: '#/components/schemas/externalId-08e7c69c-a20a-4a9e-a9f1-f1d76d25dfe4'
+      tags:
+      - Workflows
+      requestBody:
+        description: Optional.
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublishWorkflowInput'
+      responses:
+        '200':
+          description: The new version is live and accepts runs.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublishWorkflowResponse'
+          headers: {}
+        '400':
+          description: Publish was refused, and the error says why. For example, the workflow is paused or archived, or the error is `ATS_JOB_ALREADY_CONNECTED`, `RUBRIC_GENERATION_FAILED` or `JOB_SUMMARY_GENERATION_FAILED`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '409':
+          description: Another publish of this workflow ran at the same time.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '422':
+          description: The draft failed one or more checks. `validation.errors` lists each one.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublishWorkflowRefusedResponse'
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '503':
+          description: Popp could not finish a check, for example because your ATS was unreachable. Send the same request again after the `Retry-After` delay.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            Retry-After:
+              description: Seconds to wait before retrying.
+              schema:
+                $ref: '#/components/schemas/Retry-After'
+  /v1/workflows/by-external-id/{externalId}/resume:
+    post:
+      summary: Resume workflow by external ID
+      description: Same as Resume workflow, but finds the workflow by your external ID.
+      operationId: resume-workflow-by-external-id
+      parameters:
+      - name: externalId
+        in: path
+        description: Your external ID for the workflow.
+        required: true
+        schema:
+          $ref: '#/components/schemas/externalId-56390b04-5308-442b-aa33-b2a9318a4dbf'
+      tags:
+      - Workflows
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowStatusActionResponse'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+  /v1/workflows/by-external-id/{externalId}/runs:
+    post:
+      summary: Start workflow runs by external ID
+      description: Same as Start workflow runs, but finds the workflow by your external ID.
+      operationId: start-workflow-runs-by-external-id
+      parameters:
+      - name: externalId
+        in: path
+        description: Your external ID for the workflow.
+        required: true
+        schema:
+          $ref: '#/components/schemas/externalId-5f12bc47-4166-4883-942a-f025b72dd582'
+      tags:
+      - Workflows
+      requestBody:
+        description: Candidates to enrol into the workflow.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StartWorkflowRunsInput'
+      responses:
+        '202':
+          description: Popp accepted the request. `summary` accounts for every entry. An entry that can't be enrolled doesn't fail the request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StartWorkflowRunsResponse'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+  /v1/workflows/{workflowId}:
+    get:
+      summary: Get workflow
+      description: Returns a workflow by ID, including its full `configuration` and `settings` JSON strings.
+      operationId: get-workflow
+      parameters:
+      - name: workflowId
+        in: path
+        description: The workflow ID.
+        required: true
+        schema:
+          $ref: '#/components/schemas/workflowId'
+      tags:
+      - Workflows
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Workflow'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+    patch:
+      summary: Update workflow
+      description: 'Updates the working draft of a workflow. Changes go live only when you publish.
+
+
+        Some checks, such as analysis node slugs, run only at publish.'
+      operationId: update-workflow
+      parameters:
+      - name: workflowId
+        in: path
+        description: The workflow ID.
+        required: true
+        schema:
+          $ref: '#/components/schemas/workflowId'
+      tags:
+      - Workflows
+      requestBody:
+        description: The fields to change.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateWorkflowInput'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Workflow'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+  /v1/workflows/{workflowId}/analyses/{workflowNodeSlug}:
+    get:
+      summary: Get workflow analysis (Beta)
+      description: '**Beta.** Fields and behaviour may change before general availability. Returns the analysis behind one of a workflow''s analysis nodes, with its counts, score bands and requirements. Counts leave out erased candidates. See Reading a workflow analysis.'
+      operationId: get-workflow-analysis
+      parameters:
+      - name: workflowId
+        in: path
+        description: The workflow ID.
+        required: true
+        schema:
+          $ref: '#/components/schemas/workflowId'
+      - name: workflowNodeSlug
+        in: path
+        description: The slug you gave the analysis node in the workflow configuration. It is fixed once published.
+        required: true
+        schema:
+          $ref: '#/components/schemas/workflowNodeSlug'
+      tags:
+      - Workflows
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowAnalysis'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '403':
+          description: The workflow belongs to another organization.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: The workflow doesn't exist, or has no analysis for this slug.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+  /v1/workflows/{workflowId}/analyses/{workflowNodeSlug}/applications:
+    get:
+      summary: List workflow analysis applications (Beta)
+      description: '**Beta.** Fields and behaviour may change before general availability. Lists the applications scored on a workflow analysis node, one row per application with its effective score. Erased candidates are left out.'
+      operationId: list-workflow-analysis-applications
+      parameters:
+      - name: workflowId
+        in: path
+        description: The workflow ID.
+        required: true
+        schema:
+          $ref: '#/components/schemas/workflowId'
+      - name: workflowNodeSlug
+        in: path
+        description: The slug you gave the analysis node in the workflow configuration. It is fixed once published.
+        required: true
+        schema:
+          $ref: '#/components/schemas/workflowNodeSlug'
+      - name: limit
+        in: query
+        description: Maximum number of items per page, 1 to 100. Defaults to 50.
+        required: false
+        schema:
+          $ref: '#/components/schemas/limit-a4d690c1-cfce-4546-95a7-fe367ba350a7'
+      - name: nextToken
+        in: query
+        description: Pagination cursor returned by the previous call.
+        required: false
+        schema:
+          $ref: '#/components/schemas/nextToken'
+      tags:
+      - Workflows
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListWorkflowAnalysisApplicationsResponse'
+          headers: {}
+        '400':
+          description: '`limit` or `nextToken` is invalid.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '403':
+          description: The workflow belongs to another organization.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: The workflow doesn't exist, or has no analysis for this slug.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+  /v1/workflows/{workflowId}/analyses/{workflowNodeSlug}/applications/{candidateId}:
+    get:
+      summary: Get workflow analysis application (Beta)
+      description: '**Beta.** Fields and behaviour may change before general availability. Returns one application on a workflow analysis node, with its effective score and the evidence behind it. See Reading a workflow analysis.'
+      operationId: get-workflow-analysis-application
+      parameters:
+      - name: workflowId
+        in: path
+        description: The workflow ID.
+        required: true
+        schema:
+          $ref: '#/components/schemas/workflowId'
+      - name: workflowNodeSlug
+        in: path
+        description: The slug you gave the analysis node in the workflow configuration. It is fixed once published.
+        required: true
+        schema:
+          $ref: '#/components/schemas/workflowNodeSlug'
+      - name: candidateId
+        in: path
+        description: Identifier of the application's Candidate, from the applications list or the analysis webhooks (`data.recordId`).
+        required: true
+        schema:
+          $ref: '#/components/schemas/candidateId'
+      tags:
+      - Workflows
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowAnalysisApplication'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '403':
+          description: The workflow belongs to another organization.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: The workflow doesn't exist, or the Candidate isn't on this analysis node in your organization.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+  /v1/workflows/{workflowId}/analyses/{workflowNodeSlug}/applications/{candidateId}/history:
+    get:
+      summary: List workflow analysis application history (Beta)
+      description: '**Beta.** Fields and behaviour may change before general availability. Returns an application''s score history on a workflow analysis node, oldest first. Popp records each score when it is produced and never changes it, except to erase it.'
+      operationId: list-workflow-analysis-application-history
+      parameters:
+      - name: workflowId
+        in: path
+        description: The workflow ID.
+        required: true
+        schema:
+          $ref: '#/components/schemas/workflowId'
+      - name: workflowNodeSlug
+        in: path
+        description: The slug you gave the analysis node in the workflow configuration. It is fixed once published.
+        required: true
+        schema:
+          $ref: '#/components/schemas/workflowNodeSlug'
+      - name: candidateId
+        in: path
+        description: Identifier of the application's Candidate, from the applications list or the analysis webhooks (`data.recordId`).
+        required: true
+        schema:
+          $ref: '#/components/schemas/candidateId'
+      - name: limit
+        in: query
+        description: Maximum number of items per page, 1 to 100. Defaults to 50.
+        required: false
+        schema:
+          $ref: '#/components/schemas/limit-e9f88c9d-d5d5-4697-9eb4-e3130e3e10d8'
+      - name: nextToken
+        in: query
+        description: Pagination cursor returned by the previous call.
+        required: false
+        schema:
+          $ref: '#/components/schemas/nextToken'
+      tags:
+      - Workflows
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListWorkflowAnalysisApplicationHistoryResponse'
+          headers: {}
+        '400':
+          description: '`limit` or `nextToken` is invalid.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '403':
+          description: The workflow belongs to another organization.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: The workflow doesn't exist, or the Candidate isn't on this analysis node in your organization.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+  /v1/workflows/{workflowId}/archive:
+    post:
+      summary: Archive workflow
+      description: Archives a workflow. An archived workflow can't be edited, published or used to start runs, and archiving can't be undone. Runs in progress continue to completion.
+      operationId: archive-workflow
+      parameters:
+      - name: workflowId
+        in: path
+        description: The workflow ID.
+        required: true
+        schema:
+          $ref: '#/components/schemas/workflowId'
+      tags:
+      - Workflows
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArchiveWorkflowResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+  /v1/workflows/{workflowId}/pause:
+    post:
+      summary: Pause workflow
+      description: Pauses a published workflow. It stops accepting new runs, and runs in progress continue. Resume it to accept new runs again.
+      operationId: pause-workflow
+      parameters:
+      - name: workflowId
+        in: path
+        description: The workflow ID.
+        required: true
+        schema:
+          $ref: '#/components/schemas/workflowId'
+      tags:
+      - Workflows
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowStatusActionResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+  /v1/workflows/{workflowId}/publish:
+    post:
+      summary: Publish workflow
+      description: 'Publishes the workflow''s working draft as a new live version. Popp checks the draft first, and a failed publish changes nothing.
+
+
+        Configuration validation lists every check and error code.'
+      operationId: publish-workflow
+      parameters:
+      - name: workflowId
+        in: path
+        description: The workflow ID.
+        required: true
+        schema:
+          $ref: '#/components/schemas/workflowId'
+      tags:
+      - Workflows
+      requestBody:
+        description: Optional.
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PublishWorkflowInput'
+      responses:
+        '200':
+          description: The new version is live and accepts runs.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublishWorkflowResponse'
+          headers: {}
+        '400':
+          description: Publish was refused, and the error says why. For example, the workflow is paused or archived, or the error is `ATS_JOB_ALREADY_CONNECTED`, `RUBRIC_GENERATION_FAILED` or `JOB_SUMMARY_GENERATION_FAILED`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '409':
+          description: Another publish of this workflow ran at the same time.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '422':
+          description: The draft failed one or more checks. `validation.errors` lists each one.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublishWorkflowRefusedResponse'
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '503':
+          description: Popp could not finish a check, for example because your ATS was unreachable. Send the same request again after the `Retry-After` delay.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers:
+            Retry-After:
+              description: Seconds to wait before retrying.
+              schema:
+                $ref: '#/components/schemas/Retry-After'
+  /v1/workflows/{workflowId}/resume:
+    post:
+      summary: Resume workflow
+      description: Returns a paused workflow to `PUBLISHED`, so it accepts new runs again.
+      operationId: resume-workflow
+      parameters:
+      - name: workflowId
+        in: path
+        description: The workflow ID.
+        required: true
+        schema:
+          $ref: '#/components/schemas/workflowId'
+      tags:
+      - Workflows
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowStatusActionResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+  /v1/workflows/{workflowId}/runs:
+    post:
+      summary: Start workflow runs
+      description: Enrols candidates in a published workflow, one run per candidate. Runs start after the call returns, so the response reports what Popp accepted rather than the runs. Follow the runs with List workflow runs or the `WORKFLOW_CONTACT_RESOLVED` and `WORKFLOW_RUN_STARTED` webhooks.
+      operationId: start-workflow-runs
+      parameters:
+      - name: workflowId
+        in: path
+        description: The workflow ID.
+        required: true
+        schema:
+          $ref: '#/components/schemas/workflowId'
+      tags:
+      - Workflows
+      requestBody:
+        description: Candidates to enrol into the workflow.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StartWorkflowRunsInput'
+      responses:
+        '202':
+          description: Popp accepted the request. `summary` accounts for every entry. An entry that can't be enrolled doesn't fail the request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StartWorkflowRunsResponse'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+    get:
+      summary: List workflow runs
+      description: Lists a workflow's runs. Each run includes the candidate's name, so you don't need a call per run to look the candidate up.
+      operationId: list-workflow-runs
+      parameters:
+      - name: workflowId
+        in: path
+        description: The workflow ID.
+        required: true
+        schema:
+          $ref: '#/components/schemas/workflowId'
+      - name: limit
+        in: query
+        description: Maximum number of runs to return per page.
+        required: false
+        schema:
+          $ref: '#/components/schemas/limit'
+      - name: nextToken
+        in: query
+        description: Pagination cursor returned by the previous call.
+        required: false
+        schema:
+          $ref: '#/components/schemas/nextToken'
+      - name: status
+        in: query
+        description: 'Comma-separated list of statuses to filter by. Allowed values: `RUNNING`, `COMPLETED`, `FAILED`, `CANCELLED`. Example: `RUNNING,COMPLETED`.'
+        required: false
+        schema:
+          $ref: '#/components/schemas/status-77eec34f-669b-4d05-86b2-0457ccb4ae30'
+      - name: candidateProfileId
+        in: query
+        description: Filter to runs for the given candidate profile.
+        required: false
+        schema:
+          $ref: '#/components/schemas/candidateProfileId'
+      - name: candidateName
+        in: query
+        description: Only runs whose candidate name matches these words in this order, ignoring case. `John Smith` matches `John Smith` but not `Smith John`, and `John` matches every candidate named John.
+        required: false
+        schema:
+          $ref: '#/components/schemas/candidateName'
+      tags:
+      - Workflows
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListWorkflowRunsResponse'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+components:
+  schemas:
+    candidateName:
+      type: string
+      minLength: 1
+    WorkflowAnalysisApplication:
+      type: object
+      properties:
+        candidateId:
+          type: string
+          description: Identifier of the application's Candidate on this analysis node. The analysis webhooks carry it as `data.recordId`.
+        candidateProfileId:
+          type:
+          - string
+          - 'null'
+          description: Identifier of the candidate profile.
+        firstName:
+          type: string
+          description: The candidate's first name.
+        lastName:
+          type: string
+          description: The candidate's last name.
+        totalScoreScaled:
+          type:
+          - number
+          - 'null'
+          description: The application's effective score, from 0 to 1. Once the workflow acts on a score, that score stays. Until then, it is the most recent score on the newest requirements. `null` when the first score failed and no re-score has replaced it, and `analysisErrorCode` says why. Once the workflow acts on that failure, it stays `null`.
+          minimum: 0
+          maximum: 1
+        isAllRequirementsMet:
+          type:
+          - boolean
+          - 'null'
+          description: Whether the application met every mandatory requirement.
+        analysisErrorCode:
+          type:
+          - string
+          - 'null'
+          description: 'Why scoring failed, if it did. A failed re-score leaves the application''s score in place. `DOCUMENT_TOO_LARGE`: the CV''s text is too long to score. `ANALYSIS_INPUT_UNAVAILABLE`: there was no CV text and no screening answer to score. `ANALYSIS_FAILED`: scoring failed on Popp''s side. More values may be added, so handle a value you don''t recognize.'
+        metRequirementSlugs:
+          type: array
+          description: Slugs of the requirements the application met.
+          items:
+            type: string
+        unmetRequirementSlugs:
+          type: array
+          description: Slugs of the requirements the application did not meet.
+          items:
+            type: string
+        analysisOutcomeActedOnAt:
+          type:
+          - string
+          - 'null'
+          description: 'When the workflow acted on the score, or on a failure to score the application: the run entered the first outreach, scheduling, add-to-ATS-job or update-ATS-application node after the analysis node. Once set, later re-scores appear only in the application''s history.'
+          format: date-time
+        createdAt:
+          type: string
+          description: When the application was first scored on this node.
+          format: date-time
+        updatedAt:
+          type: string
+          description: When the application's record last changed.
+          format: date-time
+        requirementOutcomes:
+          type: array
+          description: The outcome of each requirement behind the effective score.
+          items:
+            type: object
+            properties:
+              requirementId:
+                type:
+                - string
+                - 'null'
+                description: Identifier of the requirement the outcome was scored against.
+              slug:
+                type:
+                - string
+                - 'null'
+                description: The requirement's slug, fixed once published.
+              text:
+                type:
+                - string
+                - 'null'
+                description: The requirement as it was worded when this outcome was scored.
+              weight:
+                type:
+                - number
+                - 'null'
+                description: The requirement's scoring weight when this outcome was scored.
+              isMandatory:
+                type:
+                - boolean
+                - 'null'
+                description: Whether the requirement was mandatory when this outcome was scored.
+              isMet:
+                type: boolean
+                description: Whether the application met the requirement.
+              evidence:
+                type: string
+                description: The evidence for the outcome, from the CV or screening answers.
+              scoredAt:
+                type:
+                - string
+                - 'null'
+                description: When the outcome was scored.
+                format: date-time
+    WorkflowStatusActionResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Workflow ID
+          description: Identifier of the workflow.
+        organizationId:
+          type: string
+          format: uuid
+          title: Organization ID
+          description: Identifier of the organization that owns the workflow.
+        name:
+          type: string
+          title: Name
+          description: Workflow name.
+        status:
+          type: string
+          enum:
+          - UNPUBLISHED
+          - PUBLISHED
+          - PAUSED
+          - ARCHIVED
+          title: Status
+          description: 'The status after the call: `PAUSED` after a pause, `PUBLISHED` after a resume.'
+        updatedAt:
+          type: string
+          format: date-time
+          title: Updated At
+          description: Timestamp when the status change took effect.
+      required:
+      - id
+      - organizationId
+      - name
+      - status
+      - updatedAt
+      additionalProperties: false
+    Retry-After:
+      type: integer
+    PublishWorkflowRefusedResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          title: Message
+          description: A summary. The problems are in `validation.errors`.
+        workflowId:
+          type: string
+          format: uuid
+          title: Workflow ID
+          description: The workflow ID.
+        versionId:
+          type: string
+          enum:
+          - ''
+          title: Version ID
+          description: 'Always empty: no version was created.'
+        versionNumber:
+          type: integer
+          enum:
+          - 0
+          title: Version Number
+          description: 'Always 0: no version was created.'
+        status:
+          type: string
+          enum:
+          - ARCHIVED
+          title: Status
+          description: 'Always `ARCHIVED`: no version went live.'
+        publishedAt:
+          type: string
+          format: date-time
+          title: Published At
+          description: When Popp refused the draft.
+        validation:
+          type: object
+          title: Validation
+          description: Why Popp refused the draft.
+          properties:
+            valid:
+              type: boolean
+              enum:
+              - false
+              title: Valid
+              description: Always `false`.
+            errors:
+              type: array
+              title: Errors
+              description: One entry per problem. [Configuration validation](/docs/workflow-configuration#configuration-validation) lists the error codes.
+              items:
+                type: object
+                properties:
+                  nodeId:
+                    type:
+                    - string
+                    - 'null'
+                    title: Node ID
+                    description: The node with the problem, when the problem belongs to one node.
+                  errorCode:
+                    type: string
+                    title: Error Code
+                    description: Stable machine-readable validation error code.
+                  message:
+                    type: string
+                    title: Message
+                    description: Human-readable explanation of the error.
+                  path:
+                    type:
+                    - string
+                    - 'null'
+                    title: Path
+                    description: Where in the configuration the problem is, for example `nodes.q1.config.questions`.
+                required:
+                - errorCode
+                - message
+                additionalProperties: false
+              minItems: 1
+          required:
+          - valid
+          - errors
+          additionalProperties: false
+      required:
+      - message
+      - workflowId
+      - versionId
+      - versionNumber
+      - status
+      - publishedAt
+      - validation
+      additionalProperties: false
+      example:
+        message: 'Workflow not published: the draft failed validation. See validation.errors.'
+        workflowId: 2f0c3c0e-6a43-4d7b-9a55-0b4a8a3f6c21
+        versionId: ''
+        versionNumber: 0
+        status: ARCHIVED
+        publishedAt: '2026-10-12T09:30:00.000Z'
+        validation:
+          valid: false
+          errors:
+          - nodeId: move-to-interview
+            errorCode: ATS_STAGE_NOT_FOUND
+            message: stage 'stage-abc' is not on the stage list of job 'job-hgv-class-1', which offers 4
+            path: nodes.move-to-interview.config.targets[0].atsInterviewStageId
+          - nodeId: collect-documents
+            errorCode: DOCUMENT_TYPE_ARCHIVED
+            message: 'Archived documentTypeId: document-type-1'
+            path: nodes.collect-documents.config.questions[0].documentItems
+    CandidateProfile:
+      type: object
+      description: Candidate profile — the canonical record of a candidate within Popp. Profiles can be enrolled into workflows.
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Candidate Profile ID
+          description: Unique identifier for the candidate profile.
+        organizationGroupId:
+          type: string
+          format: uuid
+          title: Organization Group ID
+          description: Identifier of the organization group that owns the candidate profile. Profiles are scoped to an organization group, not a single organization.
+        organizationIds:
+          type: array
+          title: Organization IDs
+          description: Organizations within the group that the candidate has been associated with.
+          items:
+            type: string
+            format: uuid
+        externalId:
+          type:
+          - string
+          - 'null'
+          title: External ID
+          description: Caller-supplied identifier in the format ^[\w.-]+$.
+        firstName:
+          type:
+          - string
+          - 'null'
+          title: First Name
+          description: Candidate's first name.
+        lastName:
+          type:
+          - string
+          - 'null'
+          title: Last Name
+          description: Candidate's last name.
+        email:
+          type:
+          - string
+          - 'null'
+          format: email
+          title: Email
+          description: Candidate's email address.
+        phoneNumber:
+          type:
+          - string
+          - 'null'
+          title: Phone Number
+          description: Candidate's phone number in E.164 format.
+      required:
+      - id
+      - organizationGroupId
+      - organizationIds
+      additionalProperties: false
+    limit-e9f88c9d-d5d5-4697-9eb4-e3130e3e10d8:
+      type: integer
+      minimum: 1
+      maximum: 100
+    limit:
+      type: integer
+    CancelWorkflowRunInput:
+      type: object
+      properties:
+        reason:
+          type: string
+          title: Reason
+          description: Why you cancelled the run.
+        closeActiveConversations:
+          type: boolean
+          title: Close Active Conversations
+          description: Also closes the run's active conversation. Defaults to `false`, which lets the conversation finish.
+      additionalProperties: false
+    workflowNodeSlug:
+      type: string
+    externalId-5f12bc47-4166-4883-942a-f025b72dd582:
+      type: string
+      pattern: ^[\w.-]+$
+      minLength: 1
+      maxLength: 256
+    externalId-0bcf915f-e8ad-4225-b43f-89471a8edea4:
+      type: string
+      pattern: ^[\w.-]+$
+      minLength: 1
+      maxLength: 256
+    limit-a4d690c1-cfce-4546-95a7-fe367ba350a7:
+      type: integer
+      minimum: 1
+      maximum: 100
+    PublishWorkflowResponse:
+      type: object
+      properties:
+        workflowId:
+          type: string
+          format: uuid
+          title: Workflow ID
+          description: The workflow ID.
+        versionId:
+          type: string
+          title: Version ID
+          description: The new version's ID. A published version can't be changed.
+        versionNumber:
+          type: integer
+          title: Version Number
+          description: The new version's number. Each publish gets a higher number.
+        status:
+          type: string
+          enum:
+          - LIVE
+          title: Status
+          description: Always `LIVE`.
+        publishedAt:
+          type: string
+          format: date-time
+          title: Published At
+          description: When the new version went live.
+        validation:
+          type: object
+          title: Validation
+          description: The result of the checks.
+          properties:
+            valid:
+              type: boolean
+              enum:
+              - true
+              title: Valid
+              description: Always `true`.
+            errors:
+              type: array
+              title: Errors
+              description: Always empty.
+              maxItems: 0
+              items:
+                type: object
+                properties:
+                  nodeId:
+                    type:
+                    - string
+                    - 'null'
+                    title: Node ID
+                    description: The node with the problem, when the problem belongs to one node.
+                  errorCode:
+                    type: string
+                    title: Error Code
+                    description: Stable machine-readable validation error code.
+                  message:
+                    type: string
+                    title: Message
+                    description: Human-readable explanation of the error.
+                  path:
+                    type:
+                    - string
+                    - 'null'
+                    title: Path
+                    description: Where in the configuration the problem is, for example `nodes.q1.config.questions`.
+                required:
+                - errorCode
+                - message
+                additionalProperties: false
+          required:
+          - valid
+          - errors
+          additionalProperties: false
+      required:
+      - workflowId
+      - versionId
+      - versionNumber
+      - status
+      - publishedAt
+      - validation
+      additionalProperties: false
+    ListWorkflowsResponse:
+      type: object
+      description: Each workflow leaves out `configuration` and `settings`. [Get workflow](/reference/get-workflow) returns them.
+      properties:
+        data:
+          type: array
+          title: Data
+          description: Workflow summaries.
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+                title: Workflow ID
+                description: Unique identifier for the workflow.
+              organizationId:
+                type: string
+                format: uuid
+                title: Organization ID
+                description: Identifier of the organization that owns the workflow.
+              name:
+                type: string
+                title: Name
+                description: The workflow name.
+              description:
+                type:
+                - string
+                - 'null'
+                title: Description
+                description: What the workflow does.
+              status:
+                type: string
+                enum:
+                - UNPUBLISHED
+                - PUBLISHED
+                - PAUSED
+                - ARCHIVED
+                title: Status
+                description: Lifecycle state.
+              liveWorkflowVersionId:
+                type:
+                - string
+                - 'null'
+                format: uuid
+                title: Live Workflow Version ID
+                description: The live version's ID. `null` until the workflow is first published, and again once it is archived.
+              externalId:
+                type:
+                - string
+                - 'null'
+                title: External ID
+                description: Your own ID for the workflow, unique within your organization.
+              createdByUserId:
+                type:
+                - string
+                - 'null'
+                format: uuid
+                title: Created By User ID
+                description: Identifier of the user that created the workflow.
+              createdAt:
+                type: string
+                format: date-time
+                title: Created At
+                description: Timestamp when the workflow was created.
+              updatedAt:
+                type: string
+                format: date-time
+                title: Updated At
+                description: Timestamp when the workflow was last updated.
+            required:
+            - id
+            - organizationId
+            - name
+            - status
+            - createdAt
+            - updatedAt
+            additionalProperties: false
+        nextToken:
+          type:
+          - string
+          - 'null'
+          title: Next Token
+          description: Pagination cursor. Pass on the next request to fetch the following page; null when there are no further pages.
+      required:
+      - data
+      additionalProperties: false
+    externalId-cf970db4-b45b-4b86-9c70-a0eeecfb2777:
+      type: string
+      pattern: ^[\w.-]+$
+      minLength: 1
+      maxLength: 256
+    ListWorkflowAnalysisApplicationsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          description: Applications.
+          items:
+            type: object
+            properties:
+              candidateId:
+                type: string
+                description: Identifier of the application's Candidate on this analysis node. The analysis webhooks carry it as `data.recordId`.
+              candidateProfileId:
+                type:
+                - string
+                - 'null'
+                description: Identifier of the candidate profile.
+              firstName:
+                type: string
+                description: The candidate's first name.
+              lastName:
+                type: string
+                description: The candidate's last name.
+              totalScoreScaled:
+                type:
+                - number
+                - 'null'
+                description: The application's effective score, from 0 to 1. Once the workflow acts on a score, that score stays. Until then, it is the most recent score on the newest requirements. `null` when the first score failed and no re-score has replaced it, and `analysisErrorCode` says why. Once the workflow acts on that failure, it stays `null`.
+                minimum: 0
+                maximum: 1
+              isAllRequirementsMet:
+                type:
+                - boolean
+                - 'null'
+                description: Whether the application met every mandatory requirement.
+              analysisErrorCode:
+                type:
+                - string
+                - 'null'
+                description: 'Why scoring failed, if it did. A failed re-score leaves the application''s score in place. `DOCUMENT_TOO_LARGE`: the CV''s text is too long to score. `ANALYSIS_INPUT_UNAVAILABLE`: there was no CV text and no screening answer to score. `ANALYSIS_FAILED`: scoring failed on Popp''s side. More values may be added, so handle a value you don''t recognize.'
+              metRequirementSlugs:
+                type: array
+                description: Slugs of the requirements the application met.
+                items:
+                  type: string
+              unmetRequirementSlugs:
+                type: array
+                description: Slugs of the requirements the application did not meet.
+                items:
+                  type: string
+              analysisOutcomeActedOnAt:
+                type:
+                - string
+                - 'null'
+                description: 'When the workflow acted on the score, or on a failure to score the application: the run entered the first outreach, scheduling, add-to-ATS-job or update-ATS-application node after the analysis node. Once set, later re-scores appear only in the application''s history.'
+                format: date-time
+              createdAt:
+                type: string
+                description: When the application was first scored on this node.
+                format: date-time
+              updatedAt:
+                type: string
+                description: When the application's record last changed.
+                format: date-time
+        nextToken:
+          type:
+          - string
+          - 'null'
+          description: Pass as `nextToken` to fetch the next page. Null on the last page.
+        total:
+          type:
+          - integer
+          - 'null'
+          description: The exact number of applications across every page.
+    externalId-08e7c69c-a20a-4a9e-a9f1-f1d76d25dfe4:
+      type: string
+      pattern: ^[\w.-]+$
+      minLength: 1
+      maxLength: 256
+    ArchiveWorkflowResponse:
+      type: object
+      properties:
+        workflowId:
+          type: string
+          format: uuid
+          title: Workflow ID
+          description: The workflow ID.
+        status:
+          type: string
+          enum:
+          - ARCHIVED
+          title: Status
+          description: Always `ARCHIVED`.
+        archivedAt:
+          type: string
+          format: date-time
+          title: Archived At
+          description: When the workflow was archived.
+      required:
+      - workflowId
+      - status
+      - archivedAt
+      additionalProperties: false
+    externalId-2cda2fc2-7679-4d1a-b9f9-7c4279e73956:
+      type: string
+      pattern: ^[\w.-]+$
+      minLength: 1
+      maxLength: 256
+    ListWorkflowAnalysisApplicationHistoryResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          description: Scores, oldest first.
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: Identifier of the history entry.
+              trigger:
+                type: string
+                description: '`SCORED`: the first score. `RESCORED`: a re-score that became the effective score. `RESCORED_AFTER_ACTED_ON`: a re-score after the workflow acted, kept as history only. `RESCORE_FAILED`: a re-score that produced no score. The application keeps its score, and this entry is never the effective score.'
+                enum:
+                - SCORED
+                - RESCORED
+                - RESCORED_AFTER_ACTED_ON
+                - RESCORE_FAILED
+              workflowVersionId:
+                type: string
+                description: The workflow version whose requirements were scored.
+              workflowVersionNumber:
+                type: integer
+                description: That version's number.
+              workflowNodeId:
+                type: string
+                description: The analysis node's id in that version.
+              workflowNodeLabel:
+                type:
+                - string
+                - 'null'
+                description: The analysis node's label in that version.
+              workflowRunId:
+                type:
+                - string
+                - 'null'
+                description: The run whose score this is, when a run produced it.
+              totalScoreScaled:
+                type:
+                - number
+                - 'null'
+                description: The score, from 0 to 1. Null when no score was produced.
+                minimum: 0
+                maximum: 1
+              isAllRequirementsMet:
+                type:
+                - boolean
+                - 'null'
+                description: Whether every mandatory requirement was met.
+              analysisErrorCode:
+                type:
+                - string
+                - 'null'
+                description: 'Why no score was produced, when none was. `DOCUMENT_TOO_LARGE`: the CV''s text is too long to score. `ANALYSIS_INPUT_UNAVAILABLE`: there was no CV text and no screening answer to score. `ANALYSIS_FAILED`: scoring failed on Popp''s side. More values may be added, so handle a value you don''t recognize.'
+              requirementOutcomes:
+                type: array
+                description: Each requirement outcome, with the requirement as it was worded and weighted.
+                items:
+                  type: object
+                  properties:
+                    requirementId:
+                      type:
+                      - string
+                      - 'null'
+                      description: Identifier of the requirement the outcome was scored against.
+                    slug:
+                      type:
+                      - string
+                      - 'null'
+                      description: The requirement's slug, fixed once published.
+                    text:
+                      type:
+                      - string
+                      - 'null'
+                      description: The requirement as it was worded when this outcome was scored.
+                    weight:
+                      type:
+                      - number
+                      - 'null'
+                      description: The requirement's scoring weight when this outcome was scored.
+                    isMandatory:
+                      type:
+                      - boolean
+                      - 'null'
+                      description: Whether the requirement was mandatory when this outcome was scored.
+                    isMet:
+                      type: boolean
+                      description: Whether the application met the requirement.
+                    evidence:
+                      type: string
+                      description: The evidence for the outcome, from the CV or screening answers.
+                    scoredAt:
+                      type:
+                      - string
+                      - 'null'
+                      description: When the outcome was scored.
+                      format: date-time
+              screeningAnswers:
+                type: array
+                description: The screening answers this score used.
+                items:
+                  type: object
+                  properties:
+                    atsQuestionId:
+                      type:
+                      - string
+                      - 'null'
+                      description: The question's id in the ATS.
+                    question:
+                      type:
+                      - string
+                      - 'null'
+                      description: The question text.
+                    questionIndex:
+                      type:
+                      - integer
+                      - 'null'
+                      description: The question's position in the application form.
+                    type:
+                      type:
+                      - string
+                      - 'null'
+                      description: The question type.
+                    category:
+                      type:
+                      - string
+                      - 'null'
+                      description: The question category.
+                    isRequired:
+                      type:
+                      - boolean
+                      - 'null'
+                      description: Whether the question was required.
+                    isAnswered:
+                      type: boolean
+                      description: Whether the candidate answered it.
+                    answerText:
+                      type:
+                      - string
+                      - 'null'
+                      description: A text answer.
+                    answerBoolean:
+                      type:
+                      - boolean
+                      - 'null'
+                      description: A yes/no answer.
+                    answerNumber:
+                      type:
+                      - number
+                      - 'null'
+                      description: A numeric answer.
+                    answerDate:
+                      type:
+                      - string
+                      - 'null'
+                      description: A date answer.
+                      format: date
+                    selectedOptions:
+                      type: array
+                      description: The options the candidate selected.
+                      items:
+                        type:
+                        - string
+                        - 'null'
+              createdAt:
+                type: string
+                description: When the score was produced.
+                format: date-time
+        nextToken:
+          type:
+          - string
+          - 'null'
+          description: Pass as `nextToken` to fetch the next page. Null on the last page.
+    StartWorkflowRunsResponse:
+      type: object
+      properties:
+        summary:
+          type: object
+          title: Summary
+          description: Counts for every entry in the request. `received` is the sum of the other four. `errors`, `alreadyEnrolled` and `duplicatesInRequest` list the entries not counted in `queued`.
+          properties:
+            received:
+              type: integer
+              minimum: 0
+              title: Received
+              description: Total input entries across candidateProfileIds, candidateProfileExternalIds, and contacts.
+            queued:
+              type: integer
+              minimum: 0
+              title: Queued
+              description: Entries accepted for enrolment.
+            alreadyEnrolled:
+              type: integer
+              minimum: 0
+              title: Already Enrolled
+              description: Entries skipped because the candidate already has a run for this workflow.
+            duplicatesInRequest:
+              type: integer
+              minimum: 0
+              title: Duplicates In Request
+              description: Entries skipped because an earlier entry in the same request already covered the same contact.
+            rejected:
+              type: integer
+              minimum: 0
+              title: Rejected
+              description: Entries Popp rejected. `errors` gives each reason.
+          required:
+          - received
+          - queued
+          - alreadyEnrolled
+          - duplicatesInRequest
+          - rejected
+          additionalProperties: false
+        queued:
+          type: integer
+          minimum: 0
+          title: Queued
+          description: Same as `summary.queued`.
+        errors:
+          type:
+          - array
+          - 'null'
+          title: Errors
+          description: Entries Popp rejected, or `null` when there are none.
+          items:
+            type: object
+            properties:
+              candidateProfileId:
+                type:
+                - string
+                - 'null'
+                format: uuid
+                title: Candidate Profile ID
+                description: Candidate profile identifier, when one could be resolved before the failure.
+              contactIndex:
+                type:
+                - integer
+                - 'null'
+                title: Contact Index
+                description: Zero-based index of the offending entry in the input `contacts[]` array, when applicable.
+              email:
+                type:
+                - string
+                - 'null'
+                title: Email
+                description: Email of the offending contact, when applicable.
+              phoneNumber:
+                type:
+                - string
+                - 'null'
+                title: Phone Number
+                description: Phone number of the offending contact, when applicable.
+              externalId:
+                type:
+                - string
+                - 'null'
+                title: External ID
+                description: External identifier of the offending entry, when applicable.
+              reason:
+                type:
+                - string
+                - 'null'
+                enum:
+                - INVALID_CONTACT_FIELDS
+                - INVALID_EXTERNAL_ID_FORMAT
+                - EXTERNAL_ID_CONFLICT
+                - EXTERNAL_ID_NOT_FOUND
+                - ENQUEUE_FAILED
+                title: Reason
+                description: Machine-readable rejection reason. Pair with `error` for the human-readable explanation.
+              error:
+                type: string
+                title: Error
+                description: Human-readable explanation of why this entry could not be enrolled.
+            required:
+            - error
+            additionalProperties: false
+        alreadyEnrolled:
+          type:
+          - array
+          - 'null'
+          title: Already Enrolled
+          description: Entries skipped because the candidate already has a run for this workflow. `null` when none were skipped for this reason.
+          items:
+            type: object
+            properties:
+              candidateProfileId:
+                type: string
+                format: uuid
+                title: Candidate Profile ID
+                description: Candidate profile already enrolled in this workflow.
+              contactIndex:
+                type:
+                - integer
+                - 'null'
+                title: Contact Index
+                description: Zero-based index of the entry in the input `contacts[]` array, when applicable.
+              email:
+                type:
+                - string
+                - 'null'
+                title: Email
+                description: Email of the contact, when applicable.
+              phoneNumber:
+                type:
+                - string
+                - 'null'
+                title: Phone Number
+                description: Phone number of the contact, when applicable.
+              externalId:
+                type:
+                - string
+                - 'null'
+                title: External ID
+                description: External identifier of the entry, when applicable.
+              existingRunId:
+                type: string
+                format: uuid
+                title: Existing Run ID
+                description: Identifier of the run the candidate is already enrolled in.
+              existingRunStatus:
+                type: string
+                enum:
+                - RUNNING
+                - COMPLETED
+                - FAILED
+                - CANCELLED
+                title: Existing Run Status
+                description: Status of the existing run.
+            required:
+            - candidateProfileId
+            - existingRunId
+            - existingRunStatus
+            additionalProperties: false
+        duplicatesInRequest:
+          type:
+          - array
+          - 'null'
+          title: Duplicates In Request
+          description: Entries skipped because an earlier entry in the same request already covered the same contact. `null` when the request had no in-request duplicates.
+          items:
+            type: object
+            properties:
+              contactIndex:
+                type: integer
+                title: Contact Index
+                description: Zero-based index of the duplicate entry in the input.
+              email:
+                type:
+                - string
+                - 'null'
+                title: Email
+                description: Email of the duplicate contact, when applicable.
+              phoneNumber:
+                type:
+                - string
+                - 'null'
+                title: Phone Number
+                description: Phone number of the duplicate contact, when applicable.
+              externalId:
+                type:
+                - string
+                - 'null'
+                title: External ID
+                description: External identifier of the duplicate entry, when applicable.
+              firstSeenAtIndex:
+                type: integer
+                title: First Seen At Index
+                description: Index of the earlier entry that first covered this contact and was accepted.
+            required:
+            - contactIndex
+            - firstSeenAtIndex
+            additionalProperties: false
+      required:
+      - summary
+      - queued
+      additionalProperties: false
+    CancelWorkflowRunResponse:
+      type: object
+      properties:
+        workflowRunId:
+          type: string
+          format: uuid
+          title: Workflow Run ID
+          description: The run ID.
+        status:
+          type: string
+          enum:
+          - CANCELLED
+          title: Status
+          description: Always `CANCELLED`.
+        cancelledAt:
+          type: string
+          format: date-time
+          title: Cancelled At
+          description: When the run was cancelled.
+      required:
+      - workflowRunId
+      - status
+      - cancelledAt
+      additionalProperties: false
+    WorkflowAnalysis:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Identifier of the node's analysis. It stays the same across every version of the workflow.
+        workflowId:
+          type: string
+          description: Identifier of the workflow.
+          format: uuid
+        workflowNodeSlug:
+          type: string
+          description: The analysis node's slug.
+        workflowNodeLabel:
+          type:
+          - string
+          - 'null'
+          description: The node's label in the latest version published with this analysis.
+        isActive:
+          type: boolean
+          description: Whether the workflow's live version has an analysis node with this slug. An inactive analysis keeps its applications, and runs on earlier versions still score into it.
+        isRecalculatingScores:
+          type: boolean
+          description: Whether a re-score is running. No progress count is given.
+        candidatesCount:
+          type: integer
+          description: Number of applications scored on the node.
+        candidatesRequirementsMetCount:
+          type: integer
+          description: Number of applications that met every mandatory requirement.
+        candidatesRequirementsNotMetCount:
+          type: integer
+          description: Number of applications that missed a mandatory requirement.
+        candidatesAnalysisErrorCount:
+          type: integer
+          description: Number of applications whose latest scoring failed. A re-score that fails after the workflow acted on the application isn't counted, and appears only in the application's history. One that fails before keeps the application's earlier score, so that application also counts in a score band.
+        scoreBands:
+          type: array
+          description: The score branches of the condition node the analysis node leads to, in score order. Empty when the node doesn't branch on its score.
+          items:
+            type: object
+            properties:
+              branchId:
+                type: string
+                description: The branch's id, or `else`.
+              label:
+                type:
+                - string
+                - 'null'
+                description: The branch's label.
+              minScore:
+                type: integer
+                description: Lowest whole-number score (0-100) in the band, inclusive.
+              maxScore:
+                type: integer
+                description: Highest whole-number score (0-100) in the band, inclusive.
+              minTotalScoreScaled:
+                type: number
+                description: Lowest `totalScoreScaled` (0-1) the band counts, inclusive.
+              maxTotalScoreScaled:
+                type: number
+                description: Highest `totalScoreScaled` (0-1) the band counts, inclusive.
+              candidatesCount:
+                type: integer
+                description: Number of applications whose effective score is in the band.
+        requirements:
+          type: array
+          description: The node's requirements, each with its met and not-met counts.
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: Identifier of the requirement.
+              slug:
+                type:
+                - string
+                - 'null'
+                description: The requirement's slug.
+              text:
+                type: string
+                description: The requirement's text.
+              weight:
+                type: number
+                description: The requirement's scoring weight.
+              isMandatory:
+                type: boolean
+                description: Whether the requirement is mandatory.
+              requirementMetCandidatesCount:
+                type: integer
+                description: Number of applications that met the requirement.
+              requirementNotMetCandidatesCount:
+                type: integer
+                description: Number of applications that did not meet the requirement.
+    workflowId:
+      type: string
+      format: uuid
+    status-4a2a30ad-8ae1-4aa0-b803-3b9cea83720a:
+      type: string
+    nextToken:
+      type: string
+    ListWorkflowRunsResponse:
+      type: object
+      description: Each run leaves out `context`, `lastFailedNodeId`, `hasPartialFailures` and `failedNodeIds`. [Get workflow run](/reference/get-workflow-run) returns them.
+      properties:
+        data:
+          type: array
+          title: Data
+          description: Workflow run summaries.
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+                title: Run ID
+                description: Unique identifier for the workflow run.
+              organizationId:
+                type: string
+                format: uuid
+                title: Organization ID
+                description: Identifier of the organization that owns the run.
+              workflowId:
+                type: string
+                format: uuid
+                title: Workflow ID
+                description: Identifier of the parent workflow.
+              workflowVersionId:
+                type: string
+                format: uuid
+                title: Workflow Version ID
+                description: Identifier of the workflow version this run executes against.
+              workflowVersionNumber:
+                type: integer
+                title: Workflow Version Number
+                description: Numeric version of the workflow this run executes against.
+              candidateProfileId:
+                type: string
+                format: uuid
+                title: Candidate Profile ID
+                description: Identifier of the candidate profile enrolled in this run.
+              candidateProfileName:
+                type:
+                - string
+                - 'null'
+                title: Candidate Name
+                description: The candidate's full name when they were enrolled. Renaming the profile later doesn't change it. `null` on older runs, or when the profile has no name.
+              candidateProfileFirstName:
+                type:
+                - string
+                - 'null'
+                title: Candidate First Name
+                description: The candidate's first name when they were enrolled. See `candidateProfileName`.
+              candidateProfileLastName:
+                type:
+                - string
+                - 'null'
+                title: Candidate Last Name
+                description: The candidate's last name when they were enrolled. See `candidateProfileName`.
+              status:
+                type: string
+                enum:
+                - RUNNING
+                - COMPLETED
+                - FAILED
+                - CANCELLED
+                title: Status
+                description: Current run status.
+              currentNodeId:
+                type:
+                - string
+                - 'null'
+                title: Current Node ID
+                description: Identifier of the node the run is currently at.
+              runVersion:
+                type: integer
+                title: Run Version
+                description: Increases each time the run changes.
+              errorCode:
+                type:
+                - string
+                - 'null'
+                title: Error Code
+                description: Machine-readable error code on failed runs.
+              errorMessage:
+                type:
+                - string
+                - 'null'
+                title: Error Message
+                description: Human-readable error message on failed runs.
+              createdAt:
+                type: string
+                format: date-time
+                title: Created At
+                description: Timestamp when the run was created.
+              updatedAt:
+                type: string
+                format: date-time
+                title: Updated At
+                description: Timestamp when the run was last updated.
+              completedAt:
+                type:
+                - string
+                - 'null'
+                format: date-time
+                title: Completed At
+                description: When the run ended.
+            required:
+            - id
+            - organizationId
+            - workflowId
+            - workflowVersionId
+            - workflowVersionNumber
+            - candidateProfileId
+            - status
+            - runVersion
+            - createdAt
+            - updatedAt
+            additionalProperties: false
+        nextToken:
+          type:
+          - string
+          - 'null'
+          title: Next Token
+          description: Pagination cursor. Pass on the next request to fetch the following page; null when there are no further pages.
+        total:
+          type:
+          - integer
+          - 'null'
+          minimum: 0
+          title: Total
+          description: Total number of runs matching the filter, when computable.
+      required:
+      - data
+      additionalProperties: false
+    Workflow:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Workflow ID
+          description: Unique identifier for the workflow.
+        organizationId:
+          type: string
+          format: uuid
+          title: Organization ID
+          description: Identifier of the organization that owns the workflow.
+        name:
+          type: string
+          title: Name
+          description: The workflow name.
+        description:
+          type:
+          - string
+          - 'null'
+          title: Description
+          description: What the workflow does.
+        status:
+          type: string
+          enum:
+          - UNPUBLISHED
+          - PUBLISHED
+          - PAUSED
+          - ARCHIVED
+          title: Status
+          description: Only `PUBLISHED` workflows accept new runs. [Lifecycle](/docs/workflow-configuration#lifecycle) explains each status.
+        configuration:
+          type:
+          - string
+          - 'null'
+          title: Configuration
+          description: The workflow graph as a JSON-encoded string. See [Workflow configuration](/docs/workflow-configuration).
+        settings:
+          type:
+          - string
+          - 'null'
+          title: Settings
+          description: JSON-encoded string containing workflow-level settings.
+        liveWorkflowVersionId:
+          type:
+          - string
+          - 'null'
+          format: uuid
+          title: Live Workflow Version ID
+          description: The live version's ID. `null` until the workflow is first published, and again once it is archived.
+        externalId:
+          type:
+          - string
+          - 'null'
+          title: External ID
+          description: Your own ID for the workflow, unique within your organization.
+        createdByUserId:
+          type:
+          - string
+          - 'null'
+          format: uuid
+          title: Created By User ID
+          description: Identifier of the user that created the workflow.
+        createdAt:
+          type: string
+          format: date-time
+          title: Created At
+          description: Timestamp when the workflow was created.
+        updatedAt:
+          type: string
+          format: date-time
+          title: Updated At
+          description: Timestamp when the workflow was last updated.
+      required:
+      - id
+      - organizationId
+      - name
+      - status
+      - createdAt
+      - updatedAt
+      additionalProperties: false
+    StartWorkflowRunsInput:
+      type: object
+      description: Send at least one candidate across `candidateProfileIds`, `candidateProfileExternalIds` and `contacts`, and no more than 5,000 in total.
+      properties:
+        candidateProfileIds:
+          type: array
+          title: Candidate Profile IDs
+          description: List of Popp candidate profile IDs to enrol into the workflow.
+          items:
+            type: string
+            minLength: 1
+            title: Candidate Profile ID
+            description: Popp candidate profile identifier.
+        candidateProfileExternalIds:
+          type: array
+          title: Candidate Profile External IDs
+          description: Your external IDs for existing candidate profiles in your organization.
+          items:
+            type: string
+            minLength: 1
+            maxLength: 256
+            pattern: ^[\w.-]+$
+            title: Candidate Profile External ID
+            description: External identifier in the format ^[\w.-]+$.
+        contacts:
+          type: array
+          title: Contacts
+          description: Inline contact details. Each contact is resolved to or created as a candidate profile, then enrolled into the workflow. Use this when you do not yet have a Popp candidate profile for the contact.
+          items:
+            type: object
+            properties:
+              firstName:
+                type: string
+                minLength: 1
+                title: First Name
+                description: Contact's first name.
+              lastName:
+                type: string
+                title: Last Name
+                description: Contact's last name.
+              email:
+                type: string
+                format: email
+                title: Email
+                description: Contact's email address. At least one of `email` or `phoneNumber` is required per contact.
+              phoneNumber:
+                type: string
+                pattern: ^\+[1-9]\d{1,14}$
+                title: Phone Number
+                description: Contact's phone number in E.164 format. At least one of `email` or `phoneNumber` is required per contact.
+              externalId:
+                type: string
+                minLength: 1
+                maxLength: 256
+                pattern: ^[\w.-]+$
+                title: External ID
+                description: Your own ID for the contact.
+              tags:
+                type: array
+                title: Tags
+                description: 'Plain candidate tags for this contact. Only inline contacts carry tags: `candidateProfileIds` and `candidateProfileExternalIds` do not. Popp trims each tag and collapses repeated whitespace, keeping casing and punctuation, and stores tags that differ only in casing or repeated whitespace once, with the first spelling sent. Blank tags, tags over 250 characters, and tags past a contact''s 4,096-byte budget (UTF-8 size of the tag list as a JSON array) are dropped rather than rejected; only a malformed shape returns 400. Tags are added to your organization''s tag catalog shortly after the run is created.'
+                items:
+                  type: string
+                  title: Tag
+                example:
+                - nurse
+                - night-shift
+              tagsObject:
+                type: object
+                title: Tags Object
+                description: Key/value candidate tags for this contact. Each entry becomes a `key:value` tag (no space after the colon), added after `tags`. Popp trims the key and the value separately; a blank key or a blank value produces no tag. Composed tags then follow the same rules as `tags`. A non-string value returns 400.
+                additionalProperties:
+                  type: string
+                example:
+                  recruiter_id: '1234567890'
+                  recruiter_name: John Doe
+                  recruiter_email: john.doe@example.com
+            required:
+            - firstName
+            additionalProperties: false
+        triggerMetadata:
+          type: string
+          title: Trigger Metadata
+          description: Your metadata for this batch of runs, as a JSON-encoded string. It appears in each run's `context` when applicable.
+      additionalProperties: false
+    ErrorResponse:
+      type: object
+    runId:
+      type: string
+      format: uuid
+    candidateProfileId:
+      type: string
+      format: uuid
+    CreateWorkflowInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          title: Name
+          description: The workflow name.
+        description:
+          type: string
+          title: Description
+          description: What the workflow does.
+        configuration:
+          type: string
+          title: Configuration
+          description: The workflow graph as a JSON-encoded string. Optional here, but required to publish. See [Workflow configuration](/docs/workflow-configuration).
+        settings:
+          type: string
+          title: Settings
+          description: JSON-encoded string containing workflow-level settings.
+        externalId:
+          type: string
+          minLength: 1
+          maxLength: 256
+          pattern: ^[\w.-]+$
+          title: External ID
+          description: Your own ID for the workflow, unique within your organization. Letters, digits, `_`, `.` and `-`, 1 to 256 characters.
+      required:
+      - name
+      additionalProperties: false
+    externalId-56390b04-5308-442b-aa33-b2a9318a4dbf:
+      type: string
+      pattern: ^[\w.-]+$
+      minLength: 1
+      maxLength: 256
+    externalId-2798ed29-5811-4c0a-b03f-8f56f0dcc756:
+      type: string
+      pattern: ^[\w.-]+$
+      minLength: 1
+      maxLength: 256
+    candidateId:
+      type: string
+    externalId-78d822e1-15b1-4cbe-95c7-b08c04b3c084:
+      type: string
+      pattern: ^[\w.-]+$
+      minLength: 1
+      maxLength: 256
+    PublishWorkflowInput:
+      type: object
+      properties:
+        changeNotes:
+          type: string
+          title: Change Notes
+          description: A note on what changed in this version.
+      additionalProperties: false
+    UpdateWorkflowInput:
+      type: object
+      description: Send at least one field.
+      properties:
+        name:
+          type: string
+          minLength: 1
+          title: Name
+          description: Updated workflow name.
+        description:
+          type: string
+          title: Description
+          description: Updated description.
+        configuration:
+          type: string
+          title: Configuration
+          description: The new workflow graph as a JSON-encoded string. See [Workflow configuration](/docs/workflow-configuration).
+        settings:
+          type: string
+          title: Settings
+          description: Updated JSON-encoded workflow settings.
+        externalId:
+          type: string
+          minLength: 1
+          maxLength: 256
+          pattern: ^[\w.-]+$
+          title: External ID
+          description: Your new ID for the workflow, unique within your organization.
+      minProperties: 1
+      additionalProperties: false
+    WorkflowRun:
+      type: object
+      description: One candidate's run through a published workflow.
+      properties:
+        id:
+          type: string
+          format: uuid
+          title: Run ID
+          description: Unique identifier for the workflow run.
+        organizationId:
+          type: string
+          format: uuid
+          title: Organization ID
+          description: Identifier of the organization that owns the run.
+        workflowId:
+          type: string
+          format: uuid
+          title: Workflow ID
+          description: Identifier of the parent workflow.
+        workflowVersionId:
+          type: string
+          format: uuid
+          title: Workflow Version ID
+          description: Identifier of the workflow version this run executes against.
+        workflowVersionNumber:
+          type: integer
+          title: Workflow Version Number
+          description: Numeric version of the workflow this run executes against.
+        candidateProfileId:
+          type: string
+          format: uuid
+          title: Candidate Profile ID
+          description: Identifier of the candidate profile enrolled in this run.
+        candidateProfileName:
+          type:
+          - string
+          - 'null'
+          title: Candidate Name
+          description: The candidate's full name when they were enrolled. Renaming the profile later doesn't change it. `null` on older runs, or when the profile has no name.
+        candidateProfileFirstName:
+          type:
+          - string
+          - 'null'
+          title: Candidate First Name
+          description: The candidate's first name when they were enrolled. See `candidateProfileName`.
+        candidateProfileLastName:
+          type:
+          - string
+          - 'null'
+          title: Candidate Last Name
+          description: The candidate's last name when they were enrolled. See `candidateProfileName`.
+        status:
+          type: string
+          enum:
+          - RUNNING
+          - COMPLETED
+          - FAILED
+          - CANCELLED
+          title: Status
+          description: Current run status.
+        currentNodeId:
+          type:
+          - string
+          - 'null'
+          title: Current Node ID
+          description: The node the run is at, or `null` once the run has ended.
+        context:
+          type:
+          - string
+          - 'null'
+          title: Context
+          description: The run's state as a JSON-encoded string, which nodes and condition expressions read. It gains the `trigger`, `candidate`, `job`, `conversations`, `answers`, `analysis` and `meetings` namespaces as the run progresses.
+        runVersion:
+          type: integer
+          title: Run Version
+          description: Increases each time the run changes.
+        errorCode:
+          type:
+          - string
+          - 'null'
+          title: Error Code
+          description: Machine-readable error code on failed runs.
+        errorMessage:
+          type:
+          - string
+          - 'null'
+          title: Error Message
+          description: Human-readable error message on failed runs.
+        lastFailedNodeId:
+          type:
+          - string
+          - 'null'
+          title: Last Failed Node ID
+          description: Identifier of the most recent node that produced a failure on this run.
+        hasPartialFailures:
+          type:
+          - boolean
+          - 'null'
+          title: Has Partial Failures
+          description: True when at least one node failed but the run continued through an alternate routing path.
+        failedNodeIds:
+          type:
+          - array
+          - 'null'
+          title: Failed Node IDs
+          description: All node IDs that produced a failure during this run.
+          items:
+            type: string
+        createdAt:
+          type: string
+          format: date-time
+          title: Created At
+          description: Timestamp when the run was created.
+        updatedAt:
+          type: string
+          format: date-time
+          title: Updated At
+          description: Timestamp when the run was last updated.
+        completedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          title: Completed At
+          description: When the run ended. `null` while it is running.
+      required:
+      - id
+      - organizationId
+      - workflowId
+      - workflowVersionId
+      - workflowVersionNumber
+      - candidateProfileId
+      - status
+      - runVersion
+      - createdAt
+      - updatedAt
+      additionalProperties: false
+    status-77eec34f-669b-4d05-86b2-0457ccb4ae30:
+      type: string
+  securitySchemes:
+    popp_api_key:
+      description: Your Popp API key for authentication
+      type: apiKey
+      name: x-api-key
+      in: header
+    organization_id:
+      description: Your organization's unique identifier
+      type: apiKey
+      name: x-organization-id
+      in: header
+x-provenance:
+  method: searched
+  source: https://docs.joinpopp.com/reference
+  harvested: '2026-10-14'
+  tool: harvest-readme-openapi.py
+  note: Assembled verbatim from the OpenAPI definition ReadMe embeds in each operation page of the provider's developer portal; paths and components merged by API title, nothing authored.
+  assembled_from:
+  - https://docs.joinpopp.com/reference/add-candidates-to-list-by-external-id.md
+  - https://docs.joinpopp.com/reference/add-candidates-to-list.md
+  - https://docs.joinpopp.com/reference/archive-analysis.md
+  - https://docs.joinpopp.com/reference/archive-document-type.md
+  - https://docs.joinpopp.com/reference/archive-workflow-by-external-id.md
+  - https://docs.joinpopp.com/reference/archive-workflow.md
+  - https://docs.joinpopp.com/reference/bulk-create-conversations.md
+  - https://docs.joinpopp.com/reference/cancel-booking.md
+  - https://docs.joinpopp.com/reference/cancel-workflow-run.md
+  - https://docs.joinpopp.com/reference/create-analysis-candidate.md
+  - https://docs.joinpopp.com/reference/create-analysis.md
+  - https://docs.joinpopp.com/reference/create-campaign.md
+  - https://docs.joinpopp.com/reference/create-candidate-list.md
+  - https://docs.joinpopp.com/reference/create-candidate-note-by-external-id.md
+  - https://docs.joinpopp.com/reference/create-candidate-note.md
+  - https://docs.joinpopp.com/reference/create-candidate.md
+  - https://docs.joinpopp.com/reference/create-conversation.md
+  - https://docs.joinpopp.com/reference/create-custom-field.md
+  - https://docs.joinpopp.com/reference/create-document-credential.md
+  - https://docs.joinpopp.com/reference/create-document-type.md
+  - https://docs.joinpopp.com/reference/create-meeting-template.md
+  - https://docs.joinpopp.com/reference/create-organization-config.md
+  - https://docs.joinpopp.com/reference/create-scheduling-conversation.md
+  - https://docs.joinpopp.com/reference/create-user.md
+  - https://docs.joinpopp.com/reference/create-webhook.md
+  - https://docs.joinpopp.com/reference/create-workflow.md
+  - https://docs.joinpopp.com/reference/deactivate-user-by-email.md
+  - https://docs.joinpopp.com/reference/deactivate-user.md
+  - https://docs.joinpopp.com/reference/delete-candidate-by-email.md
+  - https://docs.joinpopp.com/reference/delete-candidate-by-external-id.md
+  - https://docs.joinpopp.com/reference/delete-candidate-by-phone-number.md
+  - https://docs.joinpopp.com/reference/delete-candidate-list-by-external-id.md
+  - https://docs.joinpopp.com/reference/delete-candidate-list.md
+  - https://docs.joinpopp.com/reference/delete-candidate-note.md
+  - https://docs.joinpopp.com/reference/delete-candidate.md
+  - https://docs.joinpopp.com/reference/delete-custom-field.md
+  - https://docs.joinpopp.com/reference/delete-document-credential.md
+  - https://docs.joinpopp.com/reference/delete-document-type.md
+  - https://docs.joinpopp.com/reference/delete-meeting-template.md
+  - https://docs.joinpopp.com/reference/delete-tag.md
+  - https://docs.joinpopp.com/reference/delete-user-by-email.md
+  - https://docs.joinpopp.com/reference/delete-user.md
+  - https://docs.joinpopp.com/reference/delete-webhook.md
+  - https://docs.joinpopp.com/reference/download-media.md
+  - https://docs.joinpopp.com/reference/generate-preferred-answer-requirements.md
+  - https://docs.joinpopp.com/reference/generate-questions.md
+  - https://docs.joinpopp.com/reference/generate-requirements.md
+  - https://docs.joinpopp.com/reference/get-analysis.md
+  - https://docs.joinpopp.com/reference/get-booking.md
+  - https://docs.joinpopp.com/reference/get-campaign.md
+  - https://docs.joinpopp.com/reference/get-candidate-by-external-id.md
+  - https://docs.joinpopp.com/reference/get-candidate-list-by-external-id.md
+  - https://docs.joinpopp.com/reference/get-candidate-list.md
+  - https://docs.joinpopp.com/reference/get-candidate-profile-by-external-id.md
+  - https://docs.joinpopp.com/reference/get-candidate.md
+  - https://docs.joinpopp.com/reference/get-conversation.md
+  - https://docs.joinpopp.com/reference/get-custom-field.md
+  - https://docs.joinpopp.com/reference/get-document-media.md
+  - https://docs.joinpopp.com/reference/get-document-type.md
+  - https://docs.joinpopp.com/reference/get-document.md
+  - https://docs.joinpopp.com/reference/get-meeting-template.md
+  - https://docs.joinpopp.com/reference/get-organization-config-by-external-id.md
+  - https://docs.joinpopp.com/reference/get-organization-config.md
+  - https://docs.joinpopp.com/reference/get-organization-details.md
+  - https://docs.joinpopp.com/reference/get-user-by-email.md
+  - https://docs.joinpopp.com/reference/get-user-calendar.md
+  - https://docs.joinpopp.com/reference/get-user.md
+  - https://docs.joinpopp.com/reference/get-workflow-analysis-application.md
+  - https://docs.joinpopp.com/reference/get-workflow-analysis.md
+  - https://docs.joinpopp.com/reference/get-workflow-by-external-id.md
+  - https://docs.joinpopp.com/reference/get-workflow-run.md
+  - https://docs.joinpopp.com/reference/get-workflow.md
+  - https://docs.joinpopp.com/reference/hand-conversation-to-agent.md
+  - https://docs.joinpopp.com/reference/invite-calendar-contact.md
+  - https://docs.joinpopp.com/reference/list-agents.md
+  - https://docs.joinpopp.com/reference/list-analyses.md
+  - https://docs.joinpopp.com/reference/list-ats-job-stages.md
+  - https://docs.joinpopp.com/reference/list-ats-jobs.md
+  - https://docs.joinpopp.com/reference/list-ats-rejection-reasons.md
+  - https://docs.joinpopp.com/reference/list-bookings.md
+  - https://docs.joinpopp.com/reference/list-campaigns.md
+  - https://docs.joinpopp.com/reference/list-candidate-lists.md
+  - https://docs.joinpopp.com/reference/list-candidate-notes-by-external-id.md
+  - https://docs.joinpopp.com/reference/list-candidate-notes.md
+  - https://docs.joinpopp.com/reference/list-conversation-documents.md
+  - https://docs.joinpopp.com/reference/list-conversation-messages.md
+  - https://docs.joinpopp.com/reference/list-conversations.md
+  - https://docs.joinpopp.com/reference/list-custom-fields.md
+  - https://docs.joinpopp.com/reference/list-document-credentials.md
+  - https://docs.joinpopp.com/reference/list-document-types.md
+  - https://docs.joinpopp.com/reference/list-meeting-templates.md
+  - https://docs.joinpopp.com/reference/list-organization-users.md
+  - https://docs.joinpopp.com/reference/list-organizations.md
+  - https://docs.joinpopp.com/reference/list-tags.md
+  - https://docs.joinpopp.com/reference/list-templates.md
+  - https://docs.joinpopp.com/reference/list-user-calendars.md
+  - https://docs.joinpopp.com/reference/list-users.md
+  - https://docs.joinpopp.com/reference/list-webhook-events.md
+  - https://docs.joinpopp.com/reference/list-webhooks.md
+  - https://docs.joinpopp.com/reference/list-workflow-analysis-application-history.md
+  - https://docs.joinpopp.com/reference/list-workflow-analysis-applications.md
+  - https://docs.joinpopp.com/reference/list-workflow-runs.md
+  - https://docs.joinpopp.com/reference/list-workflows.md
+  - https://docs.joinpopp.com/reference/parse-availability.md
+  - https://docs.joinpopp.com/reference/pause-workflow-by-external-id.md
+  - https://docs.joinpopp.com/reference/pause-workflow.md
+  - https://docs.joinpopp.com/reference/process-document.md
+  - https://docs.joinpopp.com/reference/publish-workflow-by-external-id.md
+  - https://docs.joinpopp.com/reference/publish-workflow.md
+  - https://docs.joinpopp.com/reference/reactivate-user-by-email.md
+  - https://docs.joinpopp.com/reference/reactivate-user.md
+  - https://docs.joinpopp.com/reference/remove-candidate-document-by-external-id.md
+  - https://docs.joinpopp.com/reference/remove-candidate-document.md
+  - https://docs.joinpopp.com/reference/remove-candidates-from-list-by-external-id.md
+  - https://docs.joinpopp.com/reference/remove-candidates-from-list.md
+  - https://docs.joinpopp.com/reference/reparse-candidate-cv-by-external-id.md
+  - https://docs.joinpopp.com/reference/reparse-candidate-cv.md
+  - https://docs.joinpopp.com/reference/resend-booking-url.md
+  - https://docs.joinpopp.com/reference/resume-workflow-by-external-id.md
+  - https://docs.joinpopp.com/reference/resume-workflow.md
+  - https://docs.joinpopp.com/reference/send-conversation-message.md
+  - https://docs.joinpopp.com/reference/set-user-calendar-availability.md
+  - https://docs.joinpopp.com/reference/sign-out-user-by-email.md
+  - https://docs.joinpopp.com/reference/sign-out-user.md
+  - https://docs.joinpopp.com/reference/start-workflow-runs-by-external-id.md
+  - https://docs.joinpopp.com/reference/start-workflow-runs.md
+  - https://docs.joinpopp.com/reference/stop-campaign.md
+  - https://docs.joinpopp.com/reference/takeover-conversation.md
+  - https://docs.joinpopp.com/reference/update-analysis.md
+  - https://docs.joinpopp.com/reference/update-booking.md
+  - https://docs.joinpopp.com/reference/update-campaign.md
+  - https://docs.joinpopp.com/reference/update-candidate-by-external-id.md
+  - https://docs.joinpopp.com/reference/update-candidate-list-by-external-id.md
+  - https://docs.joinpopp.com/reference/update-candidate-list.md
+  - https://docs.joinpopp.com/reference/update-candidate-note.md
+  - https://docs.joinpopp.com/reference/update-candidate.md
+  - https://docs.joinpopp.com/reference/update-custom-field.md
+  - https://docs.joinpopp.com/reference/update-document-credential.md
+  - https://docs.joinpopp.com/reference/update-document-type.md
+  - https://docs.joinpopp.com/reference/update-meeting-template.md
+  - https://docs.joinpopp.com/reference/update-organization-config-by-external-id.md
+  - https://docs.joinpopp.com/reference/update-organization-config.md
+  - https://docs.joinpopp.com/reference/update-organization-details.md
+  - https://docs.joinpopp.com/reference/update-requirements-and-reanalyse.md
+  - https://docs.joinpopp.com/reference/update-user-by-email.md
+  - https://docs.joinpopp.com/reference/update-user.md
+  - https://docs.joinpopp.com/reference/update-webhook.md
+  - https://docs.joinpopp.com/reference/update-workflow-by-external-id.md
+  - https://docs.joinpopp.com/reference/update-workflow.md
+  merge:
+    pages: 149
+    deduped: 618
+    conflicts_kept_first: 0

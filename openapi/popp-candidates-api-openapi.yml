@@ -1,0 +1,1945 @@
+openapi: 3.2.0
+info:
+  title: Popp Candidates API
+  description: Popp API documentation
+  version: '1'
+servers:
+- url: https://api.joinpopp.com
+  description: Development server
+security:
+- popp_api_key: []
+  organization_id: []
+tags:
+- name: Candidates
+paths:
+  /v1/candidates:
+    post:
+      summary: Create a candidate
+      description: 'Creates a candidate profile in the caller''s organization, or upserts an existing one when the same `externalId` is re-posted. Organization context is taken from the authenticated API key, never from the body. `mode` controls only how much of the work the request waits for — specifically, whether the document is downloaded before responding. In `SYNC` mode the profile is created and, when `documentUrl` is supplied, the document is downloaded during the request (201 when newly created, 200 when an existing profile was upserted), so a failed download surfaces as a 502 on this call. In `ASYNC` mode the work is queued and 202 is returned immediately with the resolved candidate id, and the document is downloaded in the background. CV parsing and vectorization are **always** asynchronous, in both modes: a 2xx means the profile exists — and in `SYNC`, that the document was fetched — never that the CV has been parsed or indexed. A CV can be attached via `documentUrl` or inline `documentBase64` (`SYNC` only). `documentUrl` is fetched server-side: the organization group''s stored credential is sent when one is registered, and the URL is fetched unauthenticated when it is not, so a presigned or otherwise public URL works without any credential being set up. The destination must be an `https` URL resolving to a public address and is not followed through redirects; one that is refused is a 400, not a 502, because retrying cannot help.'
+      operationId: create-candidate
+      parameters: []
+      tags:
+      - Candidates
+      requestBody:
+        required: true
+        description: Candidate payload
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCandidateRequest'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateCandidateResponse'
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateCandidateResponse'
+        '202':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateCandidateAcceptedResponse'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '502':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /v1/candidates/by-email/{email}:
+    delete:
+      summary: Delete candidates by email
+      description: As `DELETE /v1/candidates/{id}`, addressed by email. An address can match several candidates; every match in your organization is deleted and the response lists their ids.
+      operationId: delete-candidate-by-email
+      parameters:
+      - name: email
+        in: path
+        description: URL-encoded email address. Matched case-insensitively.
+        required: true
+        schema:
+          $ref: '#/components/schemas/candidate_profile_email'
+      tags:
+      - Candidates
+      responses:
+        '202':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteCandidateResponse'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /v1/candidates/by-external-id/{externalId}:
+    patch:
+      summary: Update a candidate by external ID
+      description: 'Partially updates an existing candidate profile, addressed by the caller''s own identifier rather than Popp''s. Behaves exactly like `PATCH /v1/candidates/{id}`: send only the fields you want to change — omitting a field leaves the stored value alone, while sending `null` clears it — and the endpoint never creates. An `externalId` with no candidate in the caller''s organization group returns 404, so a mistyped identifier cannot silently produce a new candidate (use `POST /v1/candidates` to create or upsert). Organization context is taken from the authenticated API key, never from the body. A supplied `documentUrl` or `documentBase64` is downloaded during the request, so a failed fetch surfaces as a 502. `documentUrl` is fetched with the organization group''s stored credential when one is registered and unauthenticated when it is not, so a presigned or public URL works; the destination must be an `https` URL resolving to a public address and is not followed through redirects, and one that is refused is a 400 rather than a 502. CV parsing and vectorization always continue asynchronously afterwards, so a 200 means the fields are stored, never that the CV has been parsed or indexed. Resending a document with the same bytes keeps its parsed data rather than parsing it again; to force a fresh parse use the reparse endpoint.'
+      operationId: update-candidate-by-external-id
+      parameters:
+      - name: externalId
+        in: path
+        description: The caller-supplied identifier the candidate was created with.
+        required: true
+        schema:
+          $ref: '#/components/schemas/externalId'
+      tags:
+      - Candidates
+      requestBody:
+        required: true
+        description: The fields to change
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCandidateRequest'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateCandidateResponse'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '502':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      summary: Get a candidate by external ID
+      description: Returns a candidate profile addressed by the caller's own identifier. The lookup is scoped to the authenticated organization group, so an external id in use by another tenant is never reachable and returns 404 — the same response as an external id that exists nowhere. Where more than one candidate in the group somehow shares an external id, the first match is returned and the collision is logged. The response is identical in shape to `GET /v1/candidates/{id}`.
+      operationId: get-candidate-by-external-id
+      parameters:
+      - name: externalId
+        in: path
+        description: The caller-supplied identifier, in the format ^[\w.-]+$.
+        required: true
+        schema:
+          $ref: '#/components/schemas/externalId'
+      tags:
+      - Candidates
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetCandidateResponse'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      summary: Delete a candidate by external ID
+      description: As `DELETE /v1/candidates/{id}`, addressed by your own external identifier.
+      operationId: delete-candidate-by-external-id
+      parameters:
+      - name: externalId
+        in: path
+        description: The caller-supplied identifier, in the format ^[\\w.-]+$.
+        required: true
+        schema:
+          $ref: '#/components/schemas/externalId'
+      tags:
+      - Candidates
+      responses:
+        '202':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteCandidateResponse'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /v1/candidates/by-external-id/{externalId}/document:
+    delete:
+      summary: Remove a candidate CV by external ID
+      description: Addressed by the caller's own identifier. Removes the candidate's CV without deleting the candidate. Every stored version of the document is deleted, the CV-extracted values (the fromCv fields, jobs, education and the like) are cleared, and the candidate is re-indexed on the data you provided, so it stays searchable on that alone. Skills and qualifications are kept as stored. A candidate with no CV returns 200 with a message saying it is already unparsed. A candidate still being processed returns 409; retry once processing completes.
+      operationId: remove-candidate-document-by-external-id
+      parameters:
+      - name: externalId
+        in: path
+        description: The caller-supplied identifier the candidate was created with.
+        required: true
+        schema:
+          $ref: '#/components/schemas/externalId'
+      tags:
+      - Candidates
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CandidateCvResponse'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /v1/candidates/by-external-id/{externalId}/notes:
+    get:
+      summary: List a candidate's notes by external ID
+      description: 'Every note held about this candidate, newest first: notes added through this API and notes synced from your ATS. Notes are free text written by a recruiter and are searchable — they feed the same index as the candidate''s CV. They are never shown to candidates.'
+      operationId: list-candidate-notes-by-external-id
+      parameters:
+      - name: externalId
+        in: path
+        description: Your own id for the candidate
+        required: true
+        schema:
+          $ref: '#/components/schemas/externalId'
+      - name: limit
+        in: query
+        description: Notes per page, 1 to 50. Defaults to 20.
+        required: false
+        schema:
+          $ref: '#/components/schemas/limit'
+      - name: nextToken
+        in: query
+        description: 'Token from a previous response, to fetch the next page. Keep paging until nextToken is null: a page can hold fewer than limit.'
+        required: false
+        schema:
+          $ref: '#/components/schemas/nextToken'
+      tags:
+      - Candidates
+      responses:
+        '200':
+          description: The candidate's notes.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListCandidateNotesResponse'
+        '401':
+          description: Missing or invalid API key.
+        '404':
+          description: No candidate with this external ID in your organization.
+    post:
+      summary: Add a note to a candidate by external ID
+      description: Records a note against the candidate. Notes are free text and searchable — they feed the same index as the candidate's CV, so the candidate becomes findable on words in the note shortly afterwards. Notes are never shown to candidates. `priority` and `sourceTime` place the re-index in the processing queue, exactly as on a candidate update; they default to priority 0 and the time of the request.
+      operationId: create-candidate-note-by-external-id
+      parameters:
+      - name: externalId
+        in: path
+        description: Your own id for the candidate
+        required: true
+        schema:
+          $ref: '#/components/schemas/externalId'
+      tags:
+      - Candidates
+      requestBody:
+        required: false
+        description: The note to add.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CandidateNoteRequest'
+      responses:
+        '201':
+          description: The note as stored.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CandidateNoteResponse'
+        '400':
+          description: The note is empty or longer than 20,000 characters.
+        '404':
+          description: No candidate with this external ID in your organization.
+  /v1/candidates/by-external-id/{externalId}/reparse:
+    post:
+      summary: Re-parse a candidate CV by external ID
+      description: Addressed by the caller's own identifier. Parses the candidate's stored CV again and re-indexes the candidate, even when the document is unchanged. Use it when parsing failed or should be refreshed. Allowed in any status. Returns 202 once queued; the outcome arrives as the CANDIDATE_PROCESSING_STARTED, CANDIDATE_PROCESSING_COMPLETED and CANDIDATE_PROCESSING_FAILED webhooks. Each re-parse runs a full extraction.
+      operationId: reparse-candidate-cv-by-external-id
+      parameters:
+      - name: externalId
+        in: path
+        description: The caller-supplied identifier the candidate was created with.
+        required: true
+        schema:
+          $ref: '#/components/schemas/externalId'
+      tags:
+      - Candidates
+      responses:
+        '202':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CandidateCvResponse'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /v1/candidates/by-phone-number/{phoneNumber}:
+    delete:
+      summary: Delete candidates by phone number
+      description: As `DELETE /v1/candidates/{id}`, addressed by phone number. A number can match several candidates; every match in your organization is deleted and the response lists their ids.
+      operationId: delete-candidate-by-phone-number
+      parameters:
+      - name: phoneNumber
+        in: path
+        description: URL-encoded phone number in E.164 format, e.g. %2B447700900123. A local-format number without a country code is rejected rather than guessed at.
+        required: true
+        schema:
+          $ref: '#/components/schemas/phoneNumber'
+      tags:
+      - Candidates
+      responses:
+        '202':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteCandidateResponse'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /v1/candidates/{id}:
+    patch:
+      summary: Update a candidate
+      description: 'Partially updates an existing candidate profile. Send only the fields you want to change: omitting a field leaves the stored value alone, while sending `null` clears it. This endpoint never creates — an id that does not exist in the caller''s organization group returns 404, so a mistyped id cannot silently produce a new candidate (use `POST /v1/candidates` to create or upsert). Organization context is taken from the authenticated API key, never from the body. A supplied `documentUrl` or `documentBase64` is downloaded during the request, so a failed fetch surfaces as a 502. `documentUrl` is fetched with the organization group''s stored credential when one is registered and unauthenticated when it is not, so a presigned or public URL works; the destination must be an `https` URL resolving to a public address and is not followed through redirects, and one that is refused is a 400 rather than a 502. CV parsing and vectorization always continue asynchronously afterwards, so a 200 means the fields are stored, never that the CV has been parsed or indexed. Resending a document with the same bytes keeps its parsed data rather than parsing it again; to force a fresh parse use the reparse endpoint.'
+      operationId: update-candidate
+      parameters:
+      - name: id
+        in: path
+        description: Candidate profile id (UUID).
+        required: true
+        schema:
+          $ref: '#/components/schemas/candidate_profile_id'
+      tags:
+      - Candidates
+      requestBody:
+        required: true
+        description: The fields to change
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCandidateRequest'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateCandidateResponse'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '502':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      summary: Get a candidate
+      description: Returns a candidate profile by its Popp id. Organization context is taken from the authenticated API key, never from the path. A candidate that does not exist and one that belongs to a different organization group both return 404 — the two are deliberately not distinguished, so an id cannot be probed against another tenant. The response carries the canonical fields alongside a `fromCv` block holding what CV parsing extracted; those are read-only and may differ from the canonical values where a caller has supplied its own. `location.geoCoordinates` is populated asynchronously by processing, so a candidate read shortly after a create may carry a location with no coordinates yet.
+      operationId: get-candidate
+      parameters:
+      - name: id
+        in: path
+        description: Candidate profile id (UUID).
+        required: true
+        schema:
+          $ref: '#/components/schemas/candidate_profile_id'
+      tags:
+      - Candidates
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetCandidateResponse'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      summary: Delete a candidate
+      description: 'Permanently deletes the candidate with this Popp id and everything held about them: profile, notes, list memberships, attachments, every CV version, the screening answers from each ATS application, the vector index and the Twilio conversation. Analysis records, their score history and conversations are kept with personal data stripped, so reporting counts stay intact. Requirement results and score history keep whether each requirement was met, but not the evidence quoted for it or the screening answers. Returns 202 as soon as the work is queued; the work itself runs asynchronously and completion is signalled by the CANDIDATE_DELETED webhook. Irreversible. Backups retain pre-deletion values for up to 35 days. Imported workflow contacts are deleted only where they were already matched to this candidate; an unmatched import row is left, because nothing on it identifies which candidate it belongs to.'
+      operationId: delete-candidate
+      parameters:
+      - name: id
+        in: path
+        description: Candidate profile id (UUID).
+        required: true
+        schema:
+          $ref: '#/components/schemas/candidate_profile_id'
+      tags:
+      - Candidates
+      responses:
+        '202':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteCandidateResponse'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /v1/candidates/{id}/document:
+    delete:
+      summary: Remove a candidate CV
+      description: Removes the candidate's CV without deleting the candidate. Every stored version of the document is deleted, the CV-extracted values (the fromCv fields, jobs, education and the like) are cleared, and the candidate is re-indexed on the data you provided, so it stays searchable on that alone. Skills and qualifications are kept as stored. A candidate with no CV returns 200 with a message saying it is already unparsed. A candidate still being processed returns 409; retry once processing completes.
+      operationId: remove-candidate-document
+      parameters:
+      - name: id
+        in: path
+        description: Candidate profile id (UUID).
+        required: true
+        schema:
+          $ref: '#/components/schemas/candidate_profile_id'
+      tags:
+      - Candidates
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CandidateCvResponse'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /v1/candidates/{id}/notes:
+    get:
+      summary: List a candidate's notes
+      description: 'Every note held about this candidate, newest first: notes added through this API and notes synced from your ATS. Notes are free text written by a recruiter and are searchable — they feed the same index as the candidate''s CV. They are never shown to candidates.'
+      operationId: list-candidate-notes
+      parameters:
+      - name: id
+        in: path
+        description: The Popp candidate id
+        required: true
+        schema:
+          $ref: '#/components/schemas/candidate_profile_id'
+      - name: limit
+        in: query
+        description: Notes per page, 1 to 50. Defaults to 20.
+        required: false
+        schema:
+          $ref: '#/components/schemas/limit'
+      - name: nextToken
+        in: query
+        description: 'Token from a previous response, to fetch the next page. Keep paging until nextToken is null: a page can hold fewer than limit.'
+        required: false
+        schema:
+          $ref: '#/components/schemas/nextToken'
+      tags:
+      - Candidates
+      responses:
+        '200':
+          description: The candidate's notes.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListCandidateNotesResponse'
+        '401':
+          description: Missing or invalid API key.
+        '404':
+          description: No candidate with this id in your organization.
+    post:
+      summary: Add a note to a candidate
+      description: Records a note against the candidate. Notes are free text and searchable — they feed the same index as the candidate's CV, so the candidate becomes findable on words in the note shortly afterwards. Notes are never shown to candidates. `priority` and `sourceTime` place the re-index in the processing queue, exactly as on a candidate update; they default to priority 0 and the time of the request.
+      operationId: create-candidate-note
+      parameters:
+      - name: id
+        in: path
+        description: The Popp candidate id
+        required: true
+        schema:
+          $ref: '#/components/schemas/candidate_profile_id'
+      tags:
+      - Candidates
+      requestBody:
+        required: false
+        description: The note to add.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CandidateNoteRequest'
+      responses:
+        '201':
+          description: The note as stored.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CandidateNoteResponse'
+        '400':
+          description: The note is empty or longer than 20,000 characters.
+        '404':
+          description: No such candidate in your organization.
+  /v1/candidates/{id}/notes/{noteId}:
+    patch:
+      summary: Update a candidate note
+      description: Replaces the content of a note you added. The candidate is re-indexed, so search reflects the new wording shortly afterwards. Notes synced from your ATS cannot be edited here — edit them in your ATS, or the next sync will overwrite the change. `priority` and `sourceTime` place the re-index in the processing queue, exactly as on a candidate update; they default to priority 0 and the time of the request.
+      operationId: update-candidate-note
+      parameters:
+      - name: id
+        in: path
+        description: The Popp candidate id
+        required: true
+        schema:
+          $ref: '#/components/schemas/candidate_profile_id'
+      - name: noteId
+        in: path
+        description: The Popp note id, from the list or create response
+        required: true
+        schema:
+          $ref: '#/components/schemas/noteId'
+      tags:
+      - Candidates
+      requestBody:
+        required: false
+        description: The replacement content.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CandidateNoteRequest'
+      responses:
+        '200':
+          description: The note as stored.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CandidateNoteResponse'
+        '400':
+          description: The note is empty or longer than 20,000 characters.
+        '404':
+          description: No such candidate in your organization, or no such note on that candidate.
+        '409':
+          description: The note is synced from your ATS and is read-only here.
+    delete:
+      summary: Delete a candidate note
+      description: Removes a note you added. The candidate is re-indexed, so search stops matching the note's words shortly afterwards — and when it was their last note, the notes text is cleared from search entirely. Notes synced from your ATS cannot be deleted here; delete them in your ATS, or the next sync would restore them.
+      operationId: delete-candidate-note
+      parameters:
+      - name: id
+        in: path
+        description: The Popp candidate id
+        required: true
+        schema:
+          $ref: '#/components/schemas/candidate_profile_id'
+      - name: noteId
+        in: path
+        description: The Popp note id, from the list or create response
+        required: true
+        schema:
+          $ref: '#/components/schemas/noteId'
+      - name: priority
+        in: query
+        description: Processing priority for the re-index, 0 (most urgent) to 2. Defaults to 0. Match the priority of a bulk load so a delete does not move the candidate up the queue.
+        required: false
+        schema:
+          $ref: '#/components/schemas/priority'
+      - name: sourceTime
+        in: query
+        description: When the change happened in your system, ISO 8601. Orders the re-index within its priority. Defaults to the time of the request.
+        required: false
+        schema:
+          $ref: '#/components/schemas/sourceTime'
+      tags:
+      - Candidates
+      responses:
+        '204':
+          description: The note was deleted.
+        '400':
+          description: An invalid id, priority or sourceTime.
+        '404':
+          description: No such candidate in your organization, or no such note on that candidate.
+        '409':
+          description: The note is synced from your ATS and is read-only here.
+  /v1/candidates/{id}/reparse:
+    post:
+      summary: Re-parse a candidate CV
+      description: Parses the candidate's stored CV again and re-indexes the candidate, even when the document is unchanged. Use it when parsing failed or should be refreshed. Allowed in any status. Returns 202 once queued; the outcome arrives as the CANDIDATE_PROCESSING_STARTED, CANDIDATE_PROCESSING_COMPLETED and CANDIDATE_PROCESSING_FAILED webhooks. Each re-parse runs a full extraction.
+      operationId: reparse-candidate-cv
+      parameters:
+      - name: id
+        in: path
+        description: Candidate profile id (UUID).
+        required: true
+        schema:
+          $ref: '#/components/schemas/candidate_profile_id'
+      tags:
+      - Candidates
+      responses:
+        '202':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CandidateCvResponse'
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    UpdateCandidateResponse:
+      type: object
+      description: 'Response to a partial candidate update. There is no `created` flag: an update never creates a candidate, so an unknown id or external id is a 404.'
+      properties:
+        ok:
+          type: boolean
+          description: True when the update was applied.
+        candidate:
+          type: object
+          description: The updated candidate. Status is IN_PROGRESS because an update re-triggers asynchronous processing.
+          properties:
+            id:
+              type: string
+              format: uuid
+              description: Candidate profile id.
+            externalId:
+              type:
+              - string
+              - 'null'
+              description: The caller-supplied identifier, if the candidate has one.
+            status:
+              type:
+              - string
+              - 'null'
+              description: 'Processing status. An update resets this to IN_PROGRESS: parsing and vectorization run asynchronously, so a 200 does not mean the CV has been parsed or indexed.'
+            updatedAt:
+              type:
+              - string
+              - 'null'
+              format: date-time
+              description: When the candidate was last updated.
+          required:
+          - id
+      required:
+      - ok
+      - candidate
+    candidate_profile_email:
+      type: string
+    limit:
+      type: integer
+    CandidateCvResponse:
+      type: object
+      description: Response to a re-parse or a document removal.
+      properties:
+        ok:
+          type: boolean
+          description: True when the request was applied.
+        message:
+          type: string
+          description: Present when there was nothing to do, for example a document removal on a candidate with no CV.
+        candidate:
+          type: object
+          description: The candidate. Status is IN_PROGRESS while it is re-processed.
+          properties:
+            id:
+              type: string
+              format: uuid
+              description: Candidate profile id.
+            externalId:
+              type:
+              - string
+              - 'null'
+              description: The caller-supplied identifier, if the candidate has one.
+            status:
+              type:
+              - string
+              - 'null'
+              description: Processing status. The outcome arrives as the CANDIDATE_PROCESSING_* webhooks.
+            updatedAt:
+              type:
+              - string
+              - 'null'
+              format: date-time
+              description: When the candidate was last updated.
+          required:
+          - id
+      required:
+      - ok
+      - candidate
+    externalId:
+      type: string
+    sourceTime:
+      type: string
+      format: date-time
+    DeleteCandidateResponse:
+      type: object
+      description: Acknowledgement that a candidate deletion has been queued. The work runs asynchronously; a 202 means it has been accepted, never that it has finished.
+      properties:
+        ok:
+          type: boolean
+          description: True when the deletion was queued.
+        candidateProfileIds:
+          type: array
+          description: The candidates that will be deleted. Addressing by email or phone number can match more than one, so this can contain several ids; each is deleted independently.
+          items:
+            type: string
+            format: uuid
+      required:
+      - ok
+      - candidateProfileIds
+    CreateCandidateAcceptedResponse:
+      type: object
+      description: Acknowledgement that an asynchronous candidate create has been accepted and queued. Only the resolved id is known at this point.
+      properties:
+        ok:
+          type: boolean
+          description: Always true.
+        mode:
+          type: string
+          enum:
+          - ASYNC
+          description: Echoes the processing mode.
+        status:
+          type: string
+          enum:
+          - ACCEPTED
+          description: The create/fetch is queued; heavy processing runs off the request path.
+        candidate:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+              description: The resolved deterministic candidate profile id.
+          required:
+          - id
+          additionalProperties: false
+      required:
+      - ok
+      - mode
+      - status
+      - candidate
+      additionalProperties: false
+    CandidateNoteRequest:
+      type: object
+      description: A note to record against a candidate.
+      properties:
+        content:
+          type: string
+          minLength: 1
+          maxLength: 20000
+          description: 'The note, as free text. Leading and trailing whitespace is trimmed, and the result must not be empty — a string of only spaces is a 400. Searchable: it feeds the same index as the candidate''s CV.'
+        priority:
+          type: integer
+          minimum: 0
+          maximum: 2
+          description: 'Priority band for re-indexing the candidate: 0 (most urgent, the default), 1 or 2. Same bands as a candidate update.'
+        sourceTime:
+          type: string
+          format: date-time
+          description: The change time that orders a priority band (ISO 8601). Defaults to the time of the request.
+      required:
+      - content
+      additionalProperties: false
+    CreateCandidateResponse:
+      type: object
+      description: Result of a synchronous candidate create or upsert. The returned profile is a skeleton; heavy processing (CV parsing, enrichment) continues asynchronously after the row exists.
+      properties:
+        ok:
+          type: boolean
+          description: Always true on success.
+        mode:
+          type: string
+          enum:
+          - SYNC
+          description: Echoes the processing mode.
+        created:
+          type: boolean
+          description: true when a new profile was created (201); false when an existing profile was upserted (200).
+        candidate:
+          type: object
+          description: The created or updated candidate profile skeleton.
+          properties:
+            id:
+              type: string
+              format: uuid
+              description: Candidate profile id.
+            externalId:
+              type:
+              - string
+              - 'null'
+              description: Caller-supplied external id, when set.
+            status:
+              type:
+              - string
+              - 'null'
+              description: Processing status of the profile.
+            createdAt:
+              type:
+              - string
+              - 'null'
+              format: date-time
+              description: When the profile was created (ISO 8601). Present when a new profile was created.
+            updatedAt:
+              type:
+              - string
+              - 'null'
+              format: date-time
+              description: When the profile was last updated (ISO 8601).
+          required:
+          - id
+          additionalProperties: false
+      required:
+      - ok
+      - mode
+      - created
+      - candidate
+      additionalProperties: false
+    nextToken:
+      type: string
+    priority:
+      type: integer
+    UpdateCandidateRequest:
+      type: object
+      description: 'Payload for partially updating an existing candidate profile. Omitting a field leaves the stored value unchanged; sending null clears it. Organization context is taken from the authenticated API key, never from the body. There is no SYNC/ASYNC choice: a supplied document is downloaded during the request (a failed fetch is a 502), while CV parsing and vectorization remain asynchronous — a 200 means the fields are stored, never that the CV has been parsed or indexed.'
+      properties:
+        firstName:
+          type:
+          - string
+          - 'null'
+          description: Candidate's first name. Null clears the stored value.
+        lastName:
+          type:
+          - string
+          - 'null'
+          description: Candidate's last name. Null clears the stored value.
+        email:
+          type:
+          - string
+          - 'null'
+          format: email
+          description: Candidate's email address. Null clears the stored value.
+        phoneNumber:
+          type:
+          - string
+          - 'null'
+          description: 'Candidate''s phone number. Null clears the stored value, but note a later CV parse can repopulate it: the phone number is filled from the CV when empty.'
+        linkedInProfileUrl:
+          type:
+          - string
+          - 'null'
+          description: URL of the candidate's LinkedIn profile. Null clears the stored value.
+        title:
+          type:
+          - string
+          - 'null'
+          description: Candidate's current job title. Null clears the stored value.
+        company:
+          type:
+          - string
+          - 'null'
+          description: Candidate's current company. Null clears the stored value.
+        externalUrl:
+          type:
+          - string
+          - 'null'
+          description: The caller's link back to this candidate in their own system. This is not the candidate's own profile page — use linkedInProfileUrl for that. Null clears the stored value.
+        customFields:
+          type: object
+          description: 'Values for the custom fields your organization has defined, keyed by fieldKey. Applied per key over what is already stored: keys you do not send keep their value, and a key sent as null is cleared. Each key must name a live custom field, and each value other than null must match the type configured for it, or the request is rejected. To clear every custom field, send each key as null; null for customFields itself is rejected.'
+          additionalProperties:
+            description: 'Value for one custom field, or null to clear it. The accepted shape follows the type the organization configured for that field: string for TEXT, array of strings for TEXT_ARRAY, number for NUMBER, boolean for BOOLEAN, and a date string for DATE.'
+            anyOf:
+            - type:
+              - string
+              - 'null'
+            - type:
+              - number
+              - 'null'
+            - type:
+              - boolean
+              - 'null'
+            - type:
+              - array
+              - 'null'
+              items:
+                type: string
+        location:
+          type:
+          - object
+          - 'null'
+          description: 'Candidate''s location. The object replaces the stored location wholesale; null clears it. Coordinates are derived by Popp during processing and are not accepted here. When name is omitted it is composed from the other parts. At least one of name, city, region or countryCode must carry a value: an object with none of them, or only blank ones, is rejected — send null to clear the stored location.'
+          minProperties: 1
+          additionalProperties: false
+          properties:
+            name:
+              type: string
+              description: Free-text location name, for example "London, UK".
+            city:
+              type: string
+              description: City, for example "London".
+            region:
+              type: string
+              description: Region, state or county, for example "England".
+            countryCode:
+              type: string
+              pattern: ^[A-Za-z]{2}$
+              description: ISO 3166-1 alpha-2 country code, for example "GB". Normalised to upper case.
+        skills:
+          type: object
+          description: Candidate skills, with how they combine with values extracted from the CV during processing.
+          properties:
+            data:
+              type: array
+              description: The caller-supplied values.
+              items:
+                type: string
+            mode:
+              type: string
+              enum:
+              - MERGE
+              - OVERWRITE
+              description: How the supplied values combine with CV-extracted ones. MERGE (the default) keeps both; OVERWRITE keeps the supplied values and falls back to the CV's only when none are supplied.
+          required:
+          - data
+          additionalProperties: false
+        qualifications:
+          type: object
+          description: Candidate qualifications, with how they combine with values extracted from the CV during processing.
+          properties:
+            data:
+              type: array
+              description: The caller-supplied values.
+              items:
+                type: string
+            mode:
+              type: string
+              enum:
+              - MERGE
+              - OVERWRITE
+              description: How the supplied values combine with CV-extracted ones. MERGE (the default) keeps both; OVERWRITE keeps the supplied values and falls back to the CV's only when none are supplied.
+          required:
+          - data
+          additionalProperties: false
+        tags:
+          type: array
+          description: Candidate tags. These always replace the stored tags — nothing derives tags from a CV, so there is no combine mode. Note that a subsequent ATS sync replaces tags wholesale, so tags set here do not survive one.
+          items:
+            type: string
+        documentUrl:
+          type: string
+          description: URL of a CV/document to fetch (using the organization group's stored document credential) and store against the candidate. Downloaded during the request; a failed fetch is a 502.
+        documentBase64:
+          type: string
+          description: Inline CV/document as a data URI or raw base64. Takes precedence over documentUrl when both are given. Must be valid base64 (optionally as a data URI); a value that is not is rejected rather than stored as an unreadable document.
+        priority:
+          type: integer
+          minimum: 0
+          maximum: 2
+          description: 'Priority band for processing: 0 (most urgent), 1 or 2.'
+        sourceTime:
+          type: string
+          format: date-time
+          description: The change time that orders a priority band (ISO 8601), so processing across the organization group stays correctly ordered.
+      additionalProperties: false
+    ErrorResponse:
+      type: object
+    GetCandidateResponse:
+      type: object
+      description: Response to a candidate read.
+      properties:
+        ok:
+          type: boolean
+          description: True when the candidate was found and returned.
+        candidate:
+          type: object
+          description: Candidate profile — the canonical record of a candidate within Popp. Profiles can be enrolled into workflows. Canonical fields hold the current value, whichever source last set it; the `fromCv` block holds what CV parsing extracted and is read-only. Optional fields are always present and null when unset, and array fields are always present and empty when unset, so the response shape does not vary between candidates.
+          properties:
+            id:
+              type: string
+              format: uuid
+              title: Candidate Profile ID
+              description: Unique identifier for the candidate profile.
+            externalId:
+              type:
+              - string
+              - 'null'
+              title: External ID
+              description: Caller-supplied identifier in the format ^[\w.-]+$.
+            externalUrl:
+              type:
+              - string
+              - 'null'
+              title: External URL
+              description: Link back to this candidate in the caller's own system.
+            organizationGroupId:
+              type: string
+              format: uuid
+              title: Organization Group ID
+              description: Identifier of the organization group that owns the candidate profile. Profiles are scoped to an organization group, not a single organization.
+            organizationIds:
+              type: array
+              title: Organization IDs
+              description: Organizations within the group that the candidate has been associated with.
+              items:
+                type: string
+                format: uuid
+            firstName:
+              type:
+              - string
+              - 'null'
+              title: First Name
+              description: Candidate's first name.
+            lastName:
+              type:
+              - string
+              - 'null'
+              title: Last Name
+              description: Candidate's last name.
+            email:
+              type:
+              - string
+              - 'null'
+              title: Email
+              description: Candidate's email address.
+            phoneNumber:
+              type:
+              - string
+              - 'null'
+              title: Phone Number
+              description: Candidate's phone number in E.164 format.
+            linkedInProfileUrl:
+              type:
+              - string
+              - 'null'
+              title: LinkedIn Profile URL
+              description: Candidate's LinkedIn profile.
+            title:
+              type:
+              - string
+              - 'null'
+              title: Job Title
+              description: Candidate's current job title.
+            company:
+              type:
+              - string
+              - 'null'
+              title: Company
+              description: Candidate's current employer.
+            location:
+              type:
+              - object
+              - 'null'
+              title: Location
+              description: Candidate's location. `geoCoordinates` is filled asynchronously by processing, so a candidate read shortly after a create may carry a location whose coordinates are still null.
+              required:
+              - name
+              - city
+              - region
+              - countryCode
+              - geoCoordinates
+              additionalProperties: false
+              properties:
+                name:
+                  type:
+                  - string
+                  - 'null'
+                  description: Full location as a single string, e.g. "London, UK".
+                city:
+                  type:
+                  - string
+                  - 'null'
+                  description: City.
+                region:
+                  type:
+                  - string
+                  - 'null'
+                  description: Region, state or county.
+                countryCode:
+                  type:
+                  - string
+                  - 'null'
+                  description: ISO 3166-1 alpha-2 country code.
+                geoCoordinates:
+                  type:
+                  - object
+                  - 'null'
+                  description: Coordinates resolved by geocoding. Null until processing has geocoded the location.
+                  required:
+                  - latitude
+                  - longitude
+                  additionalProperties: false
+                  properties:
+                    latitude:
+                      type: number
+                    longitude:
+                      type: number
+            skills:
+              type: array
+              title: Skills
+              description: Taxonomized skills. Empty when the candidate has none.
+              items:
+                type: string
+            qualifications:
+              type: array
+              title: Qualifications
+              description: Taxonomized qualifications. Empty when the candidate has none.
+              items:
+                type: string
+            tags:
+              type: array
+              title: Tags
+              description: Tags on the candidate. Empty when the candidate has none.
+              items:
+                type: string
+            customFields:
+              type: object
+              title: Custom Fields
+              description: Values for the custom fields your organization has defined, keyed by fieldKey. Empty when the candidate has none. The stored map is returned as written, so a key belonging to a custom field that has since been retired is still present until it is overwritten. Same shape the create and update endpoints accept.
+              additionalProperties:
+                description: 'Value for one custom field, in the shape configured for that field: string for TEXT, array of strings for TEXT_ARRAY, number for NUMBER, boolean for BOOLEAN, and a date string for DATE.'
+                oneOf:
+                - type: string
+                - type: number
+                - type: boolean
+                - type: array
+                  items:
+                    type: string
+            totalExperienceInYears:
+              type:
+              - number
+              - 'null'
+              title: Total Experience In Years
+              description: Total years of experience, captured from the CV.
+            originalSource:
+              type:
+              - string
+              - 'null'
+              title: Original Source
+              description: How the candidate first entered Popp, e.g. an ATS sync, a bulk CV upload or the API.
+            status:
+              type:
+              - string
+              - 'null'
+              enum:
+              - IN_PROGRESS
+              - COMPLETED
+              - FAILED
+              title: Processing Status
+              description: Processing status of the candidate. IN_PROGRESS while CV parsing and vectorization run, COMPLETED once they finish, and FAILED when processing did not complete successfully. Null on a candidate that has never been processed.
+            statusChangedAt:
+              type:
+              - string
+              - 'null'
+              format: date-time
+              title: Status Changed At
+              description: When the processing status last changed.
+            createdAt:
+              type: string
+              format: date-time
+              title: Created At
+              description: When the candidate profile was created.
+            updatedAt:
+              type: string
+              format: date-time
+              title: Updated At
+              description: When the candidate profile was last updated.
+            fromCv:
+              type: object
+              title: Extracted From CV
+              description: 'What CV parsing extracted, kept separate from the canonical fields so a caller can see the parser''s reading even where its own supplied value took precedence. Read-only: these cannot be set through the API.'
+              properties:
+                firstName:
+                  type:
+                  - string
+                  - 'null'
+                lastName:
+                  type:
+                  - string
+                  - 'null'
+                email:
+                  type:
+                  - string
+                  - 'null'
+                phoneNumber:
+                  type:
+                  - string
+                  - 'null'
+                linkedInProfileUrl:
+                  type:
+                  - string
+                  - 'null'
+                location:
+                  type:
+                  - string
+                  - 'null'
+                  description: Location as written in the CV, before geocoding.
+                links:
+                  type: array
+                  description: Links found in the CV.
+                  items:
+                    type: string
+                skills:
+                  type: array
+                  description: Skills as written in the CV, before taxonomization.
+                  items:
+                    type: string
+                qualifications:
+                  type: array
+                  description: Qualifications as written in the CV, before taxonomization.
+                  items:
+                    type: string
+                professionalSummary:
+                  type:
+                  - string
+                  - 'null'
+              required:
+              - firstName
+              - lastName
+              - email
+              - phoneNumber
+              - linkedInProfileUrl
+              - location
+              - links
+              - skills
+              - qualifications
+              - professionalSummary
+              additionalProperties: false
+          required:
+          - id
+          - externalId
+          - externalUrl
+          - organizationGroupId
+          - organizationIds
+          - firstName
+          - lastName
+          - email
+          - phoneNumber
+          - linkedInProfileUrl
+          - title
+          - company
+          - location
+          - skills
+          - qualifications
+          - tags
+          - customFields
+          - totalExperienceInYears
+          - originalSource
+          - status
+          - statusChangedAt
+          - createdAt
+          - updatedAt
+          - fromCv
+          additionalProperties: false
+      required:
+      - ok
+      - candidate
+    phoneNumber:
+      type: string
+    CandidateNoteResponse:
+      type: object
+      description: A single note about a candidate.
+      properties:
+        ok:
+          type: boolean
+        note:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            content:
+              type: string
+            source:
+              type: string
+              enum:
+              - API
+              - ATS
+              description: Where the note came from. ATS notes are synced from your applicant tracking system and are read-only here.
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
+          required:
+          - id
+          - content
+          - source
+          - createdAt
+          - updatedAt
+          additionalProperties: false
+      required:
+      - ok
+      - note
+      additionalProperties: false
+    CreateCandidateRequest:
+      type: object
+      description: Payload for creating (or upserting) a candidate profile. The organization group is always taken from the authenticated API key and can never be set from the body. The organization within that group defaults to the API key's own, and may be chosen with externalOrganizationId, which is authorised against the access of the user the key belongs to.
+      properties:
+        mode:
+          type: string
+          enum:
+          - SYNC
+          - ASYNC
+          title: Processing Mode
+          description: Controls how much of the work the request waits for — specifically whether the document is downloaded before responding. SYNC creates/upserts the profile and downloads the document (when documentUrl is supplied) during the request, returning 201 when newly created or 200 when an existing profile was upserted; a failed download surfaces as a 502. ASYNC queues the work and returns 202 immediately with the resolved id, downloading the document in the background. CV parsing and vectorization are always asynchronous in both modes. documentBase64 is not supported in ASYNC mode.
+        externalId:
+          type: string
+          title: External ID
+          description: Caller-supplied identifier (typically matching ^[\w.-]+$). Drives the deterministic candidate profile id and de-duplication; re-posting the same externalId upserts the existing profile. Leading and trailing whitespace is trimmed before the id is derived, so " abc " and "abc" address the same candidate; a value that is empty once trimmed is rejected.
+          minLength: 1
+        externalOrganizationId:
+          type: string
+          title: External Organization ID
+          description: 'Your own identifier for the organization this candidate belongs to, used instead of relying on the organization the API key defaults to. Resolved to a Popp organization within your organization group and checked against the access of the user the API key belongs to. For a new candidate it sets the organization the candidate is created in, instead of the organization the API key defaults to. For a candidate that already exists it is additive: the named organization is added to the ones the candidate already has, and none are removed. A candidate cannot be moved between organizations, because its vector-DB tenant follows the organizations it belongs to and a vector cannot be withdrawn from a tenant it has already been indexed into. Unknown or ambiguous values are rejected with a 400, and an organization the user cannot reach with a 403. Leading and trailing whitespace is trimmed before it is matched; a value that is empty once trimmed is rejected.'
+          minLength: 1
+        firstName:
+          type: string
+          description: Candidate's first name.
+        lastName:
+          type: string
+          description: Candidate's last name.
+        email:
+          type: string
+          format: email
+          description: Candidate's email address.
+        phoneNumber:
+          type: string
+          description: Candidate's phone number.
+        linkedInProfileUrl:
+          type: string
+          description: URL of the candidate's LinkedIn profile.
+        title:
+          type: string
+          description: Candidate's current job title.
+        company:
+          type: string
+          description: Candidate's current company.
+        externalUrl:
+          type: string
+          description: The caller's link back to this candidate in their own system. This is not the candidate's own profile page — use linkedInProfileUrl for that.
+        customFields:
+          type: object
+          description: Values for the custom fields your organization has defined, keyed by fieldKey. Each key must name a live custom field, and each value must match the type configured for it, or the request is rejected. Manage the definitions through the custom-fields endpoints. In SYNC mode an unknown key or a mistyped value is rejected here; in ASYNC mode the request is accepted and the same problem is reported on the candidate processing webhook, except that a null for an unknown key is ignored rather than reported.
+          additionalProperties:
+            description: 'Value for one custom field. The accepted shape follows the type the organization configured for that field: string for TEXT, array of strings for TEXT_ARRAY, number for NUMBER, boolean for BOOLEAN, and a date string for DATE. Null is accepted and stores nothing; on an existing candidate it clears the key.'
+            anyOf:
+            - type:
+              - string
+              - 'null'
+            - type:
+              - number
+              - 'null'
+            - type:
+              - boolean
+              - 'null'
+            - type:
+              - array
+              - 'null'
+              items:
+                type: string
+        location:
+          type:
+          - object
+          - 'null'
+          description: 'Candidate''s location. The object replaces the stored location wholesale; null clears it. Coordinates are derived by Popp during processing and are not accepted here. When name is omitted it is composed from the other parts. At least one of name, city, region or countryCode must carry a value: an object with none of them, or only blank ones, is rejected — send null to clear the stored location.'
+          minProperties: 1
+          additionalProperties: false
+          properties:
+            name:
+              type: string
+              description: Free-text location name, for example "London, UK".
+            city:
+              type: string
+              description: City, for example "London".
+            region:
+              type: string
+              description: Region, state or county, for example "England".
+            countryCode:
+              type: string
+              pattern: ^[A-Za-z]{2}$
+              description: ISO 3166-1 alpha-2 country code, for example "GB". Normalised to upper case.
+        skills:
+          type: object
+          description: Candidate skills, with how they combine with values extracted from the CV during processing.
+          properties:
+            data:
+              type: array
+              description: The caller-supplied values.
+              items:
+                type: string
+            mode:
+              type: string
+              enum:
+              - MERGE
+              - OVERWRITE
+              description: How the supplied values combine with CV-extracted ones. Defaults to MERGE.
+          required:
+          - data
+          additionalProperties: false
+        qualifications:
+          type: object
+          description: Candidate qualifications, with how they combine with values extracted from the CV during processing.
+          properties:
+            data:
+              type: array
+              description: The caller-supplied values.
+              items:
+                type: string
+            mode:
+              type: string
+              enum:
+              - MERGE
+              - OVERWRITE
+              description: How the supplied values combine with CV-extracted ones. Defaults to MERGE.
+          required:
+          - data
+          additionalProperties: false
+        tags:
+          type: array
+          description: Candidate tags. These always replace the stored tags — nothing derives tags from a CV, so there is no combine mode. Note that a subsequent ATS sync replaces tags wholesale, so tags set here do not survive one.
+          items:
+            type: string
+        documentUrl:
+          type: string
+          description: URL of a CV/document to fetch (using the organization group's stored document credential) and store against the candidate.
+        documentBase64:
+          type: string
+          description: Inline CV/document as a data URI or raw base64. Takes precedence over documentUrl when both are given. SYNC mode only — an inline document can exceed the async queue's message size. Must be valid base64 (optionally as a data URI); a value that is not is rejected rather than stored as an unreadable document.
+        priority:
+          type: integer
+          minimum: 0
+          maximum: 2
+          description: 'Priority band for processing: 0 (most urgent), 1 or 2.'
+        sourceTime:
+          type: string
+          format: date-time
+          description: The change time that orders a priority band (ISO 8601), so processing across the organization group stays correctly ordered.
+      required:
+      - mode
+      additionalProperties: false
+    noteId:
+      type: string
+      format: uuid
+    ListCandidateNotesResponse:
+      type: object
+      description: A page of the notes held about a candidate.
+      properties:
+        ok:
+          type: boolean
+          description: True when the candidate was found and their notes returned.
+        items:
+          type: array
+          description: Notes about this candidate, newest first.
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+              content:
+                type: string
+                description: The note, as written.
+              source:
+                type: string
+                enum:
+                - API
+                - ATS
+                description: Where the note came from. ATS notes are synced from your applicant tracking system and are read-only here.
+              createdAt:
+                type: string
+                format: date-time
+              updatedAt:
+                type: string
+                format: date-time
+            required:
+            - id
+            - content
+            - source
+            - createdAt
+            - updatedAt
+            additionalProperties: false
+        nextToken:
+          type:
+          - string
+          - 'null'
+          description: Pass back as `nextToken` to fetch the next page. Null when there are no more results.
+      required:
+      - ok
+      - items
+      - nextToken
+      additionalProperties: false
+    candidate_profile_id:
+      type: string
+      format: uuid
+  securitySchemes:
+    popp_api_key:
+      description: Your Popp API key for authentication
+      type: apiKey
+      name: x-api-key
+      in: header
+    organization_id:
+      description: Your organization's unique identifier
+      type: apiKey
+      name: x-organization-id
+      in: header
+x-provenance:
+  method: searched
+  source: https://docs.joinpopp.com/reference
+  harvested: '2026-10-14'
+  tool: harvest-readme-openapi.py
+  note: Assembled verbatim from the OpenAPI definition ReadMe embeds in each operation page of the provider's developer portal; paths and components merged by API title, nothing authored.
+  assembled_from:
+  - https://docs.joinpopp.com/reference/add-candidates-to-list-by-external-id.md
+  - https://docs.joinpopp.com/reference/add-candidates-to-list.md
+  - https://docs.joinpopp.com/reference/archive-analysis.md
+  - https://docs.joinpopp.com/reference/archive-document-type.md
+  - https://docs.joinpopp.com/reference/archive-workflow-by-external-id.md
+  - https://docs.joinpopp.com/reference/archive-workflow.md
+  - https://docs.joinpopp.com/reference/bulk-create-conversations.md
+  - https://docs.joinpopp.com/reference/cancel-booking.md
+  - https://docs.joinpopp.com/reference/cancel-workflow-run.md
+  - https://docs.joinpopp.com/reference/create-analysis-candidate.md
+  - https://docs.joinpopp.com/reference/create-analysis.md
+  - https://docs.joinpopp.com/reference/create-campaign.md
+  - https://docs.joinpopp.com/reference/create-candidate-list.md
+  - https://docs.joinpopp.com/reference/create-candidate-note-by-external-id.md
+  - https://docs.joinpopp.com/reference/create-candidate-note.md
+  - https://docs.joinpopp.com/reference/create-candidate.md
+  - https://docs.joinpopp.com/reference/create-conversation.md
+  - https://docs.joinpopp.com/reference/create-custom-field.md
+  - https://docs.joinpopp.com/reference/create-document-credential.md
+  - https://docs.joinpopp.com/reference/create-document-type.md
+  - https://docs.joinpopp.com/reference/create-meeting-template.md
+  - https://docs.joinpopp.com/reference/create-organization-config.md
+  - https://docs.joinpopp.com/reference/create-scheduling-conversation.md
+  - https://docs.joinpopp.com/reference/create-user.md
+  - https://docs.joinpopp.com/reference/create-webhook.md
+  - https://docs.joinpopp.com/reference/create-workflow.md
+  - https://docs.joinpopp.com/reference/deactivate-user-by-email.md
+  - https://docs.joinpopp.com/reference/deactivate-user.md
+  - https://docs.joinpopp.com/reference/delete-candidate-by-email.md
+  - https://docs.joinpopp.com/reference/delete-candidate-by-external-id.md
+  - https://docs.joinpopp.com/reference/delete-candidate-by-phone-number.md
+  - https://docs.joinpopp.com/reference/delete-candidate-list-by-external-id.md
+  - https://docs.joinpopp.com/reference/delete-candidate-list.md
+  - https://docs.joinpopp.com/reference/delete-candidate-note.md
+  - https://docs.joinpopp.com/reference/delete-candidate.md
+  - https://docs.joinpopp.com/reference/delete-custom-field.md
+  - https://docs.joinpopp.com/reference/delete-document-credential.md
+  - https://docs.joinpopp.com/reference/delete-document-type.md
+  - https://docs.joinpopp.com/reference/delete-meeting-template.md
+  - https://docs.joinpopp.com/reference/delete-tag.md
+  - https://docs.joinpopp.com/reference/delete-user-by-email.md
+  - https://docs.joinpopp.com/reference/delete-user.md
+  - https://docs.joinpopp.com/reference/delete-webhook.md
+  - https://docs.joinpopp.com/reference/download-media.md
+  - https://docs.joinpopp.com/reference/generate-preferred-answer-requirements.md
+  - https://docs.joinpopp.com/reference/generate-questions.md
+  - https://docs.joinpopp.com/reference/generate-requirements.md
+  - https://docs.joinpopp.com/reference/get-analysis.md
+  - https://docs.joinpopp.com/reference/get-booking.md
+  - https://docs.joinpopp.com/reference/get-campaign.md
+  - https://docs.joinpopp.com/reference/get-candidate-by-external-id.md
+  - https://docs.joinpopp.com/reference/get-candidate-list-by-external-id.md
+  - https://docs.joinpopp.com/reference/get-candidate-list.md
+  - https://docs.joinpopp.com/reference/get-candidate-profile-by-external-id.md
+  - https://docs.joinpopp.com/reference/get-candidate.md
+  - https://docs.joinpopp.com/reference/get-conversation.md
+  - https://docs.joinpopp.com/reference/get-custom-field.md
+  - https://docs.joinpopp.com/reference/get-document-media.md
+  - https://docs.joinpopp.com/reference/get-document-type.md
+  - https://docs.joinpopp.com/reference/get-document.md
+  - https://docs.joinpopp.com/reference/get-meeting-template.md
+  - https://docs.joinpopp.com/reference/get-organization-config-by-external-id.md
+  - https://docs.joinpopp.com/reference/get-organization-config.md
+  - https://docs.joinpopp.com/reference/get-organization-details.md
+  - https://docs.joinpopp.com/reference/get-user-by-email.md
+  - https://docs.joinpopp.com/reference/get-user-calendar.md
+  - https://docs.joinpopp.com/reference/get-user.md
+  - https://docs.joinpopp.com/reference/get-workflow-analysis-application.md
+  - https://docs.joinpopp.com/reference/get-workflow-analysis.md
+  - https://docs.joinpopp.com/reference/get-workflow-by-external-id.md
+  - https://docs.joinpopp.com/reference/get-workflow-run.md
+  - https://docs.joinpopp.com/reference/get-workflow.md
+  - https://docs.joinpopp.com/reference/hand-conversation-to-agent.md
+  - https://docs.joinpopp.com/reference/invite-calendar-contact.md
+  - https://docs.joinpopp.com/reference/list-agents.md
+  - https://docs.joinpopp.com/reference/list-analyses.md
+  - https://docs.joinpopp.com/reference/list-ats-job-stages.md
+  - https://docs.joinpopp.com/reference/list-ats-jobs.md
+  - https://docs.joinpopp.com/reference/list-ats-rejection-reasons.md
+  - https://docs.joinpopp.com/reference/list-bookings.md
+  - https://docs.joinpopp.com/reference/list-campaigns.md
+  - https://docs.joinpopp.com/reference/list-candidate-lists.md
+  - https://docs.joinpopp.com/reference/list-candidate-notes-by-external-id.md
+  - https://docs.joinpopp.com/reference/list-candidate-notes.md
+  - https://docs.joinpopp.com/reference/list-conversation-documents.md
+  - https://docs.joinpopp.com/reference/list-conversation-messages.md
+  - https://docs.joinpopp.com/reference/list-conversations.md
+  - https://docs.joinpopp.com/reference/list-custom-fields.md
+  - https://docs.joinpopp.com/reference/list-document-credentials.md
+  - https://docs.joinpopp.com/reference/list-document-types.md
+  - https://docs.joinpopp.com/reference/list-meeting-templates.md
+  - https://docs.joinpopp.com/reference/list-organization-users.md
+  - https://docs.joinpopp.com/reference/list-organizations.md
+  - https://docs.joinpopp.com/reference/list-tags.md
+  - https://docs.joinpopp.com/reference/list-templates.md
+  - https://docs.joinpopp.com/reference/list-user-calendars.md
+  - https://docs.joinpopp.com/reference/list-users.md
+  - https://docs.joinpopp.com/reference/list-webhook-events.md
+  - https://docs.joinpopp.com/reference/list-webhooks.md
+  - https://docs.joinpopp.com/reference/list-workflow-analysis-application-history.md
+  - https://docs.joinpopp.com/reference/list-workflow-analysis-applications.md
+  - https://docs.joinpopp.com/reference/list-workflow-runs.md
+  - https://docs.joinpopp.com/reference/list-workflows.md
+  - https://docs.joinpopp.com/reference/parse-availability.md
+  - https://docs.joinpopp.com/reference/pause-workflow-by-external-id.md
+  - https://docs.joinpopp.com/reference/pause-workflow.md
+  - https://docs.joinpopp.com/reference/process-document.md
+  - https://docs.joinpopp.com/reference/publish-workflow-by-external-id.md
+  - https://docs.joinpopp.com/reference/publish-workflow.md
+  - https://docs.joinpopp.com/reference/reactivate-user-by-email.md
+  - https://docs.joinpopp.com/reference/reactivate-user.md
+  - https://docs.joinpopp.com/reference/remove-candidate-document-by-external-id.md
+  - https://docs.joinpopp.com/reference/remove-candidate-document.md
+  - https://docs.joinpopp.com/reference/remove-candidates-from-list-by-external-id.md
+  - https://docs.joinpopp.com/reference/remove-candidates-from-list.md
+  - https://docs.joinpopp.com/reference/reparse-candidate-cv-by-external-id.md
+  - https://docs.joinpopp.com/reference/reparse-candidate-cv.md
+  - https://docs.joinpopp.com/reference/resend-booking-url.md
+  - https://docs.joinpopp.com/reference/resume-workflow-by-external-id.md
+  - https://docs.joinpopp.com/reference/resume-workflow.md
+  - https://docs.joinpopp.com/reference/send-conversation-message.md
+  - https://docs.joinpopp.com/reference/set-user-calendar-availability.md
+  - https://docs.joinpopp.com/reference/sign-out-user-by-email.md
+  - https://docs.joinpopp.com/reference/sign-out-user.md
+  - https://docs.joinpopp.com/reference/start-workflow-runs-by-external-id.md
+  - https://docs.joinpopp.com/reference/start-workflow-runs.md
+  - https://docs.joinpopp.com/reference/stop-campaign.md
+  - https://docs.joinpopp.com/reference/takeover-conversation.md
+  - https://docs.joinpopp.com/reference/update-analysis.md
+  - https://docs.joinpopp.com/reference/update-booking.md
+  - https://docs.joinpopp.com/reference/update-campaign.md
+  - https://docs.joinpopp.com/reference/update-candidate-by-external-id.md
+  - https://docs.joinpopp.com/reference/update-candidate-list-by-external-id.md
+  - https://docs.joinpopp.com/reference/update-candidate-list.md
+  - https://docs.joinpopp.com/reference/update-candidate-note.md
+  - https://docs.joinpopp.com/reference/update-candidate.md
+  - https://docs.joinpopp.com/reference/update-custom-field.md
+  - https://docs.joinpopp.com/reference/update-document-credential.md
+  - https://docs.joinpopp.com/reference/update-document-type.md
+  - https://docs.joinpopp.com/reference/update-meeting-template.md
+  - https://docs.joinpopp.com/reference/update-organization-config-by-external-id.md
+  - https://docs.joinpopp.com/reference/update-organization-config.md
+  - https://docs.joinpopp.com/reference/update-organization-details.md
+  - https://docs.joinpopp.com/reference/update-requirements-and-reanalyse.md
+  - https://docs.joinpopp.com/reference/update-user-by-email.md
+  - https://docs.joinpopp.com/reference/update-user.md
+  - https://docs.joinpopp.com/reference/update-webhook.md
+  - https://docs.joinpopp.com/reference/update-workflow-by-external-id.md
+  - https://docs.joinpopp.com/reference/update-workflow.md
+  merge:
+    pages: 149
+    deduped: 618
+    conflicts_kept_first: 0

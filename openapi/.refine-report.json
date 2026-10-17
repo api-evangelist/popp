@@ -1,0 +1,58 @@
+{
+  "provider": "popp",
+  "sources": [
+    "popp-api-openapi.yml"
+  ],
+  "outputs": [
+    "popp-ats-api-openapi.yml",
+    "popp-agents-api-openapi.yml",
+    "popp-analysis-api-openapi.yml",
+    "popp-campaigns-api-openapi.yml",
+    "popp-candidate-lists-api-openapi.yml",
+    "popp-candidates-api-openapi.yml",
+    "popp-conversations-api-openapi.yml",
+    "popp-custom-fields-beta-api-openapi.yml",
+    "popp-document-credentials-api-openapi.yml",
+    "popp-documents-api-openapi.yml",
+    "popp-organization-configuration-api-openapi.yml",
+    "popp-organizations-api-openapi.yml",
+    "popp-scheduling-api-openapi.yml",
+    "popp-tags-api-openapi.yml",
+    "popp-templates-api-openapi.yml",
+    "popp-users-api-openapi.yml",
+    "popp-webhooks-api-openapi.yml",
+    "popp-workflows-api-openapi.yml"
+  ],
+  "archived": [
+    "deleted 1 superseded output(s) from the previous generation"
+  ],
+  "errors": [],
+  "warnings": [
+    "popp-api-openapi.yml: previously refined output kept for 149 operation(s) no archived document covers (e.g. /v1/agents get, /v1/analyses get, /v1/analyses post); its other 0 operation(s) came from the archive and were dropped from it. The archive is incomplete for this provider \u2014 re-harvest to restore _original/ as the full source of truth."
+  ],
+  "notes": [
+    "sourced from openapi/_original/ (0 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "popp-api-openapi.yml: upgraded openapi 3.0.0 -> OpenAPI 3.2.0",
+    "popp-api-openapi.yml: declared missing tag: ATS",
+    "popp-api-openapi.yml: declared missing tag: Agents",
+    "popp-api-openapi.yml: declared missing tag: Analysis",
+    "popp-api-openapi.yml: declared missing tag: Campaigns",
+    "popp-api-openapi.yml: declared missing tag: Candidate Lists",
+    "popp-api-openapi.yml: declared missing tag: Candidates",
+    "popp-api-openapi.yml: declared missing tag: Conversations",
+    "popp-api-openapi.yml: declared missing tag: Custom Fields (Beta)",
+    "popp-api-openapi.yml: declared missing tag: Document Credentials",
+    "popp-api-openapi.yml: declared missing tag: Documents",
+    "popp-api-openapi.yml: declared missing tag: Organization Configuration",
+    "popp-api-openapi.yml: declared missing tag: Organizations",
+    "popp-api-openapi.yml: declared missing tag: Scheduling",
+    "popp-api-openapi.yml: declared missing tag: Tags",
+    "popp-api-openapi.yml: declared missing tag: Templates",
+    "popp-api-openapi.yml: declared missing tag: Users",
+    "popp-api-openapi.yml: declared missing tag: Webhooks",
+    "popp-api-openapi.yml: declared missing tag: Workflows",
+    "superseded outputs removed: popp-api-openapi.yml",
+    "apis.yml register: written (+18 apis, 18 total)"
+  ],
+  "skipped": []
+}

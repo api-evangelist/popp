@@ -1,0 +1,822 @@
+openapi: 3.2.0
+info:
+  title: Popp Organization Configuration API
+  description: Popp API documentation
+  version: '1'
+servers:
+- url: https://api.joinpopp.com
+  description: Development server
+security:
+- popp_api_key: []
+  organization_id: []
+tags:
+- name: Organization Configuration
+paths:
+  /v1/config:
+    get:
+      summary: Get organization configuration
+      description: Get an organization configuration
+      operationId: get-organization-config
+      parameters: []
+      tags:
+      - Organization Configuration
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationConfig'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+    post:
+      summary: Create Organization Config
+      description: Creates an Organization Config
+      operationId: create-organization-config
+      parameters: []
+      tags:
+      - Organization Configuration
+      requestBody:
+        description: Create Organization Configuration Request
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrganizationConfigRequest'
+      responses:
+        '202':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationConfig'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+    patch:
+      summary: Update organization configuration
+      description: Updates an organization configuration
+      operationId: update-organization-config
+      parameters: []
+      tags:
+      - Organization Configuration
+      requestBody:
+        description: Update Organization Configuration Request
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateOrganizationConfigRequest'
+      responses:
+        '202':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationConfig'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+  /v1/config/by-external-organization-id/{externalOrganizationId}:
+    get:
+      summary: Get organization configuration by external organization id
+      description: Returns the configuration for the organization matching your own organization id, scoped to your organization group. Returns 409 if the external id matches more than one organization.
+      operationId: get-organization-config-by-external-id
+      parameters:
+      - name: externalOrganizationId
+        in: path
+        description: Your own identifier for the organization, as set on externalOrganizationId
+        required: true
+        schema:
+          $ref: '#/components/schemas/externalOrganizationId'
+      tags:
+      - Organization Configuration
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationConfig'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+    patch:
+      summary: Update organization configuration by external organization id
+      description: Creates or updates the configuration for the organization matching your own organization id, scoped to your organization group. Returns 409 if the external id matches more than one organization.
+      operationId: update-organization-config-by-external-id
+      parameters:
+      - name: externalOrganizationId
+        in: path
+        description: Your own identifier for the organization, as set on externalOrganizationId
+        required: true
+        schema:
+          $ref: '#/components/schemas/externalOrganizationId'
+      tags:
+      - Organization Configuration
+      requestBody:
+        description: Update Organization Configuration Request
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateOrganizationConfigRequest'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationConfig'
+          headers: {}
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationConfig'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+components:
+  schemas:
+    OrganizationConfig:
+      type: object
+      additionalProperties: false
+      required:
+      - id
+      - closingMessage
+      - rejectionMessage
+      - conversationTimeout
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the organization configuration
+        conversationTimeout:
+          type:
+          - number
+          - 'null'
+          description: Time in hours before conversations auto-close
+          minimum: 24
+        closingMessage:
+          type: string
+          description: Message sent when the candidate is not interested
+        rejectionMessage:
+          type: string
+          description: Message sent when the candidate is rejected
+        globalContext:
+          type:
+          - string
+          - 'null'
+          description: Shared configuration and context applied across all campaigns in the organization
+        emailChannelFallbackEnabled:
+          type:
+          - boolean
+          - 'null'
+          description: Organization-level default for falling back to email when an SMS or WhatsApp message cannot be delivered. Individual campaigns inherit this unless they set emailChannelFallbackEnabled themselves.
+        agent:
+          type:
+          - object
+          - 'null'
+          description: Default agent configuration for the organization
+          additionalProperties: false
+          required:
+          - id
+          - name
+          - tone
+          properties:
+            id:
+              type: string
+              description: Unique identifier for the agent
+            agentName:
+              type: string
+              description: Name of the agent
+            agentTone:
+              type: string
+              description: The communication tone of the agent
+              enum:
+              - CASUAL
+              - ENCOURAGING
+              - FRIENDLY
+              - MOTIVATIONAL
+              - NEUTRAL
+              - PROFESSIONAL
+            organizationId:
+              type: string
+              description: Unique identifier for the organization
+            organizationConfigId:
+              type:
+              - string
+              - 'null'
+              description: Unique identifier for the organization configuration
+        templates:
+          title: WhatsApp Templates
+          type: array
+          items:
+            type: object
+            additionalProperties: false
+            required:
+            - id
+            - type
+            - channel
+            - campaignType
+            properties:
+              id:
+                type: string
+                description: Unique identifier for the template
+              type:
+                type: string
+                description: The type of message template
+                enum:
+                - NUDGE_MESSAGE_1
+                - NUDGE_MESSAGE_2
+                - NUDGE_MESSAGE_3
+                - OPENING_MESSAGE
+                - RESTART_OPEN_MESSAGE
+                - WELCOME_MESSAGE
+              channel:
+                type: string
+                description: The channel through which the template will be sent
+                enum:
+                - SMS
+                - WEB_CHAT
+                - WEB_CHAT_VIA_EMAIL
+                - WHATSAPP
+              campaignType:
+                type: string
+                description: The type of campaign this template is used for
+                enum:
+                - APPLICANT_OUTREACH
+                - ENGAGEMENT_OUTREACH
+                - NEW_CANDIDATE_OUTREACH
+        protectedCharacteristics:
+          type: object
+          description: 'Every characteristic and whether it is protected for this organization. true means the search agent refuses to search on it. Always complete: a characteristic that has never been set reads as true.'
+          properties:
+            ageBias:
+              type: boolean
+              description: true protects this characteristic and the search agent refuses to search on it; false allows it.
+            sexBias:
+              type: boolean
+              description: true protects this characteristic and the search agent refuses to search on it; false allows it.
+            genderIdentityBias:
+              type: boolean
+              description: true protects this characteristic and the search agent refuses to search on it; false allows it.
+            raceEthnicityBias:
+              type: boolean
+              description: true protects this characteristic and the search agent refuses to search on it; false allows it.
+            nationalOriginBias:
+              type: boolean
+              description: true protects this characteristic and the search agent refuses to search on it; false allows it.
+            religionBias:
+              type: boolean
+              description: true protects this characteristic and the search agent refuses to search on it; false allows it.
+            sexualOrientationBias:
+              type: boolean
+              description: true protects this characteristic and the search agent refuses to search on it; false allows it.
+            disabilityBias:
+              type: boolean
+              description: true protects this characteristic and the search agent refuses to search on it; false allows it.
+            maritalStatusBias:
+              type: boolean
+              description: true protects this characteristic and the search agent refuses to search on it; false allows it.
+            pregnancyStatusBias:
+              type: boolean
+              description: true protects this characteristic and the search agent refuses to search on it; false allows it.
+            veteranStatusBias:
+              type: boolean
+              description: true protects this characteristic and the search agent refuses to search on it; false allows it.
+            criminalHistoryBias:
+              type: boolean
+              description: true protects this characteristic and the search agent refuses to search on it; false allows it.
+            medicalConditionsBias:
+              type: boolean
+              description: true protects this characteristic and the search agent refuses to search on it; false allows it.
+            englishProficiencyBias:
+              type: boolean
+              description: true protects this characteristic and the search agent refuses to search on it; false allows it.
+          additionalProperties: false
+          required:
+          - ageBias
+          - sexBias
+          - genderIdentityBias
+          - raceEthnicityBias
+          - nationalOriginBias
+          - religionBias
+          - sexualOrientationBias
+          - disabilityBias
+          - maritalStatusBias
+          - pregnancyStatusBias
+          - veteranStatusBias
+          - criminalHistoryBias
+          - medicalConditionsBias
+          - englishProficiencyBias
+    UpdateOrganizationConfigRequest:
+      type: object
+      properties:
+        agentId:
+          type: string
+          description: A valid ID of an existing agent. Cannot be used together with agentName and agentTone.
+        agentName:
+          type: string
+          description: Name of the agent. Must be provided together with agentTone. Cannot be used with agentId.
+        agentTone:
+          type: string
+          enum:
+          - CASUAL
+          - ENCOURAGING
+          - FRIENDLY
+          - MOTIVATIONAL
+          - NEUTRAL
+          - PROFESSIONAL
+          description: Tone of the agent. Must be provided together with agentName. Cannot be used with agentId.
+        conversationTimeout:
+          type: number
+          minimum: 24
+          description: Time in hours before conversations auto-close
+        rejectionMessage:
+          type: string
+          description: Message sent when the candidate is rejected
+        closingMessage:
+          type: string
+          description: Message sent when the candidate is not interested
+        globalContext:
+          type: string
+          description: Shared configuration and context applied across all campaigns in the organization
+        templates:
+          type: array
+          items:
+            type: string
+          uniqueItems: true
+          description: Array of template IDs
+        protectedCharacteristics:
+          type: object
+          description: Characteristics the search agent must refuse to search on. Merged onto the current settings, so you only need to send what you are changing. Send a characteristic as true to protect it again. Anything never set stays protected.
+          properties:
+            ageBias:
+              type: boolean
+              description: true protects this characteristic and the search agent refuses to search on it; false allows it.
+            sexBias:
+              type: boolean
+              description: true protects this characteristic and the search agent refuses to search on it; false allows it.
+            genderIdentityBias:
+              type: boolean
+              description: true protects this characteristic and the search agent refuses to search on it; false allows it.
+            raceEthnicityBias:
+              type: boolean
+              description: true protects this characteristic and the search agent refuses to search on it; false allows it.
+            nationalOriginBias:
+              type: boolean
+              description: true protects this characteristic and the search agent refuses to search on it; false allows it.
+            religionBias:
+              type: boolean
+              description: true protects this characteristic and the search agent refuses to search on it; false allows it.
+            sexualOrientationBias:
+              type: boolean
+              description: true protects this characteristic and the search agent refuses to search on it; false allows it.
+            disabilityBias:
+              type: boolean
+              description: true protects this characteristic and the search agent refuses to search on it; false allows it.
+            maritalStatusBias:
+              type: boolean
+              description: true protects this characteristic and the search agent refuses to search on it; false allows it.
+            pregnancyStatusBias:
+              type: boolean
+              description: true protects this characteristic and the search agent refuses to search on it; false allows it.
+            veteranStatusBias:
+              type: boolean
+              description: true protects this characteristic and the search agent refuses to search on it; false allows it.
+            criminalHistoryBias:
+              type: boolean
+              description: true protects this characteristic and the search agent refuses to search on it; false allows it.
+            medicalConditionsBias:
+              type: boolean
+              description: true protects this characteristic and the search agent refuses to search on it; false allows it.
+            englishProficiencyBias:
+              type: boolean
+              description: true protects this characteristic and the search agent refuses to search on it; false allows it.
+          additionalProperties: false
+      minProperties: 1
+      additionalProperties: false
+    ErrorResponse:
+      type: object
+    externalOrganizationId:
+      type: string
+    CreateOrganizationConfigRequest:
+      type: object
+      properties:
+        agentId:
+          type: string
+          description: A valid ID of an existing agent. Cannot be used together with agentName and agentTone.
+        agentName:
+          type: string
+          description: Name of the agent. Must be provided together with agentTone. Cannot be used with agentId.
+        agentTone:
+          type: string
+          enum:
+          - CASUAL
+          - ENCOURAGING
+          - FRIENDLY
+          - MOTIVATIONAL
+          - NEUTRAL
+          - PROFESSIONAL
+          description: Tone of the agent. Must be provided together with agentName. Cannot be used with agentId.
+        conversationTimeout:
+          type: number
+          minimum: 24
+          description: Time in hours before conversations auto-close
+        rejectionMessage:
+          type: string
+          description: Message sent when the candidate is rejected
+        closingMessage:
+          type: string
+          description: Message sent when the candidate is not interested
+        globalContext:
+          type: string
+          description: Shared configuration and context applied across all campaigns in the organization
+        templates:
+          type: array
+          items:
+            type: string
+          uniqueItems: true
+          description: Array of template IDs
+        protectedCharacteristics:
+          type: object
+          description: Characteristics the search agent must refuse to search on. Merged onto the current settings, so you only need to send what you are changing. Send a characteristic as true to protect it again. Anything never set stays protected.
+          properties:
+            ageBias:
+              type: boolean
+              description: true protects this characteristic and the search agent refuses to search on it; false allows it.
+            sexBias:
+              type: boolean
+              description: true protects this characteristic and the search agent refuses to search on it; false allows it.
+            genderIdentityBias:
+              type: boolean
+              description: true protects this characteristic and the search agent refuses to search on it; false allows it.
+            raceEthnicityBias:
+              type: boolean
+              description: true protects this characteristic and the search agent refuses to search on it; false allows it.
+            nationalOriginBias:
+              type: boolean
+              description: true protects this characteristic and the search agent refuses to search on it; false allows it.
+            religionBias:
+              type: boolean
+              description: true protects this characteristic and the search agent refuses to search on it; false allows it.
+            sexualOrientationBias:
+              type: boolean
+              description: true protects this characteristic and the search agent refuses to search on it; false allows it.
+            disabilityBias:
+              type: boolean
+              description: true protects this characteristic and the search agent refuses to search on it; false allows it.
+            maritalStatusBias:
+              type: boolean
+              description: true protects this characteristic and the search agent refuses to search on it; false allows it.
+            pregnancyStatusBias:
+              type: boolean
+              description: true protects this characteristic and the search agent refuses to search on it; false allows it.
+            veteranStatusBias:
+              type: boolean
+              description: true protects this characteristic and the search agent refuses to search on it; false allows it.
+            criminalHistoryBias:
+              type: boolean
+              description: true protects this characteristic and the search agent refuses to search on it; false allows it.
+            medicalConditionsBias:
+              type: boolean
+              description: true protects this characteristic and the search agent refuses to search on it; false allows it.
+            englishProficiencyBias:
+              type: boolean
+              description: true protects this characteristic and the search agent refuses to search on it; false allows it.
+          additionalProperties: false
+      minProperties: 1
+      oneOf:
+      - required:
+        - agentId
+        not:
+          anyOf:
+          - required:
+            - agentName
+          - required:
+            - agentTone
+      - required:
+        - agentName
+        - agentTone
+        not:
+          required:
+          - agentId
+      additionalProperties: false
+  securitySchemes:
+    popp_api_key:
+      description: Your Popp API key for authentication
+      type: apiKey
+      name: x-api-key
+      in: header
+    organization_id:
+      description: Your organization's unique identifier
+      type: apiKey
+      name: x-organization-id
+      in: header
+x-provenance:
+  method: searched
+  source: https://docs.joinpopp.com/reference
+  harvested: '2026-10-14'
+  tool: harvest-readme-openapi.py
+  note: Assembled verbatim from the OpenAPI definition ReadMe embeds in each operation page of the provider's developer portal; paths and components merged by API title, nothing authored.
+  assembled_from:
+  - https://docs.joinpopp.com/reference/add-candidates-to-list-by-external-id.md
+  - https://docs.joinpopp.com/reference/add-candidates-to-list.md
+  - https://docs.joinpopp.com/reference/archive-analysis.md
+  - https://docs.joinpopp.com/reference/archive-document-type.md
+  - https://docs.joinpopp.com/reference/archive-workflow-by-external-id.md
+  - https://docs.joinpopp.com/reference/archive-workflow.md
+  - https://docs.joinpopp.com/reference/bulk-create-conversations.md
+  - https://docs.joinpopp.com/reference/cancel-booking.md
+  - https://docs.joinpopp.com/reference/cancel-workflow-run.md
+  - https://docs.joinpopp.com/reference/create-analysis-candidate.md
+  - https://docs.joinpopp.com/reference/create-analysis.md
+  - https://docs.joinpopp.com/reference/create-campaign.md
+  - https://docs.joinpopp.com/reference/create-candidate-list.md
+  - https://docs.joinpopp.com/reference/create-candidate-note-by-external-id.md
+  - https://docs.joinpopp.com/reference/create-candidate-note.md
+  - https://docs.joinpopp.com/reference/create-candidate.md
+  - https://docs.joinpopp.com/reference/create-conversation.md
+  - https://docs.joinpopp.com/reference/create-custom-field.md
+  - https://docs.joinpopp.com/reference/create-document-credential.md
+  - https://docs.joinpopp.com/reference/create-document-type.md
+  - https://docs.joinpopp.com/reference/create-meeting-template.md
+  - https://docs.joinpopp.com/reference/create-organization-config.md
+  - https://docs.joinpopp.com/reference/create-scheduling-conversation.md
+  - https://docs.joinpopp.com/reference/create-user.md
+  - https://docs.joinpopp.com/reference/create-webhook.md
+  - https://docs.joinpopp.com/reference/create-workflow.md
+  - https://docs.joinpopp.com/reference/deactivate-user-by-email.md
+  - https://docs.joinpopp.com/reference/deactivate-user.md
+  - https://docs.joinpopp.com/reference/delete-candidate-by-email.md
+  - https://docs.joinpopp.com/reference/delete-candidate-by-external-id.md
+  - https://docs.joinpopp.com/reference/delete-candidate-by-phone-number.md
+  - https://docs.joinpopp.com/reference/delete-candidate-list-by-external-id.md
+  - https://docs.joinpopp.com/reference/delete-candidate-list.md
+  - https://docs.joinpopp.com/reference/delete-candidate-note.md
+  - https://docs.joinpopp.com/reference/delete-candidate.md
+  - https://docs.joinpopp.com/reference/delete-custom-field.md
+  - https://docs.joinpopp.com/reference/delete-document-credential.md
+  - https://docs.joinpopp.com/reference/delete-document-type.md
+  - https://docs.joinpopp.com/reference/delete-meeting-template.md
+  - https://docs.joinpopp.com/reference/delete-tag.md
+  - https://docs.joinpopp.com/reference/delete-user-by-email.md
+  - https://docs.joinpopp.com/reference/delete-user.md
+  - https://docs.joinpopp.com/reference/delete-webhook.md
+  - https://docs.joinpopp.com/reference/download-media.md
+  - https://docs.joinpopp.com/reference/generate-preferred-answer-requirements.md
+  - https://docs.joinpopp.com/reference/generate-questions.md
+  - https://docs.joinpopp.com/reference/generate-requirements.md
+  - https://docs.joinpopp.com/reference/get-analysis.md
+  - https://docs.joinpopp.com/reference/get-booking.md
+  - https://docs.joinpopp.com/reference/get-campaign.md
+  - https://docs.joinpopp.com/reference/get-candidate-by-external-id.md
+  - https://docs.joinpopp.com/reference/get-candidate-list-by-external-id.md
+  - https://docs.joinpopp.com/reference/get-candidate-list.md
+  - https://docs.joinpopp.com/reference/get-candidate-profile-by-external-id.md
+  - https://docs.joinpopp.com/reference/get-candidate.md
+  - https://docs.joinpopp.com/reference/get-conversation.md
+  - https://docs.joinpopp.com/reference/get-custom-field.md
+  - https://docs.joinpopp.com/reference/get-document-media.md
+  - https://docs.joinpopp.com/reference/get-document-type.md
+  - https://docs.joinpopp.com/reference/get-document.md
+  - https://docs.joinpopp.com/reference/get-meeting-template.md
+  - https://docs.joinpopp.com/reference/get-organization-config-by-external-id.md
+  - https://docs.joinpopp.com/reference/get-organization-config.md
+  - https://docs.joinpopp.com/reference/get-organization-details.md
+  - https://docs.joinpopp.com/reference/get-user-by-email.md
+  - https://docs.joinpopp.com/reference/get-user-calendar.md
+  - https://docs.joinpopp.com/reference/get-user.md
+  - https://docs.joinpopp.com/reference/get-workflow-analysis-application.md
+  - https://docs.joinpopp.com/reference/get-workflow-analysis.md
+  - https://docs.joinpopp.com/reference/get-workflow-by-external-id.md
+  - https://docs.joinpopp.com/reference/get-workflow-run.md
+  - https://docs.joinpopp.com/reference/get-workflow.md
+  - https://docs.joinpopp.com/reference/hand-conversation-to-agent.md
+  - https://docs.joinpopp.com/reference/invite-calendar-contact.md
+  - https://docs.joinpopp.com/reference/list-agents.md
+  - https://docs.joinpopp.com/reference/list-analyses.md
+  - https://docs.joinpopp.com/reference/list-ats-job-stages.md
+  - https://docs.joinpopp.com/reference/list-ats-jobs.md
+  - https://docs.joinpopp.com/reference/list-ats-rejection-reasons.md
+  - https://docs.joinpopp.com/reference/list-bookings.md
+  - https://docs.joinpopp.com/reference/list-campaigns.md
+  - https://docs.joinpopp.com/reference/list-candidate-lists.md
+  - https://docs.joinpopp.com/reference/list-candidate-notes-by-external-id.md
+  - https://docs.joinpopp.com/reference/list-candidate-notes.md
+  - https://docs.joinpopp.com/reference/list-conversation-documents.md
+  - https://docs.joinpopp.com/reference/list-conversation-messages.md
+  - https://docs.joinpopp.com/reference/list-conversations.md
+  - https://docs.joinpopp.com/reference/list-custom-fields.md
+  - https://docs.joinpopp.com/reference/list-document-credentials.md
+  - https://docs.joinpopp.com/reference/list-document-types.md
+  - https://docs.joinpopp.com/reference/list-meeting-templates.md
+  - https://docs.joinpopp.com/reference/list-organization-users.md
+  - https://docs.joinpopp.com/reference/list-organizations.md
+  - https://docs.joinpopp.com/reference/list-tags.md
+  - https://docs.joinpopp.com/reference/list-templates.md
+  - https://docs.joinpopp.com/reference/list-user-calendars.md
+  - https://docs.joinpopp.com/reference/list-users.md
+  - https://docs.joinpopp.com/reference/list-webhook-events.md
+  - https://docs.joinpopp.com/reference/list-webhooks.md
+  - https://docs.joinpopp.com/reference/list-workflow-analysis-application-history.md
+  - https://docs.joinpopp.com/reference/list-workflow-analysis-applications.md
+  - https://docs.joinpopp.com/reference/list-workflow-runs.md
+  - https://docs.joinpopp.com/reference/list-workflows.md
+  - https://docs.joinpopp.com/reference/parse-availability.md
+  - https://docs.joinpopp.com/reference/pause-workflow-by-external-id.md
+  - https://docs.joinpopp.com/reference/pause-workflow.md
+  - https://docs.joinpopp.com/reference/process-document.md
+  - https://docs.joinpopp.com/reference/publish-workflow-by-external-id.md
+  - https://docs.joinpopp.com/reference/publish-workflow.md
+  - https://docs.joinpopp.com/reference/reactivate-user-by-email.md
+  - https://docs.joinpopp.com/reference/reactivate-user.md
+  - https://docs.joinpopp.com/reference/remove-candidate-document-by-external-id.md
+  - https://docs.joinpopp.com/reference/remove-candidate-document.md
+  - https://docs.joinpopp.com/reference/remove-candidates-from-list-by-external-id.md
+  - https://docs.joinpopp.com/reference/remove-candidates-from-list.md
+  - https://docs.joinpopp.com/reference/reparse-candidate-cv-by-external-id.md
+  - https://docs.joinpopp.com/reference/reparse-candidate-cv.md
+  - https://docs.joinpopp.com/reference/resend-booking-url.md
+  - https://docs.joinpopp.com/reference/resume-workflow-by-external-id.md
+  - https://docs.joinpopp.com/reference/resume-workflow.md
+  - https://docs.joinpopp.com/reference/send-conversation-message.md
+  - https://docs.joinpopp.com/reference/set-user-calendar-availability.md
+  - https://docs.joinpopp.com/reference/sign-out-user-by-email.md
+  - https://docs.joinpopp.com/reference/sign-out-user.md
+  - https://docs.joinpopp.com/reference/start-workflow-runs-by-external-id.md
+  - https://docs.joinpopp.com/reference/start-workflow-runs.md
+  - https://docs.joinpopp.com/reference/stop-campaign.md
+  - https://docs.joinpopp.com/reference/takeover-conversation.md
+  - https://docs.joinpopp.com/reference/update-analysis.md
+  - https://docs.joinpopp.com/reference/update-booking.md
+  - https://docs.joinpopp.com/reference/update-campaign.md
+  - https://docs.joinpopp.com/reference/update-candidate-by-external-id.md
+  - https://docs.joinpopp.com/reference/update-candidate-list-by-external-id.md
+  - https://docs.joinpopp.com/reference/update-candidate-list.md
+  - https://docs.joinpopp.com/reference/update-candidate-note.md
+  - https://docs.joinpopp.com/reference/update-candidate.md
+  - https://docs.joinpopp.com/reference/update-custom-field.md
+  - https://docs.joinpopp.com/reference/update-document-credential.md
+  - https://docs.joinpopp.com/reference/update-document-type.md
+  - https://docs.joinpopp.com/reference/update-meeting-template.md
+  - https://docs.joinpopp.com/reference/update-organization-config-by-external-id.md
+  - https://docs.joinpopp.com/reference/update-organization-config.md
+  - https://docs.joinpopp.com/reference/update-organization-details.md
+  - https://docs.joinpopp.com/reference/update-requirements-and-reanalyse.md
+  - https://docs.joinpopp.com/reference/update-user-by-email.md
+  - https://docs.joinpopp.com/reference/update-user.md
+  - https://docs.joinpopp.com/reference/update-webhook.md
+  - https://docs.joinpopp.com/reference/update-workflow-by-external-id.md
+  - https://docs.joinpopp.com/reference/update-workflow.md
+  merge:
+    pages: 149
+    deduped: 618
+    conflicts_kept_first: 0

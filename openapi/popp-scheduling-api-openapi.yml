@@ -1,0 +1,3426 @@
+openapi: 3.2.0
+info:
+  title: Popp Scheduling API
+  description: Popp API documentation
+  version: '1'
+servers:
+- url: https://api.joinpopp.com
+  description: Development server
+security:
+- popp_api_key: []
+  organization_id: []
+tags:
+- name: Scheduling
+paths:
+  /v1/availability/parse:
+    post:
+      summary: Parse Availability
+      description: Parses natural-language availability text into structured time slots. Supports multi-turn clarification via the messages array. Does NOT save the availability — call PUT /v1/user-calendars/{userCalendarId}/availability after the user confirms.
+      operationId: parse-availability
+      parameters: []
+      tags:
+      - Scheduling
+      requestBody:
+        description: Conversation messages and date/timezone context
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ParseAvailabilityInput'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParseAvailabilityResponse'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+  /v1/bookings:
+    get:
+      summary: List calendar bookings
+      description: 'List calendar bookings belonging to the authenticated organization.
+
+
+        All filters are optional. Results are always scoped to the authenticated organization.
+
+
+        Results are paginated using a cursor (`nextToken`). To fetch the next page, pass the
+
+        `nextToken` from the previous response back as a query parameter.'
+      operationId: list-bookings
+      parameters:
+      - name: campaignId
+        in: query
+        description: Filter by the campaign that generated the booking
+        required: false
+        schema:
+          $ref: '#/components/schemas/campaignId'
+      - name: conversationId
+        in: query
+        description: Filter by the conversation that generated the booking
+        required: false
+        schema:
+          $ref: '#/components/schemas/conversationId'
+      - name: status
+        in: query
+        description: Filter by booking status
+        required: false
+        schema:
+          $ref: '#/components/schemas/status-fdf66607-6c16-48bb-bc03-7dea3c78657e'
+      - name: fromDateTime
+        in: query
+        description: Only include bookings starting on or after this ISO-8601 datetime
+        required: false
+        schema:
+          $ref: '#/components/schemas/fromDateTime'
+      - name: toDateTime
+        in: query
+        description: Only include bookings starting on or before this ISO-8601 datetime
+        required: false
+        schema:
+          $ref: '#/components/schemas/toDateTime'
+      - name: limit
+        in: query
+        description: 'Maximum number of results to return (1-100, default: 20)'
+        required: false
+        schema:
+          $ref: '#/components/schemas/limit-b96ef13b-e584-424a-928f-64183cf295c1'
+      - name: nextToken
+        in: query
+        description: Pagination cursor from a previous response
+        required: false
+        schema:
+          $ref: '#/components/schemas/nextToken'
+      tags:
+      - Scheduling
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookingList'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+  /v1/bookings/{bookingId}:
+    patch:
+      summary: Update Booking
+      description: 'Update an existing booking. Supports updating the title, time, duration,
+
+        description, location, and attendees of the meeting. The underlying calendar
+
+        event is updated and participants are notified by default.
+
+
+        Cannot be used on cancelled bookings or to set a start time in the past.
+
+
+        When you change the time, the new slot is validated against the meeting
+
+        template it was booked from. The request returns 400, with the reason in the
+
+        response message, if the new slot:
+
+
+        - falls outside the template''s open hours
+
+        - falls inside the template''s minimum notice period
+
+        - falls beyond the template''s booking window
+
+        - overlaps another meeting on the assigned interviewer''s calendar,
+
+        including the template''s buffer either side
+
+
+        Moving a booking within its own existing slot is always allowed. Changes
+
+        that do not alter the time are not validated against the template.
+
+
+        The request also returns 400 if the template''s rules cannot be read at all —
+
+        for example if its scheduler configuration is missing open hours, a notice
+
+        period or a booking window, or if the booking''s organizer calendar cannot be
+
+        resolved. These are reported separately from a rule that was evaluated and
+
+        failed, so you can tell "your time is outside the open hours" from "we could
+
+        not read this template".
+
+
+        Returns 404 if the booking does not exist, or if it belongs to a different
+
+        organisation than the one tied to the API key.'
+      operationId: update-booking
+      parameters:
+      - name: bookingId
+        in: path
+        description: The unique identifier of the booking
+        required: true
+        schema:
+          $ref: '#/components/schemas/bookingId'
+      tags:
+      - Scheduling
+      requestBody:
+        description: The fields to update on the booking
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateBookingInput'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookingResponse'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+    get:
+      summary: Get a calendar booking
+      description: 'Get full details of a calendar booking by ID.
+
+
+        Returns the booking record only if it belongs to the authenticated organization.'
+      operationId: get-booking
+      parameters:
+      - name: bookingId
+        in: path
+        description: The unique identifier of the calendar booking
+        required: true
+        schema:
+          $ref: '#/components/schemas/bookingId'
+      tags:
+      - Scheduling
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+  /v1/bookings/{bookingId}/cancel:
+    post:
+      summary: Cancel Booking
+      description: 'Cancel an existing booking. The underlying calendar event is cancelled
+
+        via Nylas and a cancellation notification is sent to all participants
+
+        by default.
+
+
+        Returns 404 if the booking does not exist, or if it belongs to a different
+
+        organisation than the one tied to the API key. Returns 409 if the booking
+
+        has already been cancelled. Returns 400 if the booking has already started.'
+      operationId: cancel-booking
+      parameters:
+      - name: bookingId
+        in: path
+        description: The unique identifier of the booking
+        required: true
+        schema:
+          $ref: '#/components/schemas/bookingId'
+      tags:
+      - Scheduling
+      requestBody:
+        description: Optional cancellation reason and notification settings
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CancelBookingInput'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CancelBookingResponse'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+  /v1/conversations/resend-booking-url:
+    post:
+      summary: Resend booking URL
+      description: Resends a booking URL to an existing conversation with updated meeting configuration. Use this when a candidate cannot find suitable time slots and you need to provide new availability options. Identify the conversation using either conversationId or externalConversationId. You can either reference an existing meeting template or create a new one with custom configuration.
+      operationId: resend-booking-url
+      parameters: []
+      tags:
+      - Scheduling
+      requestBody:
+        description: Conversation identifier (conversationId or externalConversationId) and meeting template ID or new meeting configuration
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResendBookingUrlInput'
+      responses:
+        '202':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResendBookingUrlResponse'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+  /v1/invite-calendar-contact:
+    post:
+      summary: Invite Calendar Contact
+      description: Invites an external contact to connect their calendar. This sends an invitation to the contact allowing them to share their calendar availability.
+      operationId: invite-calendar-contact
+      parameters: []
+      tags:
+      - Scheduling
+      requestBody:
+        description: The input to invite a calendar contact
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InviteCalendarContactInput'
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InviteCalendarContactResponse'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+  /v1/meeting-templates:
+    get:
+      summary: List meeting templates
+      description: 'Search and list meeting templates belonging to the authenticated organization.
+
+
+        All search filters are optional. Results are always scoped to the authenticated organization.
+
+
+        **Note:** For full meeting template details (including configuration options like buffer,
+
+        reminder settings, and availability), use the `/v1/meeting-templates/{templateId}` endpoint.'
+      operationId: list-meeting-templates
+      parameters:
+      - name: title
+        in: query
+        description: Search by title (partial match supported)
+        required: false
+        schema:
+          $ref: '#/components/schemas/title'
+      - name: status
+        in: query
+        description: Filter by status
+        required: false
+        schema:
+          $ref: '#/components/schemas/status-68e07924-ed96-48a5-906e-ede3549d53d4'
+      - name: location
+        in: query
+        description: Search by location (partial match supported)
+        required: false
+        schema:
+          $ref: '#/components/schemas/location'
+      - name: isVideoConference
+        in: query
+        description: Filter by video conferencing enabled
+        required: false
+        schema:
+          $ref: '#/components/schemas/isVideoConference'
+      - name: limit
+        in: query
+        description: 'Maximum number of results to return (1-100, default: 100)'
+        required: false
+        schema:
+          $ref: '#/components/schemas/limit-272b2660-f5ad-4a2e-aaf5-9174ff8f57b9'
+      - name: nextToken
+        in: query
+        description: Pagination token from previous response
+        required: false
+        schema:
+          $ref: '#/components/schemas/nextToken'
+      tags:
+      - Scheduling
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListMeetingTemplatesResponse'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+    post:
+      summary: Create Meeting Template
+      description: Creates a calendar meeting template for scheduling meetings. The template defines meeting parameters such as duration, participants, availability, and video conferencing settings.
+      operationId: create-meeting-template
+      parameters: []
+      tags:
+      - Scheduling
+      requestBody:
+        description: The input to create a meeting template
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMeetingTemplateInput'
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateMeetingTemplateResponse'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+  /v1/meeting-templates/{templateId}:
+    get:
+      summary: Get meeting template
+      description: 'Get full details of a meeting template by ID.
+
+
+        Returns the complete meeting template configuration including availability settings,
+
+        buffer times, reminder settings, and participant information.
+
+
+        Use this endpoint when you need the full configuration details. For a list overview
+
+        of meeting templates, use the `/v1/meeting-templates` endpoint instead.
+
+
+        Returns 404 if the template does not exist, or if it belongs to a different
+
+        organization than the one tied to the API key.'
+      operationId: get-meeting-template
+      parameters:
+      - name: templateId
+        in: path
+        description: The unique identifier of the meeting template
+        required: true
+        schema:
+          $ref: '#/components/schemas/templateId'
+      tags:
+      - Scheduling
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetMeetingTemplateResponse'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+    put:
+      summary: Update Meeting Template
+      description: 'Updates a calendar meeting template by ID.
+
+
+        Nearly every field is required, so in practice a call supplies the template''s
+
+        whole configuration rather than a patch. The optional fields behave
+
+        differently: **omitting one leaves the stored value unchanged — it does not
+
+        clear it.** `guestLabel` accepts `null` to clear it explicitly, and
+
+        `availabilityOutreachSettings` is merged field by field, so you can send only
+
+        the keys you want to change and the rest are preserved. `availabilityMethod`
+
+        follows the same rule: omit it and the template keeps its current method
+
+        instead of reverting to `COLLECTIVE`, and the participants you send are
+
+        validated against whichever method results.
+
+
+        `location` does not keep its stored value on an in-person template
+
+        (`videoConferencing: false`). Send it on every update, also when the stored
+
+        template already has an address, or the update returns 400.
+
+
+        **`meetingParticipants` is also an exception, and the sharp edge: the array you
+
+        send becomes the template''s entire panel, so a participant currently on the
+
+        template but missing from your payload is removed from it.** There is no
+
+        partial update of a single participant.
+
+
+        The intended flow is read-modify-write. Call
+
+        Get Meeting Template, change what you need,
+
+        and send the whole thing back. Every field this endpoint requires is returned
+
+        by that read except `isCalendarConnected`, which you supply per participant.
+
+        `openHours` is returned alongside `availability` in exactly the shape this
+
+        endpoint expects, and `videoConferencingProvider` comes back for templates
+
+        that use video conferencing.
+
+
+        Returns 404 if the template does not exist, or if it belongs to a different
+
+        organization than the one tied to the API key.'
+      operationId: update-meeting-template
+      parameters:
+      - name: templateId
+        in: path
+        description: The unique identifier of the meeting template
+        required: true
+        schema:
+          $ref: '#/components/schemas/templateId'
+      tags:
+      - Scheduling
+      requestBody:
+        description: The updated meeting template configuration
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateMeetingTemplateInput'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateMeetingTemplateResponse'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+    delete:
+      summary: Delete Meeting Template
+      description: 'Deletes a calendar meeting template by ID.
+
+
+        Returns 404 if the template does not exist, or if it belongs to a different
+
+        organisation than the one tied to the API key.
+
+
+        Returns 409 Conflict if the template is referenced by an active campaign or
+
+        has scheduled future bookings.'
+      operationId: delete-meeting-template
+      parameters:
+      - name: templateId
+        in: path
+        description: The unique identifier of the meeting template
+        required: true
+        schema:
+          $ref: '#/components/schemas/templateId'
+      tags:
+      - Scheduling
+      responses:
+        '204':
+          description: ''
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+  /v1/scheduling/conversations:
+    post:
+      summary: Create auto-schedule conversation
+      description: Creates a scheduling conversation in Popp application. This endpoint is used for meeting scheduling workflows where participants can provide their availability and a meeting will be scheduled automatically.
+      operationId: create-scheduling-conversation
+      parameters: []
+      tags:
+      - Scheduling
+      requestBody:
+        description: The input to create a scheduling conversation
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSchedulingConversationInput'
+      responses:
+        '202':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateSchedulingConversationResponse'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+  /v1/user-calendars:
+    get:
+      summary: List User Calendars
+      description: List user calendars connected to the requesting organization. Use this to discover the `userCalendarId` needed to publish availability via PUT /v1/user-calendars/{userCalendarId}/availability.
+      operationId: list-user-calendars
+      parameters:
+      - name: provider
+        in: query
+        description: Filter by provider.
+        required: false
+        schema:
+          $ref: '#/components/schemas/provider'
+      - name: status
+        in: query
+        description: Filter by connection status.
+        required: false
+        schema:
+          $ref: '#/components/schemas/status-e42c6b84-3eed-4a37-8a05-cf2140d60597'
+      - name: email
+        in: query
+        description: Exact-match email lookup.
+        required: false
+        schema:
+          $ref: '#/components/schemas/email'
+      - name: limit
+        in: query
+        description: Maximum number of items per page (1–50). Defaults to 20.
+        required: false
+        schema:
+          $ref: '#/components/schemas/limit-af1e6b3b-98fc-4525-898e-9eaf97e70859'
+      - name: nextToken
+        in: query
+        description: Pagination token returned by a previous call.
+        required: false
+        schema:
+          $ref: '#/components/schemas/nextToken'
+      tags:
+      - Scheduling
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListUserCalendarsResponse'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+  /v1/user-calendars/{userCalendarId}:
+    get:
+      summary: Get User Calendar
+      description: Fetch a single user calendar by id. Returns 404 if the calendar does not exist or does not belong to the requesting organization (the API does not leak existence across organizations).
+      operationId: get-user-calendar
+      parameters:
+      - name: userCalendarId
+        in: path
+        description: The user calendar ID (discoverable via GET /v1/user-calendars).
+        required: true
+        schema:
+          $ref: '#/components/schemas/userCalendarId'
+      tags:
+      - Scheduling
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserCalendar'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+  /v1/user-calendars/{userCalendarId}/availability:
+    put:
+      summary: Set User Calendar Availability
+      description: Saves confirmed availability time slots to a participant's virtual calendar. Once all required participants for a meeting have availability recorded, the scheduling link is generated and sent to the candidate automatically.
+      operationId: set-user-calendar-availability
+      parameters:
+      - name: userCalendarId
+        in: path
+        description: The ID of the virtual calendar to save availability against (discoverable via GET /v1/user-calendars).
+        required: true
+        schema:
+          $ref: '#/components/schemas/userCalendarId'
+      tags:
+      - Scheduling
+      requestBody:
+        description: Timezone and the list of free time windows.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetUserCalendarAvailabilityInput'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SetUserCalendarAvailabilityResponse'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+components:
+  schemas:
+    ResendBookingUrlResponse:
+      type: object
+      title: Resend Booking URL Response
+      description: Response from the resend booking URL endpoint.
+      properties:
+        message:
+          type: string
+          title: Message
+          description: A confirmation message indicating the booking URL resend has been scheduled.
+          example: Booking URL resend triggered
+        conversationId:
+          type: string
+          title: Conversation ID
+          description: The ID of the conversation that will receive the new booking URL.
+          example: conv_abc123
+        calendarMeetingTemplateId:
+          type: string
+          title: Calendar Meeting Template ID
+          description: The ID of the meeting template used for generating the booking URL.
+          example: cmt_xyz789
+      required:
+      - message
+      - conversationId
+      - calendarMeetingTemplateId
+      additionalProperties: false
+    BookingResponse:
+      type: object
+      properties:
+        bookingId:
+          type: string
+          title: Booking ID
+          example: booking-123
+        conversationId:
+          type: string
+          title: Conversation ID
+          example: conv-123
+        campaignId:
+          type: string
+          title: Campaign ID
+          example: camp-123
+        title:
+          type: string
+          title: Title
+          example: Technical Interview Round 2
+        startDateTime:
+          type: string
+          format: date-time
+          title: Start Date Time
+          example: '2026-03-20T14:00:00Z'
+        endDateTime:
+          type: string
+          format: date-time
+          title: End Date Time
+          example: '2026-03-20T14:45:00Z'
+        description:
+          type: string
+          title: Description
+          example: Technical deep-dive
+        location:
+          type: string
+          title: Location
+          example: Room 3B
+        attendees:
+          type: array
+          title: Attendees
+          items:
+            type: object
+            properties:
+              email:
+                type: string
+                format: email
+              name:
+                type: string
+            required:
+            - email
+            - name
+        status:
+          type: string
+          title: Status
+          enum:
+          - SCHEDULED
+          - CANCELLED
+          - RESCHEDULED
+          - RESCHEDULING_REQUESTED
+          example: SCHEDULED
+      required:
+      - bookingId
+      - conversationId
+      - campaignId
+      - title
+      - startDateTime
+      - endDateTime
+      - description
+      - location
+      - attendees
+      - status
+      additionalProperties: false
+    CreateMeetingTemplateResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          title: Message
+          example: Meeting template created successfully
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+              title: ID
+              description: The unique identifier of the created meeting template.
+              example: template-123
+          required:
+          - id
+          additionalProperties: false
+      required:
+      - message
+      - data
+      additionalProperties: false
+    ParseAvailabilityResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          title: Assistant Message
+          description: Human-readable assistant reply to display. A confirmation when status=complete, a follow-up question when status=clarification_needed, or an explanation when status=error.
+        availability:
+          title: Parsed Availability
+          description: Populated when status=complete; null otherwise.
+          type:
+          - object
+          - 'null'
+          properties:
+            timezone:
+              type: string
+              description: IANA timezone for the returned time slots.
+            timeSlots:
+              type: array
+              items:
+                type: object
+                properties:
+                  date:
+                    type: string
+                    pattern: ^\d{4}-\d{2}-\d{2}$
+                    description: Slot date (YYYY-MM-DD).
+                  startTime:
+                    type: string
+                    pattern: ^\d{2}:\d{2}$
+                    description: Local start time (HH:MM, 24h).
+                  endTime:
+                    type: string
+                    pattern: ^\d{2}:\d{2}$
+                    description: Local end time (HH:MM, 24h).
+                required:
+                - date
+                - startTime
+                - endTime
+                additionalProperties: false
+          required:
+          - timezone
+          - timeSlots
+          additionalProperties: false
+        status:
+          type: string
+          enum:
+          - complete
+          - clarification_needed
+          - error
+          description: complete = slots ready (client may save); clarification_needed = ask follow-up; error = input not parseable.
+        confidence:
+          type: number
+          minimum: 0
+          maximum: 1
+          description: Model confidence in the result.
+      required:
+      - message
+      - availability
+      - status
+      - confidence
+      additionalProperties: false
+    status-68e07924-ed96-48a5-906e-ede3549d53d4:
+      type: string
+      enum:
+      - ACTIVE
+      - ARCHIVED
+    location:
+      type: string
+    bookingId:
+      type: string
+    UpdateMeetingTemplateInput:
+      type: object
+      properties:
+        meetingParticipants:
+          type: array
+          title: Meeting Participants
+          description: 'The complete participant panel for the meeting. The array you send becomes the panel, so a participant currently on the template but absent from this list is removed from it. There is no way to update a single participant in isolation — read the template first with Get Meeting Template and send its meetingParticipants back with isCalendarConnected added to each. For a COLLECTIVE meeting exactly one participant must be the organizer; for a round-robin availabilityMethod the pool must contain 2 to 10 participants and no organizer is required. Every participant must be able to supply availability one of three ways: a connected calendar (isCalendarConnected true), pre-defined availability.timeSlots, or autoCollectAvailability.'
+          minItems: 1
+          items:
+            type: object
+            properties:
+              isOrganizer:
+                type: boolean
+                title: Is Organizer
+                description: Whether this participant is the meeting organizer. Defaults to false when omitted. Exactly one participant must be the organizer for a COLLECTIVE meeting; a round-robin availabilityMethod needs none.
+                default: false
+                example: true
+              isCalendarConnected:
+                type: boolean
+                title: Is Calendar Connected
+                description: Whether this participant has a connected calendar in Popp.
+                example: true
+              name:
+                type: string
+                title: Name
+                description: The full name of the participant.
+                example: John Doe
+              email:
+                type: string
+                format: email
+                title: Email
+                description: The email address of the participant.
+                example: john@example.com
+              autoCollectAvailability:
+                type: boolean
+                title: Auto Collect Availability
+                description: If true, Popp emails this participant to ask for their availability instead of reading a calendar. Requires isCalendarConnected to be false. Any number of participants on the template can have this enabled — for a COLLECTIVE meeting Popp collects from each of them and books a slot that works for the whole panel.
+              availabilityOutreachSettings:
+                type: object
+                title: Availability Outreach Settings
+                description: Per-participant overrides for availability outreach. Fields not specified fall back to template-level settings, then system defaults.
+                properties:
+                  requiredHours:
+                    type: integer
+                    description: Hours of availability to ask this participant for. A target the agent nudges toward, not a minimum that gates booking — Popp will book inside a shorter overlap if that is all it has.
+                    minimum: 1
+                    maximum: 168
+                  periodDays:
+                    type: integer
+                    description: The window this participant is asked to offer availability within, in days, and the window their reply is read against. Distinct from the top-level availableDaysInTheFuture, which controls how far ahead a candidate may book.
+                    minimum: 7
+                    maximum: 60
+                  customTemplatedSubjectLine:
+                    type: string
+                    description: 'Custom email subject line for the outreach email to this participant. Supports placeholders: {{INTERVIEWER_NAME}}, {{CANDIDATE_FIRST_NAME}}, {{AGENT_NAME}}, {{ORGANIZATION_NAME}}, {{CAMPAIGN_OWNER_NAME}}, {{MEETING_AVAILABILITY_TEXT}}.'
+                  customTemplatedMessage:
+                    type: string
+                    description: Custom email body for the outreach email to this participant. Supports the same placeholders as customTemplatedSubjectLine. {{MEETING_AVAILABILITY_TEXT}} expands to the concrete ask (window, hours, timezone) derived from requiredHours and periodDays; it is optional and not validated, so a message that omits it is accepted and the participant receives no concrete availability request.
+                  nudgeSettings:
+                    type: array
+                    description: Follow-up nudge configuration. Each entry represents one nudge with a delayHours field. Array length determines total nudges. Empty array disables nudging.
+                    items:
+                      type: object
+                      properties:
+                        delayHours:
+                          type: integer
+                          description: Hours to wait since the previous message before sending this nudge.
+                          minimum: 1
+                      required:
+                      - delayHours
+                    maxItems: 10
+                  additionalRecipients:
+                    type: array
+                    description: Email addresses CC'd on all outreach communications (initial email, reply-backs, nudges, cancellation).
+                    items:
+                      type: string
+                      format: email
+              availability:
+                type: object
+                title: Availability
+                description: Pre-defined availability time slots for the participant. Only applicable when isCalendarConnected is false.
+                properties:
+                  timezone:
+                    type: string
+                    title: Timezone
+                    description: IANA timezone string (e.g., 'America/New_York', 'Europe/London'). Must be a valid IANA timezone identifier.
+                    example: Europe/London
+                  timeSlots:
+                    type: array
+                    title: Time Slots
+                    description: Array of available time windows. All time slots must be in the future.
+                    minItems: 1
+                    items:
+                      type: object
+                      properties:
+                        date:
+                          type: string
+                          pattern: ^\d{4}-([0][1-9]|1[0-2])-([0][1-9]|[12]\d|3[01])$
+                          title: Date
+                          description: The date in YYYY-MM-DD format (e.g., '2025-01-15').
+                        startTime:
+                          type: string
+                          pattern: ^([01]\d|2[0-3]):([0-5]\d)$
+                          title: Start Time
+                          description: The start time in HH:mm format (e.g., '09:00').
+                        endTime:
+                          type: string
+                          pattern: ^([01]\d|2[0-3]):([0-5]\d)$
+                          title: End Time
+                          description: The end time in HH:mm format (e.g., '17:00').
+                      required:
+                      - date
+                      - startTime
+                      - endTime
+                required:
+                - timezone
+                - timeSlots
+            required:
+            - isCalendarConnected
+            - name
+            - email
+        availabilityMethod:
+          type: string
+          title: Availability Method
+          description: 'Determines who must attend the meeting. Optional on update: omitting it leaves the template''s current method unchanged rather than resetting it to COLLECTIVE, and the participants you send are validated against that resulting method. COLLECTIVE books a slot that works for every participant on the panel and requires exactly one organizer. ROUND_ROBIN_MAX_AVAILABILITY routes each meeting to a single participant from a pool of 2 to 10, chosen to give the candidate the widest choice of slots, and requires no organizer.'
+          enum:
+          - COLLECTIVE
+          - ROUND_ROBIN_MAX_AVAILABILITY
+          example: COLLECTIVE
+        title:
+          type: string
+          title: Title
+          description: The title of the meeting.
+          example: Interview Call
+        description:
+          type: string
+          title: Description
+          description: A description for the meeting that will be included in the calendar invite.
+          example: Initial screening interview
+        openHours:
+          type: array
+          title: Open Hours
+          description: Available time windows for scheduling the meeting.
+          minItems: 1
+          items:
+            type: object
+            properties:
+              days:
+                type: array
+                title: Days
+                items:
+                  type: integer
+                  minimum: 0
+                  maximum: 6
+                minItems: 1
+                example:
+                - 1
+                - 2
+                - 3
+                - 4
+                - 5
+              start:
+                type: string
+                pattern: ^([01]\d|2[0-3]):([0-5]\d)$
+                example: 09:00
+              end:
+                type: string
+                pattern: ^([01]\d|2[0-3]):([0-5]\d)$
+                example: '17:00'
+            required:
+            - days
+            - start
+            - end
+        timezone:
+          type: string
+          title: Timezone
+          description: IANA timezone string for the meeting.
+          example: Europe/London
+        duration:
+          type: integer
+          title: Duration
+          description: The duration of the meeting in minutes.
+          minimum: 1
+          maximum: 1440
+          example: 30
+        videoConferencing:
+          type: boolean
+          title: Video Conferencing
+          description: Whether to include video conferencing for the meeting. If true, videoConferencingProvider is required and location cannot be specified. If false, location is required.
+          example: true
+        videoConferencingProvider:
+          type: string
+          title: Video Conferencing Provider
+          description: The video conferencing provider to use. Required when videoConferencing is true.
+          enum:
+          - Google Meet
+          - Microsoft Teams
+          example: Google Meet
+        location:
+          type: string
+          title: Location
+          description: The physical location for the meeting. Required when videoConferencing is false; must contain at least one non-space character and is trimmed. Cannot be used when videoConferencing is enabled.
+        buffer:
+          type: integer
+          title: Buffer
+          description: Buffer time in minutes before/after meetings. Must be a multiple of 5.
+          minimum: 0
+          maximum: 120
+          multipleOf: 5
+          example: 15
+        reminderMinutesBeforeMeeting:
+          type: integer
+          title: Reminder Minutes Before Meeting
+          description: How many minutes before the meeting to send a reminder notification.
+          minimum: 1
+          example: 1440
+        noticePeriodMinutes:
+          type: integer
+          title: Notice Period Minutes
+          description: Minimum notice required for booking in minutes.
+          minimum: 0
+          example: 60
+        availableDaysInTheFuture:
+          type: integer
+          title: Available Days In The Future
+          description: How far ahead a candidate may book on the booking page, in days. Distinct from availabilityOutreachSettings.periodDays, which controls the window interviewers are asked to offer availability within. Neither field caps the other.
+          minimum: 1
+          example: 30
+        guestLabel:
+          type:
+          - string
+          - 'null'
+          title: Guest Label
+          description: Noun used in the availability-outreach email for the counterparty the interviewer is scheduled to meet — the person who books the slot. Applies to the whole meeting. Defaults to "candidate"; override with e.g. "recruiter". Must not begin with "the" (Popp prefixes it automatically). Send null to clear a custom label and fall back to the default.
+          minLength: 1
+          maxLength: 50
+          example: recruiter
+        availabilityOutreachSettings:
+          type: object
+          title: Availability Outreach Settings
+          description: Template-level settings for availability outreach emails sent to participants with autoCollectAvailability enabled. Per-participant overrides take priority over these values. On update these are merged field by field onto the stored settings — send only the keys you want to change; omitted keys keep their current value, and omitting the object entirely leaves all of them unchanged. See the Scheduling with Availability Collection guide for details.
+          properties:
+            requiredHours:
+              type: integer
+              description: 'Hours of availability to ask for. Default: 6. A target the agent nudges toward, not a minimum that gates booking — Popp will book inside a shorter overlap if that is all it has.'
+              minimum: 1
+              maximum: 168
+              example: 4
+            periodDays:
+              type: integer
+              description: 'The window interviewers are asked to offer availability within, in days, and the window their replies are read against. Default: 14. Distinct from the top-level availableDaysInTheFuture, which controls how far ahead a candidate may book.'
+              minimum: 7
+              maximum: 60
+              example: 10
+            customTemplatedSubjectLine:
+              type: string
+              description: 'Custom email subject line. Supports placeholders: {{INTERVIEWER_NAME}}, {{CANDIDATE_FIRST_NAME}}, {{AGENT_NAME}}, {{ORGANIZATION_NAME}}, {{CAMPAIGN_OWNER_NAME}}, {{MEETING_AVAILABILITY_TEXT}}.'
+              example: Hi {{INTERVIEWER_NAME}}, availability needed
+            customTemplatedMessage:
+              type: string
+              description: Custom email body. Supports the same placeholders as customTemplatedSubjectLine. {{MEETING_AVAILABILITY_TEXT}} expands to the concrete ask (window, hours, timezone) derived from requiredHours and periodDays; it is optional and not validated, so a message that omits it is accepted and the interviewer receives no concrete availability request.
+              example: 'Hi {{INTERVIEWER_NAME}},
+
+
+                {{MEETING_AVAILABILITY_TEXT}}
+
+
+                Thanks,
+
+                {{AGENT_NAME}}'
+            nudgeSettings:
+              type: array
+              description: 'Follow-up nudge configuration. Each entry represents one nudge. Array length determines total nudges. Default: 3 nudges at 24h intervals.'
+              items:
+                type: object
+                properties:
+                  delayHours:
+                    type: integer
+                    description: Hours to wait since the previous message before sending this nudge.
+                    minimum: 1
+                required:
+                - delayHours
+              maxItems: 10
+              example:
+              - delayHours: 12
+              - delayHours: 24
+            additionalRecipients:
+              type: array
+              description: Email addresses CC'd on all outreach communications.
+              items:
+                type: string
+                format: email
+              example:
+              - recruiter@company.com
+      required:
+      - meetingParticipants
+      - title
+      - openHours
+      - timezone
+      - duration
+      - videoConferencing
+      - buffer
+      - reminderMinutesBeforeMeeting
+      - noticePeriodMinutes
+      - availableDaysInTheFuture
+      additionalProperties: false
+    ResendBookingUrlInput:
+      type: object
+      title: Resend Booking URL Input
+      description: Input for resending a booking URL to a conversation. Provide either conversationId OR externalConversationId to identify the conversation, and either calendarMeetingTemplateId OR meetingConfiguration with meetingParticipants for the meeting setup.
+      properties:
+        conversationId:
+          type: string
+          title: Conversation ID
+          description: Popp's internal conversation ID. Provide either this OR externalConversationId.
+          example: 15dff535-2e85-4155-8dd5-21d9f1b52e0d
+        externalConversationId:
+          type: string
+          title: External Conversation ID
+          description: Your external/custom conversation ID. Provide either this OR conversationId.
+          example: my-external-id-123
+        calendarMeetingTemplateId:
+          type: string
+          title: Calendar Meeting Template ID
+          description: The ID of an existing calendar meeting template to reuse. Use this when you have already created a meeting template with the desired configuration.
+        meetingParticipants:
+          type: array
+          title: Meeting Participants
+          description: List of participants for the meeting. Required when providing meetingConfiguration. At least one participant must be marked as organizer.
+          minItems: 1
+          items:
+            type: object
+            properties:
+              isOrganizer:
+                type: boolean
+                title: Is Organizer
+                description: Whether this participant is the meeting organizer. Exactly one participant should be marked as organizer.
+              isCalendarConnected:
+                type: boolean
+                title: Is Calendar Connected
+                description: Whether this participant has a connected calendar in Popp.
+              name:
+                type: string
+                title: Name
+                description: The full name of the participant.
+                example: John Doe
+              email:
+                type: string
+                format: email
+                title: Email
+                description: The email address of the participant.
+                example: john@example.com
+              autoCollectAvailability:
+                type: boolean
+                title: Auto Collect Availability
+                description: 'NOT SUPPORTED for resend booking URL. This is an asynchronous flow that requires conversation interaction. Use connected calendars (isCalendarConnected: true) or provide availability time slots directly instead.'
+                enum:
+                - false
+              availability:
+                type: object
+                title: Availability
+                description: Pre-defined availability time slots for the participant. Only applicable when isCalendarConnected is false.
+                properties:
+                  timezone:
+                    type: string
+                    title: Timezone
+                    description: IANA timezone string (e.g., 'America/New_York', 'Europe/London').
+                    example: Europe/London
+                  timeSlots:
+                    type: array
+                    title: Time Slots
+                    description: Array of available time windows. All time slots must be in the future.
+                    minItems: 1
+                    items:
+                      type: object
+                      properties:
+                        date:
+                          type: string
+                          pattern: ^\d{4}-([0][1-9]|1[0-2])-([0][1-9]|[12]\d|3[01])$
+                          title: Date
+                          description: The date in YYYY-MM-DD format (e.g., '2025-01-15').
+                        startTime:
+                          type: string
+                          pattern: ^([01]\d|2[0-3]):([0-5]\d)$
+                          title: Start Time
+                          description: The start time in HH:mm format (e.g., '09:00').
+                        endTime:
+                          type: string
+                          pattern: ^([01]\d|2[0-3]):([0-5]\d)$
+                          title: End Time
+                          description: The end time in HH:mm format (e.g., '17:00').
+                      required:
+                      - date
+                      - startTime
+                      - endTime
+                required:
+                - timezone
+                - timeSlots
+            required:
+            - isOrganizer
+            - isCalendarConnected
+            - name
+            - email
+        closePreviousConversations:
+          type: boolean
+          title: Close Previous Conversations
+          description: When true, any ongoing conversations for the same phone number and channel will be automatically closed (marked as COMPLETED). Useful for testing with the same phone number. Defaults to false.
+          default: false
+          example: true
+        meetingConfiguration:
+          type: object
+          title: Meeting Configuration
+          description: Configuration for the new meeting template. Required when not using calendarMeetingTemplateId.
+          properties:
+            title:
+              type: string
+              title: Title
+              description: The title of the meeting.
+              example: Interview Call
+            description:
+              type: string
+              title: Description
+              description: A description for the meeting that will be included in the calendar invite.
+              example: Initial screening interview
+            openHours:
+              type: array
+              title: Open Hours
+              description: Available time windows for scheduling the meeting.
+              minItems: 1
+              items:
+                type: object
+                properties:
+                  days:
+                    type: array
+                    title: Days
+                    description: Array of day numbers (0=Sunday, 1=Monday, ..., 6=Saturday).
+                    items:
+                      type: integer
+                      minimum: 0
+                      maximum: 6
+                    minItems: 1
+                  start:
+                    type: string
+                    pattern: ^([01]\d|2[0-3]):([0-5]\d)$
+                    title: Start Time
+                    description: The start time in HH:mm format (e.g., '09:00').
+                  end:
+                    type: string
+                    pattern: ^([01]\d|2[0-3]):([0-5]\d)$
+                    title: End Time
+                    description: The end time in HH:mm format (e.g., '17:00').
+                required:
+                - days
+                - start
+                - end
+            timezone:
+              type: string
+              title: Timezone
+              description: IANA timezone string for the meeting (e.g., 'America/New_York').
+              example: Europe/London
+            duration:
+              type: integer
+              title: Duration
+              description: The duration of the meeting in minutes.
+              minimum: 1
+              example: 30
+            videoConferencing:
+              type: boolean
+              title: Video Conferencing
+              description: Whether to include video conferencing for the meeting. If true, location is not allowed. If false, location is required.
+              example: true
+            videoConferencingProvider:
+              type: string
+              title: Video Conferencing Provider
+              description: The video conferencing provider to use.
+              enum:
+              - Google Meet
+              - Microsoft Teams
+              example: Google Meet
+            location:
+              type: string
+              title: Location
+              description: The physical location for the meeting. Required when videoConferencing is false; must contain at least one non-space character and is trimmed. Not allowed when videoConferencing is true.
+          required:
+          - title
+          - openHours
+          - timezone
+          - duration
+          - videoConferencing
+      oneOf:
+      - title: With Conversation ID and existing template
+        required:
+        - conversationId
+        - calendarMeetingTemplateId
+      - title: With Conversation ID and new template
+        required:
+        - conversationId
+        - meetingConfiguration
+        - meetingParticipants
+      - title: With External Conversation ID and existing template
+        required:
+        - externalConversationId
+        - calendarMeetingTemplateId
+      - title: With External Conversation ID and new template
+        required:
+        - externalConversationId
+        - meetingConfiguration
+        - meetingParticipants
+      additionalProperties: false
+    limit-272b2660-f5ad-4a2e-aaf5-9174ff8f57b9:
+      type: integer
+      minimum: 1
+      maximum: 100
+    fromDateTime:
+      type: string
+      format: date-time
+    status-fdf66607-6c16-48bb-bc03-7dea3c78657e:
+      type: string
+      enum:
+      - SCHEDULED
+      - CANCELLED
+      - RESCHEDULED
+      - RESCHEDULING_REQUESTED
+    ListMeetingTemplatesResponse:
+      type: object
+      required:
+      - data
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            required:
+            - id
+            - title
+            - duration
+            - videoConferencing
+            - status
+            - meetingParticipants
+            - createdAt
+            - updatedAt
+            properties:
+              id:
+                type: string
+                description: The unique identifier of the meeting template
+                example: template-123
+              title:
+                type: string
+                description: The title of the meeting template
+                example: Interview Call
+              duration:
+                type: integer
+                description: Duration of the meeting in minutes
+                example: 30
+              videoConferencing:
+                type: boolean
+                description: Whether video conferencing is enabled
+                example: true
+              location:
+                type: string
+                description: The meeting location
+              status:
+                type: string
+                description: The status of the meeting template
+                enum:
+                - ACTIVE
+                - ARCHIVED
+                example: ACTIVE
+              meetingParticipants:
+                type: array
+                description: List of participants in the meeting template
+                items:
+                  type: object
+                  required:
+                  - email
+                  - name
+                  - isOrganizer
+                  - autoCollectAvailability
+                  properties:
+                    email:
+                      type: string
+                      description: The participant email address
+                      example: john@example.com
+                    name:
+                      type: string
+                      description: The participant name
+                      example: John Doe
+                    isOrganizer:
+                      type: boolean
+                      description: Whether this participant is the meeting organizer
+                      example: true
+                    autoCollectAvailability:
+                      type: boolean
+                      description: Whether Popp collects this participant's availability automatically via an outreach email
+                      example: true
+              createdAt:
+                type: string
+                format: date-time
+                description: When the template was created
+                example: '2025-01-01T09:00:00Z'
+              updatedAt:
+                type: string
+                format: date-time
+                description: When the template was last updated
+                example: '2025-01-05T14:30:00Z'
+        nextToken:
+          type: string
+          description: Pagination token for next page of results
+        total:
+          type: integer
+          description: Total number of matching meeting templates
+    CreateSchedulingConversationInput:
+      type: object
+      description: Request body for creating an auto-schedule conversation. Requires a campaign (campaignId or externalCampaignId), a way to reach the candidate (phoneNumber or emailAddress), the meeting participants, and the meeting configuration.
+      properties:
+        phoneNumber:
+          type: string
+          pattern: ^\+[1-9]\d{1,14}$
+          title: Phone Number
+          description: The phone number of the candidate, in E.164 format. Either phoneNumber or emailAddress is required. For SMS and WHATSAPP campaigns a usable phone number is required unless the campaign's email fallback resolves to enabled (emailChannelFallbackEnabled on the campaign, inheriting the organization setting when unset) and an emailAddress is provided, in which case email is used as a fallback when the phone number cannot be parsed.
+        countryCode:
+          type: string
+          title: Country Code
+          description: The country code in ISO 3166-1 alpha-2 format. This is used to format the phone number if it is not in E.164 format.
+        firstName:
+          type: string
+          title: First Name
+          description: The first name of the candidate.
+        lastName:
+          type: string
+          title: Last Name
+          description: The last name of the candidate.
+        emailAddress:
+          type: string
+          format: email
+          title: Email Address
+          description: The email address of the candidate. Either phoneNumber or emailAddress is required. For SMS and WHATSAPP campaigns, a request with no usable phone number is accepted only when the campaign's email fallback resolves to enabled; otherwise it is rejected with 400.
+        campaignId:
+          type: string
+          title: Campaign ID
+          description: The unique identifier for the campaign. Either campaignId or externalCampaignId is required.
+        externalCampaignId:
+          type: string
+          title: External Campaign ID
+          description: The unique identifier for the campaign in the external system. Either campaignId or externalCampaignId is required.
+        externalId:
+          type: string
+          title: External ID
+          description: The unique identifier for the conversation in the external system.
+        skipDuplicationCheck:
+          type: boolean
+          title: Skip Duplication Check
+          description: If true, skips the check for existing conversations with the same phone number/email and campaign.
+        shouldSendDuringBusinessHours:
+          type: boolean
+          title: Should Send During Business Hours
+          description: If true, the initial message will be scheduled to send during business hours. The timezone is inferred from the phone number.
+        meetingParticipants:
+          type: array
+          title: Meeting Participants
+          description: 'List of participants for the meeting. Exactly one participant must be marked as organizer — this endpoint always schedules a collective meeting, where every participant must be able to attend. Each participant must be able to supply availability one of three ways: a connected calendar (isCalendarConnected true), pre-defined availability.timeSlots, or autoCollectAvailability. Any combination of the three across the panel is allowed.'
+          minItems: 1
+          items:
+            type: object
+            properties:
+              isOrganizer:
+                type: boolean
+                title: Is Organizer
+                description: Whether this participant is the meeting organizer. Exactly one participant should be marked as organizer.
+              isCalendarConnected:
+                type: boolean
+                title: Is Calendar Connected
+                description: Whether this participant has a connected calendar in Popp.
+              name:
+                type: string
+                title: Name
+                description: The full name of the participant.
+                example: John Doe
+              email:
+                type: string
+                format: email
+                title: Email
+                description: The email address of the participant.
+                example: john@example.com
+              autoCollectAvailability:
+                type: boolean
+                title: Auto Collect Availability
+                description: If true, Popp emails this participant to ask for their availability instead of reading a calendar. Requires isCalendarConnected to be false. Any number of participants can have this enabled — Popp collects from each of them and books a slot that works for the whole panel.
+              availabilityOutreachSettings:
+                type: object
+                title: Availability Outreach Settings
+                description: Per-participant availability outreach settings. This endpoint has no template-level equivalent — settings are per participant, and any field omitted falls back to the system default.
+                properties:
+                  requiredHours:
+                    type: integer
+                    description: 'Hours of availability to ask this participant for. Default: 6. A target the agent nudges toward, not a minimum that gates booking — Popp will book inside a shorter overlap if that is all it has.'
+                    minimum: 1
+                    maximum: 168
+                  periodDays:
+                    type: integer
+                    description: 'The window this participant is asked to offer availability within, in days, and the window their reply is read against. Default: 14.'
+                    minimum: 7
+                    maximum: 60
+                  customTemplatedSubjectLine:
+                    type: string
+                    description: 'Custom email subject line for the outreach email to this participant. Supports placeholders: {{INTERVIEWER_NAME}}, {{CANDIDATE_FIRST_NAME}}, {{AGENT_NAME}}, {{ORGANIZATION_NAME}}, {{CAMPAIGN_OWNER_NAME}}, {{MEETING_AVAILABILITY_TEXT}}.'
+                  customTemplatedMessage:
+                    type: string
+                    description: Custom email body for the outreach email to this participant. Supports the same placeholders as customTemplatedSubjectLine. {{MEETING_AVAILABILITY_TEXT}} expands to the concrete ask (window, hours, timezone) derived from requiredHours and periodDays; it is optional and not validated, so a message that omits it is accepted and the participant receives no concrete availability request.
+                  nudgeSettings:
+                    type: array
+                    description: Follow-up nudge configuration. Each entry represents one nudge with a delayHours field. Array length determines total nudges. Empty array disables nudging.
+                    items:
+                      type: object
+                      properties:
+                        delayHours:
+                          type: integer
+                          description: Hours to wait since the previous message before sending this nudge.
+                          minimum: 1
+                      required:
+                      - delayHours
+                    maxItems: 10
+                  additionalRecipients:
+                    type: array
+                    description: Email addresses CC'd on all outreach communications (initial email, reply-backs, nudges, cancellation).
+                    items:
+                      type: string
+                      format: email
+              availability:
+                type: object
+                title: Availability
+                description: Pre-defined availability time slots for the participant. Only applicable when isCalendarConnected is false.
+                properties:
+                  timezone:
+                    type: string
+                    title: Timezone
+                    description: IANA timezone string (e.g., 'America/New_York', 'Europe/London').
+                    example: Europe/London
+                  timeSlots:
+                    type: array
+                    title: Time Slots
+                    description: Array of available time windows. All time slots must be in the future.
+                    minItems: 1
+                    items:
+                      type: object
+                      properties:
+                        date:
+                          type: string
+                          pattern: ^\d{4}-([0][1-9]|1[0-2])-([0][1-9]|[12]\d|3[01])$
+                          title: Date
+                          description: The date in YYYY-MM-DD format (e.g., '2025-01-15').
+                        startTime:
+                          type: string
+                          pattern: ^([01]\d|2[0-3]):([0-5]\d)$
+                          title: Start Time
+                          description: The start time in HH:mm format (e.g., '09:00').
+                        endTime:
+                          type: string
+                          pattern: ^([01]\d|2[0-3]):([0-5]\d)$
+                          title: End Time
+                          description: The end time in HH:mm format (e.g., '17:00').
+                      required:
+                      - date
+                      - startTime
+                      - endTime
+                required:
+                - timezone
+                - timeSlots
+            required:
+            - isOrganizer
+            - isCalendarConnected
+            - name
+            - email
+        meetingConfiguration:
+          type: object
+          title: Meeting Configuration
+          description: Configuration for the meeting to be scheduled.
+          properties:
+            title:
+              type: string
+              title: Title
+              description: The title of the meeting.
+              example: Interview Call
+            description:
+              type: string
+              title: Description
+              description: A description for the meeting that will be included in the calendar invite.
+              example: Initial screening interview
+            openHours:
+              type: array
+              title: Open Hours
+              description: Available time windows for scheduling the meeting.
+              minItems: 1
+              items:
+                type: object
+                properties:
+                  days:
+                    type: array
+                    title: Days
+                    description: Array of day numbers (0=Sunday, 1=Monday, ..., 6=Saturday).
+                    items:
+                      type: integer
+                      minimum: 0
+                      maximum: 6
+                    minItems: 1
+                  start:
+                    type: string
+                    pattern: ^([01]\d|2[0-3]):([0-5]\d)$
+                    title: Start Time
+                    description: The start time in HH:mm format (e.g., '09:00').
+                  end:
+                    type: string
+                    pattern: ^([01]\d|2[0-3]):([0-5]\d)$
+                    title: End Time
+                    description: The end time in HH:mm format (e.g., '17:00').
+                required:
+                - days
+                - start
+                - end
+            timezone:
+              type: string
+              title: Timezone
+              description: IANA timezone string for the meeting (e.g., 'America/New_York').
+              example: Europe/London
+            duration:
+              type: integer
+              title: Duration
+              description: The duration of the meeting in minutes.
+              minimum: 1
+              example: 30
+            videoConferencing:
+              type: boolean
+              title: Video Conferencing
+              description: Whether to include video conferencing for the meeting. If true, location is not allowed. If false, location is required.
+              example: true
+            videoConferencingProvider:
+              type: string
+              title: Video Conferencing Provider
+              description: The video conferencing provider to use.
+              enum:
+              - Google Meet
+              - Microsoft Teams
+              example: Google Meet
+            location:
+              type: string
+              title: Location
+              description: The physical location for the meeting. Required when videoConferencing is false; must contain at least one non-space character and is trimmed. Not allowed when videoConferencing is true.
+          required:
+          - title
+          - openHours
+          - timezone
+          - duration
+          - videoConferencing
+      required:
+      - firstName
+      - meetingParticipants
+      - meetingConfiguration
+      oneOf:
+      - title: Campaign ID Required
+        description: Either campaignId or externalCampaignId is required.
+        required:
+        - campaignId
+      - title: External Campaign ID Required
+        description: Either campaignId or externalCampaignId is required.
+        required:
+        - externalCampaignId
+      additionalProperties: false
+    limit-af1e6b3b-98fc-4525-898e-9eaf97e70859:
+      type: integer
+      minimum: 1
+      maximum: 50
+    InviteCalendarContactResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          title: Message
+          description: A message describing the result of the invitation.
+          example: Invitation sent
+        data:
+          type: object
+          title: Data
+          description: Additional data returned when the user's calendar is already linked.
+          properties:
+            userCalendarId:
+              type: string
+              title: User Calendar ID
+              description: The ID of the user's calendar if already linked to the organization.
+              example: calendar-456
+      required:
+      - message
+      additionalProperties: false
+    title:
+      type: string
+    CancelBookingResponse:
+      type: object
+      properties:
+        bookingId:
+          type: string
+          title: Booking ID
+          example: booking-123
+        status:
+          type: string
+          title: Status
+          enum:
+          - CANCELLED
+          example: CANCELLED
+        cancelledAt:
+          type: string
+          format: date-time
+          title: Cancelled At
+          description: Server timestamp captured when the cancellation was issued to Nylas.
+          example: '2026-03-20T14:32:11.123Z'
+      required:
+      - bookingId
+      - status
+      - cancelledAt
+      additionalProperties: false
+    email:
+      type: string
+      format: email
+    UpdateMeetingTemplateResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          title: Message
+          example: Meeting template updated successfully
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+              title: ID
+              description: The unique identifier of the updated meeting template.
+              example: template-123
+          required:
+          - id
+          additionalProperties: false
+      required:
+      - message
+      - data
+      additionalProperties: false
+    Booking:
+      type: object
+      required:
+      - bookingId
+      - conversationId
+      - campaignId
+      - calendarMeetingTemplateId
+      - title
+      - startTime
+      - endTime
+      - status
+      - participants
+      - createdAt
+      - updatedAt
+      properties:
+        bookingId:
+          type: string
+          description: The unique identifier of the booking
+          example: booking-123
+        conversationId:
+          type: string
+          description: ID of the conversation this booking is associated with
+          example: conv-123
+        campaignId:
+          type: string
+          description: ID of the campaign this booking is associated with
+          example: campaign-123
+        calendarMeetingTemplateId:
+          type: string
+          description: ID of the meeting template used to create the booking
+          example: template-123
+        title:
+          type: string
+          description: The title of the meeting (from the meeting template)
+          example: Initial screening interview
+        startTime:
+          type: string
+          format: date-time
+          description: ISO-8601 timestamp when the booking starts
+          example: '2026-05-15T09:00:00Z'
+        endTime:
+          type: string
+          format: date-time
+          description: ISO-8601 timestamp when the booking ends
+          example: '2026-05-15T09:30:00Z'
+        status:
+          type: string
+          description: The current status of the booking
+          enum:
+          - SCHEDULED
+          - CANCELLED
+          - RESCHEDULED
+          - RESCHEDULING_REQUESTED
+          example: SCHEDULED
+        location:
+          type:
+          - string
+          - 'null'
+          description: Meeting location, if any (from the meeting template)
+          example: Conference Room A
+        conferenceUrl:
+          type:
+          - string
+          - 'null'
+          description: Video conferencing link for the meeting (Google Meet or Microsoft Teams). Null when the meeting has no video conferencing.
+          example: https://meet.google.com/abc-defg-hij
+        participants:
+          type: array
+          description: Participants in the booking - one ORGANIZER and one ATTENDEE
+          items:
+            type: object
+            required:
+            - email
+            - name
+            - role
+            properties:
+              email:
+                type: string
+                description: Participant email address
+                example: recruiter@example.com
+              name:
+                type: string
+                description: Participant name
+                example: Jane Recruiter
+              role:
+                type: string
+                description: Role of the participant in the meeting
+                enum:
+                - ORGANIZER
+                - ATTENDEE
+                example: ORGANIZER
+        createdAt:
+          type: string
+          format: date-time
+          description: When the booking was created
+          example: '2026-05-01T09:00:00Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: When the booking was last updated
+          example: '2026-05-02T14:30:00Z'
+    nextToken:
+      type: string
+    limit-b96ef13b-e584-424a-928f-64183cf295c1:
+      type: integer
+      minimum: 1
+      maximum: 100
+    ListUserCalendarsResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          description: User calendars belonging to the requesting organization.
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              email:
+                type: string
+              name:
+                type: string
+              provider:
+                type:
+                - string
+                - 'null'
+                enum:
+                - google
+                - microsoft
+                - virtual
+              status:
+                type: string
+                enum:
+                - CONNECTED
+                - DISCONNECTED
+                - INVITED
+              reference:
+                type:
+                - string
+                - 'null'
+              isSharedMailbox:
+                type:
+                - boolean
+                - 'null'
+              createdAt:
+                type: string
+              updatedAt:
+                type: string
+            required:
+            - id
+            - email
+            - name
+            - status
+            - createdAt
+            - updatedAt
+            additionalProperties: false
+        nextToken:
+          type:
+          - string
+          - 'null'
+          description: Pass back as `nextToken` to fetch the next page. Null when there are no more results.
+        total:
+          type: integer
+          description: Total number of calendars matching the filter (across all pages).
+      required:
+      - items
+      - nextToken
+      - total
+      additionalProperties: false
+    UpdateBookingInput:
+      type: object
+      properties:
+        title:
+          type: string
+          title: Title
+          description: New meeting title.
+          example: 'Updated: Technical Interview Round 2'
+        startDateTime:
+          type: string
+          format: date-time
+          title: Start Date Time
+          description: New start time in ISO 8601 format. Must be in the future. Must be supplied with duration.
+          example: '2026-03-20T14:00:00Z'
+        duration:
+          type: integer
+          title: Duration
+          description: New duration in minutes. Must be supplied with startDateTime.
+          minimum: 1
+          maximum: 1440
+          example: 45
+        description:
+          type: string
+          title: Description
+          description: New meeting description / agenda.
+          example: 'Updated agenda: technical deep-dive'
+        location:
+          type: string
+          title: Location
+          description: New meeting location — physical address or video link.
+          example: Room 3B
+        attendees:
+          type: array
+          title: Attendees
+          description: Full attendee list. Adding new attendees sends invites; removing attendees sends cancellations.
+          minItems: 1
+          items:
+            type: object
+            properties:
+              email:
+                type: string
+                format: email
+                example: new-panelist@company.com
+              name:
+                type: string
+                example: Jane Smith
+            required:
+            - email
+            - name
+        sendNotification:
+          type: boolean
+          title: Send Notification
+          description: Whether to notify participants of the update. Defaults to true.
+          default: true
+          example: true
+      additionalProperties: false
+    ErrorResponse:
+      type: object
+    isVideoConference:
+      type: boolean
+    BookingList:
+      type: object
+      required:
+      - data
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            required:
+            - bookingId
+            - conversationId
+            - campaignId
+            - calendarMeetingTemplateId
+            - title
+            - startTime
+            - endTime
+            - status
+            - participants
+            - createdAt
+            - updatedAt
+            properties:
+              bookingId:
+                type: string
+                description: The unique identifier of the booking
+                example: booking-123
+              conversationId:
+                type: string
+                description: ID of the conversation this booking is associated with
+                example: conv-123
+              campaignId:
+                type: string
+                description: ID of the campaign this booking is associated with
+                example: campaign-123
+              calendarMeetingTemplateId:
+                type: string
+                description: ID of the meeting template used to create the booking
+                example: template-123
+              title:
+                type: string
+                description: The title of the meeting (from the meeting template)
+                example: Initial screening interview
+              startTime:
+                type: string
+                format: date-time
+                description: ISO-8601 timestamp when the booking starts
+                example: '2026-05-15T09:00:00Z'
+              endTime:
+                type: string
+                format: date-time
+                description: ISO-8601 timestamp when the booking ends
+                example: '2026-05-15T09:30:00Z'
+              status:
+                type: string
+                description: The current status of the booking
+                enum:
+                - SCHEDULED
+                - CANCELLED
+                - RESCHEDULED
+                - RESCHEDULING_REQUESTED
+                example: SCHEDULED
+              location:
+                type:
+                - string
+                - 'null'
+                description: Meeting location, if any (from the meeting template)
+                example: Conference Room A
+              participants:
+                type: array
+                description: Participants in the booking - one ORGANIZER and one ATTENDEE
+                items:
+                  type: object
+                  required:
+                  - email
+                  - name
+                  - role
+                  properties:
+                    email:
+                      type: string
+                      description: Participant email address
+                      example: recruiter@example.com
+                    name:
+                      type: string
+                      description: Participant name
+                      example: Jane Recruiter
+                    role:
+                      type: string
+                      description: Role of the participant in the meeting
+                      enum:
+                      - ORGANIZER
+                      - ATTENDEE
+                      example: ORGANIZER
+              createdAt:
+                type: string
+                format: date-time
+                description: When the booking was created
+                example: '2026-05-01T09:00:00Z'
+              updatedAt:
+                type: string
+                format: date-time
+                description: When the booking was last updated
+                example: '2026-05-02T14:30:00Z'
+        nextToken:
+          type:
+          - string
+          - 'null'
+          description: Pagination cursor to use to fetch the next page; null when there are no more results
+    CancelBookingInput:
+      type: object
+      properties:
+        reason:
+          type: string
+          title: Reason
+          description: Cancellation reason. Passed to Nylas and included in the participant notification email. Defaults to 'Cancelled by the organiser'.
+          minLength: 1
+          example: Position filled
+        sendCancellationNotification:
+          type: boolean
+          title: Send Cancellation Notification
+          description: Whether to send a cancellation email to all participants. Defaults to true.
+          default: true
+          example: true
+      additionalProperties: false
+    UserCalendar:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the user calendar.
+        email:
+          type: string
+          description: Email address the calendar is connected for.
+        name:
+          type: string
+          description: Display name of the calendar owner.
+        provider:
+          type:
+          - string
+          - 'null'
+          enum:
+          - google
+          - microsoft
+          - virtual
+          description: Calendar provider.
+        status:
+          type: string
+          enum:
+          - CONNECTED
+          - DISCONNECTED
+          - INVITED
+          description: Connection status.
+        reference:
+          type:
+          - string
+          - 'null'
+          description: Optional client-supplied reference set when the calendar was created.
+        isSharedMailbox:
+          type:
+          - boolean
+          - 'null'
+          description: True if the calendar represents a shared mailbox.
+        createdAt:
+          type: string
+          description: ISO 8601 timestamp.
+        updatedAt:
+          type: string
+          description: ISO 8601 timestamp.
+      required:
+      - id
+      - email
+      - name
+      - status
+      - createdAt
+      - updatedAt
+      additionalProperties: false
+    userCalendarId:
+      type: string
+    provider:
+      type: string
+      enum:
+      - google
+      - microsoft
+      - virtual
+    status-e42c6b84-3eed-4a37-8a05-cf2140d60597:
+      type: string
+      enum:
+      - CONNECTED
+      - DISCONNECTED
+      - INVITED
+    GetMeetingTemplateResponse:
+      type: object
+      required:
+      - title
+      - videoConferencing
+      - duration
+      - meetingParticipants
+      - availability
+      - openHours
+      - timezone
+      - buffer
+      - noticePeriodMinutes
+      - availableDaysInTheFuture
+      - reminderMinutesBeforeMeeting
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the meeting template.
+          example: 9471251e-9fb0-429a-b761-f029008cac2b
+        status:
+          type: string
+          description: Lifecycle status of the meeting template.
+          example: ACTIVE
+        createdAt:
+          type: string
+          format: date-time
+          description: ISO-8601 timestamp of when the template was created.
+        updatedAt:
+          type: string
+          format: date-time
+          description: ISO-8601 timestamp of when the template was last updated.
+        guestLabel:
+          type: string
+          description: Noun used in the availability-outreach email for the counterparty the interviewer is scheduled to meet. Applies to the whole meeting. Defaults to "candidate".
+          example: recruiter
+        title:
+          type: string
+          description: The title of the meeting
+          example: Interview Call
+        description:
+          type: string
+          description: Description of the meeting
+          example: Initial screening interview
+        videoConferencing:
+          type: boolean
+          description: Whether video conferencing is enabled
+          example: true
+        videoConferencingProvider:
+          type: string
+          description: The video conferencing provider the template was created with. Present only when videoConferencing is true, and omitted for the rare template configured with a provider Popp does not offer.
+          enum:
+          - Google Meet
+          - Microsoft Teams
+          example: Google Meet
+        duration:
+          type: integer
+          description: Duration of the meeting in minutes
+          example: 30
+        location:
+          type: string
+          description: Physical location of the meeting
+        timezone:
+          type: string
+          description: IANA timezone identifier
+          example: Europe/London
+        buffer:
+          type: integer
+          description: Buffer time in minutes before/after meetings
+          example: 15
+        noticePeriodMinutes:
+          type: integer
+          description: Minimum notice required for booking in minutes
+          example: 60
+        availableDaysInTheFuture:
+          type: integer
+          description: How many days in the future bookings are available
+          example: 30
+        reminderMinutesBeforeMeeting:
+          type: integer
+          description: How many minutes before the meeting to send a reminder notification
+          example: 1440
+        meetingParticipants:
+          type: array
+          description: List of meeting participants. Every field the Update Meeting Template endpoint requires on a participant is returned here except isCalendarConnected, which the consumer supplies. The order of this array is not guaranteed and may differ between reads, so compare panels by participant rather than by position.
+          items:
+            type: object
+            required:
+            - email
+            - name
+            - isOrganizer
+            - autoCollectAvailability
+            properties:
+              email:
+                type: string
+                description: Participant email address
+                example: john@example.com
+              name:
+                type: string
+                description: Participant name
+                example: John Doe
+              isOrganizer:
+                type: boolean
+                description: Whether this participant is the organizer
+                example: true
+              autoCollectAvailability:
+                type: boolean
+                description: Whether Popp collects this participant's availability automatically via an outreach email. Returned so the participant can be written back through Update Meeting Template, which rejects a participant that has neither a connected calendar, availability time slots, nor this flag.
+                example: true
+              availabilityOutreachSettings:
+                type: object
+                description: Per-participant availability outreach overrides stored on the template, if any.
+                properties:
+                  requiredHours:
+                    type: integer
+                  periodDays:
+                    type: integer
+                  customTemplatedSubjectLine:
+                    type: string
+                  customTemplatedMessage:
+                    type: string
+                  nudgeSettings:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        delayHours:
+                          type: integer
+                  additionalRecipients:
+                    type: array
+                    items:
+                      type: string
+                      format: email
+        availabilityOutreachSettings:
+          type: object
+          description: Template-level availability outreach settings stored on the template, if any.
+          properties:
+            requiredHours:
+              type: integer
+            periodDays:
+              type: integer
+            customTemplatedSubjectLine:
+              type: string
+            customTemplatedMessage:
+              type: string
+            nudgeSettings:
+              type: array
+              items:
+                type: object
+                properties:
+                  delayHours:
+                    type: integer
+            additionalRecipients:
+              type: array
+              items:
+                type: string
+                format: email
+        openHours:
+          type: array
+          description: The same weekly schedule as `availability`, in the shape the Update Meeting Template endpoint accepts. Days that share a start and end time are grouped into one entry, and days with no availability are omitted.
+          items:
+            type: object
+            required:
+            - days
+            - start
+            - end
+            properties:
+              days:
+                type: array
+                description: Days of the week this window applies to (0=Sunday through 6=Saturday)
+                items:
+                  type: integer
+                  minimum: 0
+                  maximum: 6
+                example:
+                - 1
+                - 2
+                - 3
+                - 4
+                - 5
+              start:
+                type: string
+                description: Start time in HH:mm format
+                example: 09:00
+              end:
+                type: string
+                description: End time in HH:mm format
+                example: '17:00'
+        availability:
+          type: object
+          description: Weekly availability schedule (0=Sunday through 6=Saturday)
+          additionalProperties:
+            type: array
+            items:
+              type: object
+              properties:
+                start:
+                  type: string
+                  description: Start time in HH:mm format
+                  example: 09:00
+                end:
+                  type: string
+                  description: End time in HH:mm format
+                  example: '17:00'
+    SetUserCalendarAvailabilityInput:
+      type: object
+      properties:
+        timezone:
+          type: string
+          description: IANA timezone identifier the slots are expressed in, e.g. 'Europe/London'.
+        timeSlots:
+          type: array
+          minItems: 1
+          description: Free time windows during which the participant is available.
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+                pattern: ^\d{4}-\d{2}-\d{2}$
+                description: Slot date (YYYY-MM-DD).
+              startTime:
+                type: string
+                pattern: ^\d{2}:\d{2}$
+                description: Local start time (HH:MM, 24h).
+              endTime:
+                type: string
+                pattern: ^\d{2}:\d{2}$
+                description: Local end time (HH:MM, 24h). Must be after startTime.
+            required:
+            - date
+            - startTime
+            - endTime
+            additionalProperties: false
+      required:
+      - timezone
+      - timeSlots
+      additionalProperties: false
+    conversationId:
+      type: string
+    ParseAvailabilityInput:
+      type: object
+      properties:
+        messages:
+          type: array
+          title: Conversation Messages
+          description: OpenAI-style chat history. Include prior turns for multi-turn clarification.
+          minItems: 1
+          items:
+            type: object
+            properties:
+              role:
+                type: string
+                enum:
+                - user
+                - assistant
+              content:
+                type: string
+                minLength: 1
+            required:
+            - role
+            - content
+            additionalProperties: false
+        context:
+          type: object
+          title: Parse Context
+          description: Bounds for the parsed availability.
+          properties:
+            timezone:
+              type: string
+              description: IANA timezone identifier, e.g. 'Europe/London'.
+            startDate:
+              type: string
+              pattern: ^\d{4}-\d{2}-\d{2}$
+              description: Start of the target date range (inclusive, YYYY-MM-DD). Must be before endDate.
+            endDate:
+              type: string
+              pattern: ^\d{4}-\d{2}-\d{2}$
+              description: End of the target date range (inclusive, YYYY-MM-DD). Maximum 90 days after startDate.
+          required:
+          - timezone
+          - startDate
+          - endDate
+          additionalProperties: false
+      required:
+      - messages
+      - context
+      additionalProperties: false
+    SetUserCalendarAvailabilityResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Confirmation that the availability was saved.
+      required:
+      - message
+      additionalProperties: false
+    templateId:
+      type: string
+    CreateSchedulingConversationResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: A message indicating the result of the operation.
+          example: Scheduling conversation created
+      required:
+      - message
+      additionalProperties: false
+    toDateTime:
+      type: string
+      format: date-time
+    CreateMeetingTemplateInput:
+      type: object
+      properties:
+        meetingParticipants:
+          type: array
+          title: Meeting Participants
+          description: 'List of participants for the meeting. For a COLLECTIVE meeting (the default) exactly one participant must be marked as organizer; for a round-robin availabilityMethod the pool must contain 2 to 10 participants and no organizer is required. Every participant must be able to supply availability one of three ways: a connected calendar (isCalendarConnected true), pre-defined availability.timeSlots, or autoCollectAvailability. Any combination of the three across the panel is allowed.'
+          minItems: 1
+          items:
+            type: object
+            properties:
+              isOrganizer:
+                type: boolean
+                title: Is Organizer
+                description: Whether this participant is the meeting organizer. Defaults to false when omitted. Exactly one participant must be the organizer for a COLLECTIVE meeting; a round-robin availabilityMethod needs none.
+                default: false
+                example: true
+              isCalendarConnected:
+                type: boolean
+                title: Is Calendar Connected
+                description: Whether this participant has a connected calendar in Popp.
+                example: true
+              name:
+                type: string
+                title: Name
+                description: The full name of the participant.
+                example: John Doe
+              email:
+                type: string
+                format: email
+                title: Email
+                description: The email address of the participant.
+                example: john@example.com
+              autoCollectAvailability:
+                type: boolean
+                title: Auto Collect Availability
+                description: If true, Popp emails this participant to ask for their availability instead of reading a calendar. Requires isCalendarConnected to be false. Any number of participants on the template can have this enabled — for a COLLECTIVE meeting Popp collects from each of them and books a slot that works for the whole panel.
+              availabilityOutreachSettings:
+                type: object
+                title: Availability Outreach Settings
+                description: Per-participant overrides for availability outreach. Fields not specified fall back to template-level settings, then system defaults.
+                properties:
+                  requiredHours:
+                    type: integer
+                    description: Hours of availability to ask this participant for. A target the agent nudges toward, not a minimum that gates booking — Popp will book inside a shorter overlap if that is all it has.
+                    minimum: 1
+                    maximum: 168
+                  periodDays:
+                    type: integer
+                    description: The window this participant is asked to offer availability within, in days, and the window their reply is read against. Distinct from the top-level availableDaysInTheFuture, which controls how far ahead a candidate may book.
+                    minimum: 7
+                    maximum: 60
+                  customTemplatedSubjectLine:
+                    type: string
+                    description: 'Custom email subject line for the outreach email to this participant. Supports placeholders: {{INTERVIEWER_NAME}}, {{CANDIDATE_FIRST_NAME}}, {{AGENT_NAME}}, {{ORGANIZATION_NAME}}, {{CAMPAIGN_OWNER_NAME}}, {{MEETING_AVAILABILITY_TEXT}}.'
+                  customTemplatedMessage:
+                    type: string
+                    description: Custom email body for the outreach email to this participant. Supports the same placeholders as customTemplatedSubjectLine. {{MEETING_AVAILABILITY_TEXT}} expands to the concrete ask (window, hours, timezone) derived from requiredHours and periodDays; it is optional and not validated, so a message that omits it is accepted and the participant receives no concrete availability request.
+                  nudgeSettings:
+                    type: array
+                    description: Follow-up nudge configuration. Each entry represents one nudge with a delayHours field. Array length determines total nudges. Empty array disables nudging.
+                    items:
+                      type: object
+                      properties:
+                        delayHours:
+                          type: integer
+                          description: Hours to wait since the previous message before sending this nudge.
+                          minimum: 1
+                      required:
+                      - delayHours
+                    maxItems: 10
+                  additionalRecipients:
+                    type: array
+                    description: Email addresses CC'd on all outreach communications (initial email, reply-backs, nudges, cancellation).
+                    items:
+                      type: string
+                      format: email
+              availability:
+                type: object
+                title: Availability
+                description: Pre-defined availability time slots for the participant. Only applicable when isCalendarConnected is false.
+                properties:
+                  timezone:
+                    type: string
+                    title: Timezone
+                    description: IANA timezone string (e.g., 'America/New_York', 'Europe/London'). Must be a valid IANA timezone identifier.
+                    example: Europe/London
+                  timeSlots:
+                    type: array
+                    title: Time Slots
+                    description: Array of available time windows. All time slots must be in the future.
+                    minItems: 1
+                    items:
+                      type: object
+                      properties:
+                        date:
+                          type: string
+                          pattern: ^\d{4}-([0][1-9]|1[0-2])-([0][1-9]|[12]\d|3[01])$
+                          title: Date
+                          description: The date in YYYY-MM-DD format (e.g., '2025-01-15').
+                        startTime:
+                          type: string
+                          pattern: ^([01]\d|2[0-3]):([0-5]\d)$
+                          title: Start Time
+                          description: The start time in HH:mm format (e.g., '09:00').
+                        endTime:
+                          type: string
+                          pattern: ^([01]\d|2[0-3]):([0-5]\d)$
+                          title: End Time
+                          description: The end time in HH:mm format (e.g., '17:00').
+                      required:
+                      - date
+                      - startTime
+                      - endTime
+                required:
+                - timezone
+                - timeSlots
+            required:
+            - isCalendarConnected
+            - name
+            - email
+        availabilityMethod:
+          type: string
+          title: Availability Method
+          description: Determines who must attend the meeting. COLLECTIVE books a slot that works for every participant on the panel and requires exactly one organizer. ROUND_ROBIN_MAX_AVAILABILITY routes each meeting to a single participant from a pool of 2 to 10, chosen to give the candidate the widest choice of slots, and requires no organizer.
+          enum:
+          - COLLECTIVE
+          - ROUND_ROBIN_MAX_AVAILABILITY
+          default: COLLECTIVE
+          example: COLLECTIVE
+        title:
+          type: string
+          title: Title
+          description: The title of the meeting.
+          example: Interview Call
+        description:
+          type: string
+          title: Description
+          description: A description for the meeting that will be included in the calendar invite.
+          example: Initial screening interview
+        openHours:
+          type: array
+          title: Open Hours
+          description: Available time windows for scheduling the meeting.
+          minItems: 1
+          items:
+            type: object
+            properties:
+              days:
+                type: array
+                title: Days
+                description: Array of day numbers (0=Sunday, 1=Monday, ..., 6=Saturday).
+                items:
+                  type: integer
+                  minimum: 0
+                  maximum: 6
+                minItems: 1
+                example:
+                - 1
+                - 2
+                - 3
+                - 4
+                - 5
+              start:
+                type: string
+                pattern: ^([01]\d|2[0-3]):([0-5]\d)$
+                title: Start Time
+                description: The start time in HH:mm format.
+                example: 09:00
+              end:
+                type: string
+                pattern: ^([01]\d|2[0-3]):([0-5]\d)$
+                title: End Time
+                description: The end time in HH:mm format.
+                example: '17:00'
+            required:
+            - days
+            - start
+            - end
+        timezone:
+          type: string
+          title: Timezone
+          description: IANA timezone string for the meeting.
+          example: Europe/London
+        duration:
+          type: integer
+          title: Duration
+          description: The duration of the meeting in minutes.
+          minimum: 1
+          maximum: 1440
+          example: 30
+        videoConferencing:
+          type: boolean
+          title: Video Conferencing
+          description: Whether to include video conferencing for the meeting. If true, videoConferencingProvider is required and location cannot be specified. If false, location is required.
+          example: true
+        videoConferencingProvider:
+          type: string
+          title: Video Conferencing Provider
+          description: The video conferencing provider to use. Required when videoConferencing is true.
+          enum:
+          - Google Meet
+          - Microsoft Teams
+          example: Google Meet
+        location:
+          type: string
+          title: Location
+          description: The physical location for the meeting. Required when videoConferencing is false; must contain at least one non-space character and is trimmed. Cannot be used when videoConferencing is enabled.
+        buffer:
+          type: integer
+          title: Buffer
+          description: Buffer time in minutes before/after meetings. Must be a multiple of 5.
+          minimum: 0
+          maximum: 120
+          default: 0
+          example: 15
+          multipleOf: 5
+        reminderMinutesBeforeMeeting:
+          type: integer
+          title: Reminder Minutes Before Meeting
+          description: How many minutes before the meeting to send a reminder notification.
+          minimum: 1
+          default: 1440
+          example: 1440
+        noticePeriodMinutes:
+          type: integer
+          title: Notice Period Minutes
+          description: Minimum notice required for booking in minutes.
+          minimum: 0
+          default: 0
+          example: 60
+        availableDaysInTheFuture:
+          type: integer
+          title: Available Days In The Future
+          description: How far ahead a candidate may book on the booking page, in days. Distinct from availabilityOutreachSettings.periodDays, which controls the window interviewers are asked to offer availability within. Neither field caps the other.
+          minimum: 1
+          default: 30
+          example: 30
+        guestLabel:
+          type: string
+          title: Guest Label
+          description: Noun used in the availability-outreach email for the counterparty the interviewer is scheduled to meet — the person who books the slot. Applies to the whole meeting. Defaults to "candidate"; override with e.g. "recruiter". Must not begin with "the" (Popp prefixes it automatically).
+          minLength: 1
+          maxLength: 50
+          example: recruiter
+        availabilityOutreachSettings:
+          type: object
+          title: Availability Outreach Settings
+          description: Template-level settings for availability outreach emails sent to participants with autoCollectAvailability enabled. Per-participant overrides take priority over these values. See the Scheduling with Availability Collection guide for details.
+          properties:
+            requiredHours:
+              type: integer
+              description: 'Hours of availability to ask for. Default: 6. A target the agent nudges toward, not a minimum that gates booking — Popp will book inside a shorter overlap if that is all it has.'
+              minimum: 1
+              maximum: 168
+              example: 4
+            periodDays:
+              type: integer
+              description: 'The window interviewers are asked to offer availability within, in days, and the window their replies are read against. Default: 14. Distinct from the top-level availableDaysInTheFuture, which controls how far ahead a candidate may book.'
+              minimum: 7
+              maximum: 60
+              example: 10
+            customTemplatedSubjectLine:
+              type: string
+              description: 'Custom email subject line. Supports placeholders: {{INTERVIEWER_NAME}}, {{CANDIDATE_FIRST_NAME}}, {{AGENT_NAME}}, {{ORGANIZATION_NAME}}, {{CAMPAIGN_OWNER_NAME}}, {{MEETING_AVAILABILITY_TEXT}}.'
+              example: Hi {{INTERVIEWER_NAME}}, availability needed
+            customTemplatedMessage:
+              type: string
+              description: Custom email body. Supports the same placeholders as customTemplatedSubjectLine. {{MEETING_AVAILABILITY_TEXT}} expands to the concrete ask (window, hours, timezone) derived from requiredHours and periodDays; it is optional and not validated, so a message that omits it is accepted and the interviewer receives no concrete availability request.
+              example: 'Hi {{INTERVIEWER_NAME}},
+
+
+                {{MEETING_AVAILABILITY_TEXT}}
+
+
+                Thanks,
+
+                {{AGENT_NAME}}'
+            nudgeSettings:
+              type: array
+              description: 'Follow-up nudge configuration. Each entry represents one nudge. Array length determines total nudges. Default: 3 nudges at 24h intervals.'
+              items:
+                type: object
+                properties:
+                  delayHours:
+                    type: integer
+                    description: Hours to wait since the previous message before sending this nudge.
+                    minimum: 1
+                required:
+                - delayHours
+              maxItems: 10
+              example:
+              - delayHours: 12
+              - delayHours: 24
+            additionalRecipients:
+              type: array
+              description: Email addresses CC'd on all outreach communications.
+              items:
+                type: string
+                format: email
+              example:
+              - recruiter@company.com
+      required:
+      - meetingParticipants
+      - title
+      - openHours
+      - timezone
+      - duration
+      - videoConferencing
+      additionalProperties: false
+    InviteCalendarContactInput:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          title: Email
+          description: The email address of the contact to invite.
+          example: jane@example.com
+        name:
+          type: string
+          title: Name
+          description: The full name of the contact to invite.
+          example: Jane Smith
+        reference:
+          type: string
+          title: Reference
+          description: An optional reference string for tracking the invitation.
+          example: candidate-12345
+        isSharedMailbox:
+          type: boolean
+          title: Is Shared Mailbox
+          description: Set to true when inviting a shared / no-reply mailbox that should send interview invites without its own calendar availability constraining scheduling. Popp will provision an empty secondary calendar in the mailbox after OAuth completes and route availability checks through it. Defaults to false.
+          example: false
+      required:
+      - email
+      - name
+      additionalProperties: false
+    campaignId:
+      type: string
+  securitySchemes:
+    popp_api_key:
+      description: Your Popp API key for authentication
+      type: apiKey
+      name: x-api-key
+      in: header
+    organization_id:
+      description: Your organization's unique identifier
+      type: apiKey
+      name: x-organization-id
+      in: header
+x-provenance:
+  method: searched
+  source: https://docs.joinpopp.com/reference
+  harvested: '2026-10-14'
+  tool: harvest-readme-openapi.py
+  note: Assembled verbatim from the OpenAPI definition ReadMe embeds in each operation page of the provider's developer portal; paths and components merged by API title, nothing authored.
+  assembled_from:
+  - https://docs.joinpopp.com/reference/add-candidates-to-list-by-external-id.md
+  - https://docs.joinpopp.com/reference/add-candidates-to-list.md
+  - https://docs.joinpopp.com/reference/archive-analysis.md
+  - https://docs.joinpopp.com/reference/archive-document-type.md
+  - https://docs.joinpopp.com/reference/archive-workflow-by-external-id.md
+  - https://docs.joinpopp.com/reference/archive-workflow.md
+  - https://docs.joinpopp.com/reference/bulk-create-conversations.md
+  - https://docs.joinpopp.com/reference/cancel-booking.md
+  - https://docs.joinpopp.com/reference/cancel-workflow-run.md
+  - https://docs.joinpopp.com/reference/create-analysis-candidate.md
+  - https://docs.joinpopp.com/reference/create-analysis.md
+  - https://docs.joinpopp.com/reference/create-campaign.md
+  - https://docs.joinpopp.com/reference/create-candidate-list.md
+  - https://docs.joinpopp.com/reference/create-candidate-note-by-external-id.md
+  - https://docs.joinpopp.com/reference/create-candidate-note.md
+  - https://docs.joinpopp.com/reference/create-candidate.md
+  - https://docs.joinpopp.com/reference/create-conversation.md
+  - https://docs.joinpopp.com/reference/create-custom-field.md
+  - https://docs.joinpopp.com/reference/create-document-credential.md
+  - https://docs.joinpopp.com/reference/create-document-type.md
+  - https://docs.joinpopp.com/reference/create-meeting-template.md
+  - https://docs.joinpopp.com/reference/create-organization-config.md
+  - https://docs.joinpopp.com/reference/create-scheduling-conversation.md
+  - https://docs.joinpopp.com/reference/create-user.md
+  - https://docs.joinpopp.com/reference/create-webhook.md
+  - https://docs.joinpopp.com/reference/create-workflow.md
+  - https://docs.joinpopp.com/reference/deactivate-user-by-email.md
+  - https://docs.joinpopp.com/reference/deactivate-user.md
+  - https://docs.joinpopp.com/reference/delete-candidate-by-email.md
+  - https://docs.joinpopp.com/reference/delete-candidate-by-external-id.md
+  - https://docs.joinpopp.com/reference/delete-candidate-by-phone-number.md
+  - https://docs.joinpopp.com/reference/delete-candidate-list-by-external-id.md
+  - https://docs.joinpopp.com/reference/delete-candidate-list.md
+  - https://docs.joinpopp.com/reference/delete-candidate-note.md
+  - https://docs.joinpopp.com/reference/delete-candidate.md
+  - https://docs.joinpopp.com/reference/delete-custom-field.md
+  - https://docs.joinpopp.com/reference/delete-document-credential.md
+  - https://docs.joinpopp.com/reference/delete-document-type.md
+  - https://docs.joinpopp.com/reference/delete-meeting-template.md
+  - https://docs.joinpopp.com/reference/delete-tag.md
+  - https://docs.joinpopp.com/reference/delete-user-by-email.md
+  - https://docs.joinpopp.com/reference/delete-user.md
+  - https://docs.joinpopp.com/reference/delete-webhook.md
+  - https://docs.joinpopp.com/reference/download-media.md
+  - https://docs.joinpopp.com/reference/generate-preferred-answer-requirements.md
+  - https://docs.joinpopp.com/reference/generate-questions.md
+  - https://docs.joinpopp.com/reference/generate-requirements.md
+  - https://docs.joinpopp.com/reference/get-analysis.md
+  - https://docs.joinpopp.com/reference/get-booking.md
+  - https://docs.joinpopp.com/reference/get-campaign.md
+  - https://docs.joinpopp.com/reference/get-candidate-by-external-id.md
+  - https://docs.joinpopp.com/reference/get-candidate-list-by-external-id.md
+  - https://docs.joinpopp.com/reference/get-candidate-list.md
+  - https://docs.joinpopp.com/reference/get-candidate-profile-by-external-id.md
+  - https://docs.joinpopp.com/reference/get-candidate.md
+  - https://docs.joinpopp.com/reference/get-conversation.md
+  - https://docs.joinpopp.com/reference/get-custom-field.md
+  - https://docs.joinpopp.com/reference/get-document-media.md
+  - https://docs.joinpopp.com/reference/get-document-type.md
+  - https://docs.joinpopp.com/reference/get-document.md
+  - https://docs.joinpopp.com/reference/get-meeting-template.md
+  - https://docs.joinpopp.com/reference/get-organization-config-by-external-id.md
+  - https://docs.joinpopp.com/reference/get-organization-config.md
+  - https://docs.joinpopp.com/reference/get-organization-details.md
+  - https://docs.joinpopp.com/reference/get-user-by-email.md
+  - https://docs.joinpopp.com/reference/get-user-calendar.md
+  - https://docs.joinpopp.com/reference/get-user.md
+  - https://docs.joinpopp.com/reference/get-workflow-analysis-application.md
+  - https://docs.joinpopp.com/reference/get-workflow-analysis.md
+  - https://docs.joinpopp.com/reference/get-workflow-by-external-id.md
+  - https://docs.joinpopp.com/reference/get-workflow-run.md
+  - https://docs.joinpopp.com/reference/get-workflow.md
+  - https://docs.joinpopp.com/reference/hand-conversation-to-agent.md
+  - https://docs.joinpopp.com/reference/invite-calendar-contact.md
+  - https://docs.joinpopp.com/reference/list-agents.md
+  - https://docs.joinpopp.com/reference/list-analyses.md
+  - https://docs.joinpopp.com/reference/list-ats-job-stages.md
+  - https://docs.joinpopp.com/reference/list-ats-jobs.md
+  - https://docs.joinpopp.com/reference/list-ats-rejection-reasons.md
+  - https://docs.joinpopp.com/reference/list-bookings.md
+  - https://docs.joinpopp.com/reference/list-campaigns.md
+  - https://docs.joinpopp.com/reference/list-candidate-lists.md
+  - https://docs.joinpopp.com/reference/list-candidate-notes-by-external-id.md
+  - https://docs.joinpopp.com/reference/list-candidate-notes.md
+  - https://docs.joinpopp.com/reference/list-conversation-documents.md
+  - https://docs.joinpopp.com/reference/list-conversation-messages.md
+  - https://docs.joinpopp.com/reference/list-conversations.md
+  - https://docs.joinpopp.com/reference/list-custom-fields.md
+  - https://docs.joinpopp.com/reference/list-document-credentials.md
+  - https://docs.joinpopp.com/reference/list-document-types.md
+  - https://docs.joinpopp.com/reference/list-meeting-templates.md
+  - https://docs.joinpopp.com/reference/list-organization-users.md
+  - https://docs.joinpopp.com/reference/list-organizations.md
+  - https://docs.joinpopp.com/reference/list-tags.md
+  - https://docs.joinpopp.com/reference/list-templates.md
+  - https://docs.joinpopp.com/reference/list-user-calendars.md
+  - https://docs.joinpopp.com/reference/list-users.md
+  - https://docs.joinpopp.com/reference/list-webhook-events.md
+  - https://docs.joinpopp.com/reference/list-webhooks.md
+  - https://docs.joinpopp.com/reference/list-workflow-analysis-application-history.md
+  - https://docs.joinpopp.com/reference/list-workflow-analysis-applications.md
+  - https://docs.joinpopp.com/reference/list-workflow-runs.md
+  - https://docs.joinpopp.com/reference/list-workflows.md
+  - https://docs.joinpopp.com/reference/parse-availability.md
+  - https://docs.joinpopp.com/reference/pause-workflow-by-external-id.md
+  - https://docs.joinpopp.com/reference/pause-workflow.md
+  - https://docs.joinpopp.com/reference/process-document.md
+  - https://docs.joinpopp.com/reference/publish-workflow-by-external-id.md
+  - https://docs.joinpopp.com/reference/publish-workflow.md
+  - https://docs.joinpopp.com/reference/reactivate-user-by-email.md
+  - https://docs.joinpopp.com/reference/reactivate-user.md
+  - https://docs.joinpopp.com/reference/remove-candidate-document-by-external-id.md
+  - https://docs.joinpopp.com/reference/remove-candidate-document.md
+  - https://docs.joinpopp.com/reference/remove-candidates-from-list-by-external-id.md
+  - https://docs.joinpopp.com/reference/remove-candidates-from-list.md
+  - https://docs.joinpopp.com/reference/reparse-candidate-cv-by-external-id.md
+  - https://docs.joinpopp.com/reference/reparse-candidate-cv.md
+  - https://docs.joinpopp.com/reference/resend-booking-url.md
+  - https://docs.joinpopp.com/reference/resume-workflow-by-external-id.md
+  - https://docs.joinpopp.com/reference/resume-workflow.md
+  - https://docs.joinpopp.com/reference/send-conversation-message.md
+  - https://docs.joinpopp.com/reference/set-user-calendar-availability.md
+  - https://docs.joinpopp.com/reference/sign-out-user-by-email.md
+  - https://docs.joinpopp.com/reference/sign-out-user.md
+  - https://docs.joinpopp.com/reference/start-workflow-runs-by-external-id.md
+  - https://docs.joinpopp.com/reference/start-workflow-runs.md
+  - https://docs.joinpopp.com/reference/stop-campaign.md
+  - https://docs.joinpopp.com/reference/takeover-conversation.md
+  - https://docs.joinpopp.com/reference/update-analysis.md
+  - https://docs.joinpopp.com/reference/update-booking.md
+  - https://docs.joinpopp.com/reference/update-campaign.md
+  - https://docs.joinpopp.com/reference/update-candidate-by-external-id.md
+  - https://docs.joinpopp.com/reference/update-candidate-list-by-external-id.md
+  - https://docs.joinpopp.com/reference/update-candidate-list.md
+  - https://docs.joinpopp.com/reference/update-candidate-note.md
+  - https://docs.joinpopp.com/reference/update-candidate.md
+  - https://docs.joinpopp.com/reference/update-custom-field.md
+  - https://docs.joinpopp.com/reference/update-document-credential.md
+  - https://docs.joinpopp.com/reference/update-document-type.md
+  - https://docs.joinpopp.com/reference/update-meeting-template.md
+  - https://docs.joinpopp.com/reference/update-organization-config-by-external-id.md
+  - https://docs.joinpopp.com/reference/update-organization-config.md
+  - https://docs.joinpopp.com/reference/update-organization-details.md
+  - https://docs.joinpopp.com/reference/update-requirements-and-reanalyse.md
+  - https://docs.joinpopp.com/reference/update-user-by-email.md
+  - https://docs.joinpopp.com/reference/update-user.md
+  - https://docs.joinpopp.com/reference/update-webhook.md
+  - https://docs.joinpopp.com/reference/update-workflow-by-external-id.md
+  - https://docs.joinpopp.com/reference/update-workflow.md
+  merge:
+    pages: 149
+    deduped: 618
+    conflicts_kept_first: 0

@@ -1,0 +1,1393 @@
+openapi: 3.2.0
+info:
+  title: Popp Conversations API
+  description: Popp API documentation
+  version: '1'
+servers:
+- url: https://api.joinpopp.com
+  description: Development server
+security:
+- popp_api_key: []
+  organization_id: []
+tags:
+- name: Conversations
+paths:
+  /v1/conversations:
+    post:
+      summary: Create conversation
+      description: Creates a conversation in Popp application
+      operationId: create-conversation
+      parameters: []
+      tags:
+      - Conversations
+      requestBody:
+        description: The input to create a conversation
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateConversationInput'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conversation'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+    get:
+      summary: List conversations
+      description: List all conversations in Popp application
+      operationId: list-conversations
+      parameters:
+      - name: limit
+        in: query
+        description: The limit parameter
+        required: false
+        schema:
+          $ref: '#/components/schemas/limit'
+      - name: nextToken
+        in: query
+        description: The next token parameter for pagination
+        required: false
+        schema:
+          $ref: '#/components/schemas/nextToken'
+      - name: campaignId
+        in: query
+        description: The campaign ID parameter
+        required: false
+        schema:
+          $ref: '#/components/schemas/campaignId'
+      - name: phoneNumber
+        in: query
+        description: The phone number parameter
+        required: false
+        schema:
+          $ref: '#/components/schemas/phoneNumber'
+      - name: emailAddress
+        in: query
+        description: Filter conversations by participant email address
+        required: false
+        schema:
+          $ref: '#/components/schemas/emailAddress'
+      - name: externalId
+        in: query
+        description: Filter conversations by external ID
+        required: false
+        schema:
+          $ref: '#/components/schemas/externalId'
+      - name: status
+        in: query
+        description: Filter conversations by status
+        required: false
+        schema:
+          $ref: '#/components/schemas/status'
+      - name: sortDirection
+        in: query
+        description: Sort conversations by creation date. Use "ASC" for oldest first or "DESC" for newest first
+        required: false
+        schema:
+          $ref: '#/components/schemas/sortDirection'
+      tags:
+      - Conversations
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListConversationsResponse'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+  /v1/conversations/bulk:
+    post:
+      summary: Bulk create conversations
+      description: Creates multiple conversations in bulk for a single campaign
+      operationId: bulk-create-conversations
+      parameters: []
+      tags:
+      - Conversations
+      requestBody:
+        description: The input to bulk create conversations
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulkCreateConversationsInput'
+      responses:
+        '202':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkCreateConversationsResponse'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+  /v1/conversations/{conversationId}:
+    get:
+      summary: Get conversation
+      description: Get a conversation
+      operationId: get-conversation
+      parameters:
+      - name: conversationId
+        in: path
+        description: The ID of the conversation to get
+        required: true
+        schema:
+          $ref: '#/components/schemas/conversationId'
+      tags:
+      - Conversations
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conversation'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+  /v1/conversations/{conversationId}/hand-to-agent:
+    post:
+      summary: Hand Conversation to Agent
+      description: Hand the conversation back to the AI agent after a human takeover
+      operationId: hand-conversation-to-agent
+      parameters:
+      - name: conversationId
+        in: path
+        description: The ID of the conversation to hand back to the agent
+        required: true
+        schema:
+          $ref: '#/components/schemas/conversationId'
+      tags:
+      - Conversations
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConversationUpdateResponse'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+  /v1/conversations/{conversationId}/messages:
+    get:
+      summary: List conversation messages
+      description: List all messages in a conversation
+      operationId: list-conversation-messages
+      parameters:
+      - name: conversationId
+        in: path
+        description: The ID of the conversation to get messages for
+        required: true
+        schema:
+          $ref: '#/components/schemas/conversationId'
+      - name: limit
+        in: query
+        description: The maximum number of messages to return
+        required: false
+        schema:
+          $ref: '#/components/schemas/limit'
+      - name: nextToken
+        in: query
+        description: The next token parameter for pagination
+        required: false
+        schema:
+          $ref: '#/components/schemas/nextToken'
+      - name: sortDirection
+        in: query
+        description: Sort direction for messages by creation date. Defaults to DESC (most recent first)
+        required: false
+        schema:
+          $ref: '#/components/schemas/sortDirection'
+      tags:
+      - Conversations
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListConversationMessagesResponse'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+    post:
+      summary: Send Conversation Message
+      description: Send a message as the user/recruiter on a conversation
+      operationId: send-conversation-message
+      parameters:
+      - name: conversationId
+        in: path
+        description: The ID of the conversation to send a message on
+        required: true
+        schema:
+          $ref: '#/components/schemas/conversationId'
+      tags:
+      - Conversations
+      requestBody:
+        description: Send Message Request
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendConversationMessageRequest'
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+  /v1/conversations/{conversationId}/takeover:
+    post:
+      summary: Takeover Conversation
+      description: Take over a conversation from the AI agent so a human can respond directly
+      operationId: takeover-conversation
+      parameters:
+      - name: conversationId
+        in: path
+        description: The ID of the conversation to take over
+        required: true
+        schema:
+          $ref: '#/components/schemas/conversationId'
+      tags:
+      - Conversations
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConversationUpdateResponse'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+components:
+  schemas:
+    BulkCreateConversationsResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        total:
+          type: integer
+          description: Total number of candidates processed.
+        queued:
+          type: integer
+          description: Number of candidates successfully queued.
+        failed:
+          type: integer
+          description: Number of candidates that failed to process.
+        results:
+          type: array
+          items:
+            type: object
+            properties:
+              index:
+                type: integer
+                description: The index of the candidate in the input array.
+              firstName:
+                type: string
+                description: The first name of the candidate.
+              status:
+                type: string
+                enum:
+                - queued
+                - failed
+                description: The processing status.
+              error:
+                type: string
+                description: Error message if the candidate failed to process.
+            required:
+            - index
+            - firstName
+            - status
+      required:
+      - message
+      - total
+      - queued
+      - failed
+      - results
+      additionalProperties: false
+    limit:
+      type: integer
+    externalId:
+      type: string
+    emailAddress:
+      type: string
+      format: email
+    BulkCreateConversationsInput:
+      type: object
+      properties:
+        campaignId:
+          type: string
+          title: Campaign ID
+          description: The unique identifier for the campaign.
+        externalCampaignId:
+          type: string
+          title: External Campaign ID
+          description: The unique identifier for the campaign in the external system.
+        shouldSendDuringBusinessHours:
+          type: boolean
+          title: Should Send During Business Hours
+          description: Whether to send messages during business hours. Applies to all contacts in the batch. The timezone is inferred from each contact's phone number.
+        skipDuplicationCheck:
+          type: boolean
+          title: Skip Duplication Check
+          description: When true, closes ongoing conversation with the same phone number/email in the SAME CAMPAIGN, then creates a new one. Applies to all contacts in the batch.
+          default: false
+        contacts:
+          type: array
+          title: Contacts
+          description: Array of contacts to create conversations for.
+          minItems: 1
+          items:
+            type: object
+            properties:
+              phoneNumber:
+                type: string
+                pattern: ^\+[1-9]\d{1,14}$
+                title: Phone Number
+                description: The phone number of the contact, in E.164 format. For SMS and WHATSAPP campaigns, required unless the campaign's email fallback resolves to enabled (emailChannelFallbackEnabled on the campaign, inheriting the organization setting when unset) and an emailAddress is provided.
+              countryCode:
+                type: string
+                title: Country Code
+                description: The country code in ISO 3166-1 alpha-2 format.
+              firstName:
+                type: string
+                title: First Name
+                description: The first name of the contact.
+              lastName:
+                type: string
+                title: Last Name
+                description: The last name of the contact.
+              emailAddress:
+                type: string
+                title: Email Address
+                description: The email address of the contact. For SMS and WHATSAPP campaigns, an email-only contact is accepted only when the campaign's email fallback resolves to enabled; otherwise the contact is rejected.
+              externalId:
+                type: string
+                title: External ID
+                description: The unique identifier for the conversation in the external system.
+              applicationSource:
+                type: string
+                title: Application Source
+                description: The source where the application was submitted from.
+              closePreviousConversations:
+                type: boolean
+                title: Close Previous Conversations
+                description: When true, closes all ongoing conversations with the same contact identifier across ALL CAMPAIGNS before creating the new conversation.
+                default: false
+              openingMessage:
+                type: string
+                maxLength: 600
+                title: Opening Message
+                description: A custom opening message that overrides the campaign's default opening message. Must be 600 characters or less.
+              additionalContext:
+                type: string
+                minLength: 1
+                title: Additional Context
+                description: Custom context to provide to the AI agent for this specific conversation.
+              calendarMeetingTemplateId:
+                type: string
+                title: Calendar Meeting Template ID
+                description: The calendar meeting template identifier.
+            required:
+            - firstName
+            additionalProperties: false
+      required:
+      - contacts
+      oneOf:
+      - title: Campaign ID Required
+        required:
+        - campaignId
+      - title: External Campaign ID Required
+        required:
+        - externalCampaignId
+      additionalProperties: false
+    ListConversationMessagesResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: Unique identifier for the message
+              conversationId:
+                type: string
+                description: ID of the conversation this message belongs to
+              body:
+                type: string
+                description: The content of the message
+              sender:
+                type: string
+                enum:
+                - AGENT
+                - PROSPECT
+                - USER
+                description: The sender of the message
+              status:
+                type:
+                - string
+                - 'null'
+                enum:
+                - NOT_SENT
+                - READ
+                - RECEIVED_SUCCESS
+                - SENT
+                - SENT_FAILED
+                - SENT_SKIPPED
+                - SENT_SUCCESS
+                description: The delivery status of the message
+              createdAt:
+                type: string
+                format: date-time
+                description: When the message was created
+              updatedAt:
+                type: string
+                format: date-time
+                description: When the message was last updated
+              deliveredAt:
+                type:
+                - string
+                - 'null'
+                format: date-time
+                description: When the message was delivered
+              readAt:
+                type:
+                - string
+                - 'null'
+                format: date-time
+                description: When the message was read
+              isInitial:
+                type:
+                - boolean
+                - 'null'
+                description: Whether this is the initial message in the conversation
+              isFallback:
+                type:
+                - boolean
+                - 'null'
+                description: Whether this is a fallback message
+              isNegativeSentiment:
+                type:
+                - boolean
+                - 'null'
+                description: Whether the message has negative sentiment
+              sentimentName:
+                type:
+                - string
+                - 'null'
+                description: The sentiment classification of the message
+              emailSubjectLine:
+                type:
+                - string
+                - 'null'
+                description: The email subject line if this is an email message
+              isEmailOpened:
+                type:
+                - boolean
+                - 'null'
+                description: Whether the email has been opened
+              media:
+                type:
+                - object
+                - 'null'
+                description: Media attached to the message
+                properties:
+                  fileName:
+                    type: string
+                    description: Name of the media file
+                  contentType:
+                    type: string
+                    description: MIME type of the media
+                  size:
+                    type:
+                    - integer
+                    - 'null'
+                    description: Size of the media in bytes
+                  classifiedDocumentType:
+                    type:
+                    - string
+                    - 'null'
+                    description: Classified type of the document
+            required:
+            - id
+            - conversationId
+            - body
+            - sender
+            - createdAt
+            - updatedAt
+            additionalProperties: false
+        nextToken:
+          type:
+          - string
+          - 'null'
+      required:
+      - data
+      additionalProperties: false
+    status:
+      type: string
+      enum:
+      - COMPLETED_SCREENING_PASSED
+      - CLOSED
+      - COMPLETED_SCREENING_FAILED
+      - OPTED_OUT
+      - ONGOING
+      - CREATED
+      - QUEUED
+      - DELIVERY_FAILED
+    nextToken:
+      type: string
+    CreateConversationInput:
+      type: object
+      properties:
+        phoneNumber:
+          type: string
+          pattern: ^\+[1-9]\d{1,14}$
+          title: Phone Number
+          description: The phone number of the candidate, in E.164 format. For SMS and WHATSAPP campaigns, required unless the campaign's email fallback resolves to enabled (emailChannelFallbackEnabled on the campaign, inheriting the organization setting when unset) and an emailAddress is provided.
+        shouldSendDuringBusinessHours:
+          type: boolean
+          title: Should Send During Business Hours
+          description: Whether to send the message during business hours. The timezone is inferred from the phone number.
+        countryCode:
+          type: string
+          title: Country Code
+          description: The country code in ISO 3166-1 alpha-2 format. This is used to format the phone number if it is not in E.164 format.
+        firstName:
+          type: string
+          title: First Name
+          description: The first name of the candidate.
+        lastName:
+          type: string
+          title: Last Name
+          description: The last name of the candidate.
+        emailAddress:
+          type: string
+          title: Email Address
+          description: The email address of the candidate. Required for EMAIL channel campaigns. For SMS and WHATSAPP campaigns, an email-only request is accepted only when the campaign's email fallback resolves to enabled; otherwise the request is rejected with 400.
+        campaignId:
+          type: string
+          title: Campaign ID
+          description: The unique identifier for the campaign.
+        externalId:
+          type: string
+          title: External ID
+          description: The unique identifier for the conversation in the external system.
+        externalCampaignId:
+          type: string
+          title: External Campaign ID
+          description: The unique identifier for the campaign in the external system.
+        applicationSource:
+          type: string
+          title: Application Source
+          description: The source where the application was submitted from (e.g., 'careers-page', 'job-board', 'referral').
+        skipDuplicationCheck:
+          type: boolean
+          title: Skip Duplication Check
+          description: 'When true, closes ongoing conversation with the same phone number/email in the SAME CAMPAIGN, then creates a new one. Use for re-engaging a candidate within the same campaign. Note: queuing behavior is still respected if conversations exist in other campaigns.'
+          default: false
+        closePreviousConversations:
+          type: boolean
+          title: Close Previous Conversations
+          description: When true, closes all ongoing conversations (CREATED, QUEUED, ONGOING) with the same contact identifier (phone number for SMS/WhatsApp, email address for Email) and channel across ALL CAMPAIGNS before creating the new conversation. This completely disables queuing behavior. Applies to SMS, WhatsApp, and Email channels.
+          default: false
+        openingMessage:
+          type: string
+          maxLength: 600
+          title: Opening Message
+          description: 'A custom opening message that overrides the campaign''s default opening message. Must be 600 characters or less. Additional validation: For SMS campaigns, must include the ''STOP'' keyword (uppercase) for opt-out compliance. Not supported for WhatsApp campaigns (will return 400 error).'
+        additionalContext:
+          type: string
+          minLength: 1
+          title: Additional Context
+          description: Custom context to provide to the AI agent for this specific conversation. This context is used alongside campaign-level and organization-level context when generating replies. Useful for passing candidate-specific information that should influence the conversation.
+      required:
+      - firstName
+      oneOf:
+      - title: Campaign ID Required
+        description: Either campaignId or externalCampaignId is required.
+        required:
+        - campaignId
+      - title: External Campaign ID Required
+        description: Either externalCampaignId or campaignId is required.
+        required:
+        - externalCampaignId
+      additionalProperties: false
+    SendConversationMessageRequest:
+      description: Request to send a message on a conversation
+      type: object
+      properties:
+        messageBody:
+          type: string
+          description: The message text to send. Required unless templateId is provided.
+        templateId:
+          type: string
+          description: WhatsApp template ID to send a template message. Use when the 24h WhatsApp conversation window has expired.
+      additionalProperties: false
+    ErrorResponse:
+      type: object
+    ConversationUpdateResponse:
+      description: Response from updating a conversation (takeover or hand-to-agent)
+      type: object
+      properties:
+        id:
+          type: string
+          description: The conversation ID
+        status:
+          type: string
+          description: The current conversation status
+        stage:
+          type:
+          - string
+          - 'null'
+          description: The current conversation stage
+        calendarMeetingTemplateId:
+          type:
+          - string
+          - 'null'
+          description: The calendar meeting template ID if applicable
+        isHumanTakeover:
+          type: boolean
+          description: Whether the conversation is in human takeover mode
+      required:
+      - id
+      - status
+      - isHumanTakeover
+    MessageResponse:
+      description: Response containing the created message
+      type: object
+      properties:
+        id:
+          type: string
+          description: The message ID
+        conversationId:
+          type: string
+          description: The conversation ID
+        body:
+          type: string
+          description: The message body
+        sender:
+          type: string
+          description: The sender of the message
+          enum:
+          - USER
+          - AGENT
+          - PROSPECT
+        status:
+          type:
+          - string
+          - 'null'
+          description: The delivery status of the message
+        createdAt:
+          type: string
+          format: date-time
+          description: When the message was created
+        updatedAt:
+          type: string
+          format: date-time
+          description: When the message was last updated
+      required:
+      - id
+      - conversationId
+      - body
+      - sender
+      - createdAt
+    sortDirection:
+      type: string
+      enum:
+      - ASC
+      - DESC
+    phoneNumber:
+      type: string
+    ListConversationsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+                description: Unique identifier for the conversation
+              organizationId:
+                type: string
+                format: uuid
+                description: Organization identifier
+              campaignId:
+                type: string
+                format: uuid
+                description: Campaign identifier
+              participantPhoneNumber:
+                type: string
+                pattern: ^\+[1-9]\d{1,14}$
+                description: Participant's phone number in E.164 format
+              participantFirstName:
+                type: string
+                description: Participant's first name
+              participantLastName:
+                type:
+                - string
+                - 'null'
+                description: Participant's last name
+              participantEmailAddress:
+                type:
+                - string
+                - 'null'
+                format: email
+                description: Participant's email address
+              createdAt:
+                type: string
+                format: date-time
+                description: Timestamp when the conversation was created
+              updatedAt:
+                type: string
+                format: date-time
+                description: Timestamp when the conversation was last updated
+              needsReview:
+                type: boolean
+                description: Indicates if the conversation needs review
+              isHumanTakeover:
+                type: boolean
+                description: Indicates if human has taken over the conversation
+              screeningQuestionsOutcome:
+                type:
+                - array
+                - 'null'
+                description: Outcome of screening questions
+                items:
+                  type: object
+                  properties:
+                    questionOutcome:
+                      type: string
+                      enum:
+                      - FAILED
+                      - NOT_COMPLETED
+                      - PASSED
+                      description: The outcome of the screening question
+                    responseSummary:
+                      type: string
+                      description: Summary of the participant's response
+                    screeningQuestion:
+                      type: string
+                      description: The screening question asked
+                  required:
+                  - questionOutcome
+                  - responseSummary
+                  - screeningQuestion
+                  additionalProperties: false
+              sentAt:
+                type:
+                - string
+                - 'null'
+                format: date-time
+                description: Timestamp when the conversation was sent
+              completedAt:
+                type:
+                - string
+                - 'null'
+                format: date-time
+                description: Timestamp when the conversation was completed
+              timeToFirstResponse:
+                type:
+                - number
+                - 'null'
+                description: Time taken for first response
+              timeToComplete:
+                type:
+                - number
+                - 'null'
+                description: Time taken to complete the conversation
+              messagesCount:
+                type: integer
+                minimum: 0
+                description: Total number of messages in the conversation
+              repliesCount:
+                type: integer
+                minimum: 0
+                description: Total number of replies in the conversation
+              conversationStatus:
+                type: string
+                enum:
+                - COMPLETED_SCREENING_PASSED
+                - CLOSED
+                - COMPLETED_SCREENING_FAILED
+                - OPTED_OUT
+                - ONGOING
+                - CREATED
+                - QUEUED
+                - DELIVERY_FAILED
+                description: Current status of the conversation
+              scorecardTotalValue:
+                type:
+                - number
+                - 'null'
+                description: Total scorecard value derived from preferred-answer scoring across the conversation's open questions. Null when the conversation has not produced a scorecard.
+              externalId:
+                type:
+                - string
+                - 'null'
+                description: Caller-supplied identifier passed when the conversation was created via POST /v1/conversations or POST /v1/workflows/{workflowId}/runs. Null when the caller did not supply one.
+              workflowRunId:
+                type:
+                - string
+                - 'null'
+                description: Identifier of the workflow run that owns this conversation. Null when the conversation was not created by a workflow run.
+              workflowNodeId:
+                type:
+                - string
+                - 'null'
+                description: Identifier of the workflow node that owns this conversation. Null when the conversation was not created by a workflow run.
+              bookingId:
+                type:
+                - string
+                - 'null'
+                description: Identifier of the calendar booking associated with this conversation. Null when no booking has been made.
+              scoreCardOutcomes:
+                type:
+                - array
+                - 'null'
+                description: Per-question scorecard outcomes for open questions evaluated during the conversation.
+                items:
+                  type: object
+                  properties:
+                    question:
+                      type: string
+                      description: The open question that was asked.
+                    responseSummary:
+                      type:
+                      - string
+                      - 'null'
+                      description: Summary of the candidate's response to the question.
+                    score:
+                      type:
+                      - number
+                      - 'null'
+                      description: Score awarded to the candidate's answer.
+                    requirementOutcomes:
+                      type:
+                      - array
+                      - 'null'
+                      description: Per-requirement evaluation results for the question.
+                      items:
+                        type: object
+                        properties:
+                          content:
+                            type: string
+                            description: The requirement content evaluated against the candidate's answer.
+                          evidence:
+                            type:
+                            - string
+                            - 'null'
+                            description: Evidence from the candidate's answer that supported or contradicted the requirement.
+                          isMet:
+                            type: boolean
+                            description: Whether the requirement was met by the candidate's answer.
+                        required:
+                        - content
+                        - isMet
+                        additionalProperties: false
+                  required:
+                  - question
+                  additionalProperties: false
+            required:
+            - id
+            - organizationId
+            - campaignId
+            - participantPhoneNumber
+            - participantFirstName
+            - createdAt
+            - updatedAt
+            - needsReview
+            - isHumanTakeover
+            - messagesCount
+            - repliesCount
+            - conversationStatus
+            additionalProperties: false
+        nextToken:
+          type:
+          - string
+          - 'null'
+      required:
+      - data
+      additionalProperties: false
+    conversationId:
+      type: string
+    Conversation:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the conversation
+        organizationId:
+          type: string
+          format: uuid
+          description: Organization identifier
+        campaignId:
+          type: string
+          format: uuid
+          description: Campaign identifier
+        participantPhoneNumber:
+          type: string
+          pattern: ^\+[1-9]\d{1,14}$
+          description: Participant's phone number in E.164 format
+        participantFirstName:
+          type: string
+          description: Participant's first name
+        participantLastName:
+          type:
+          - string
+          - 'null'
+          description: Participant's last name
+        participantEmailAddress:
+          type:
+          - string
+          - 'null'
+          format: email
+          description: Participant's email address
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the conversation was created
+        updatedAt:
+          type: string
+          format: date-time
+          description: Timestamp when the conversation was last updated
+        needsReview:
+          type: boolean
+          description: Indicates if the conversation needs review
+        isHumanTakeover:
+          type: boolean
+          description: Indicates if human has taken over the conversation
+        screeningQuestionsOutcome:
+          type:
+          - array
+          - 'null'
+          description: Outcome of screening questions
+          items:
+            type: object
+            properties:
+              questionOutcome:
+                type: string
+                enum:
+                - FAILED
+                - NOT_COMPLETED
+                - PASSED
+                description: The outcome of the screening question
+              responseSummary:
+                type: string
+                description: Summary of the participant's response
+              screeningQuestion:
+                type: string
+                description: The screening question asked
+            required:
+            - questionOutcome
+            - responseSummary
+            - screeningQuestion
+            additionalProperties: false
+        sentAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Timestamp when the conversation was sent
+        completedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Timestamp when the conversation was completed
+        timeToFirstResponse:
+          type:
+          - number
+          - 'null'
+          description: Time taken for first response
+        timeToComplete:
+          type:
+          - number
+          - 'null'
+          description: Time taken to complete the conversation
+        messagesCount:
+          type: integer
+          minimum: 0
+          description: Total number of messages in the conversation
+        repliesCount:
+          type: integer
+          minimum: 0
+          description: Total number of replies in the conversation
+        conversationStatus:
+          type: string
+          enum:
+          - COMPLETED_SCREENING_PASSED
+          - CLOSED
+          - COMPLETED_SCREENING_FAILED
+          - OPTED_OUT
+          - ONGOING
+          - CREATED
+          - QUEUED
+          - DELIVERY_FAILED
+          description: Current status of the conversation
+        scorecardTotalValue:
+          type:
+          - number
+          - 'null'
+          description: Total scorecard value derived from preferred-answer scoring across the conversation's open questions. Null when the conversation has not produced a scorecard.
+        externalId:
+          type:
+          - string
+          - 'null'
+          description: Caller-supplied identifier passed when the conversation was created via POST /v1/conversations or POST /v1/workflows/{workflowId}/runs. Null when the caller did not supply one.
+        workflowRunId:
+          type:
+          - string
+          - 'null'
+          description: Identifier of the workflow run that owns this conversation. Null when the conversation was not created by a workflow run.
+        workflowNodeId:
+          type:
+          - string
+          - 'null'
+          description: Identifier of the workflow node that owns this conversation. Null when the conversation was not created by a workflow run.
+        bookingId:
+          type:
+          - string
+          - 'null'
+          description: Identifier of the calendar booking associated with this conversation. Null when no booking has been made.
+        scoreCardOutcomes:
+          type:
+          - array
+          - 'null'
+          description: Per-question scorecard outcomes for open questions evaluated during the conversation.
+          items:
+            type: object
+            properties:
+              question:
+                type: string
+                description: The open question that was asked.
+              responseSummary:
+                type:
+                - string
+                - 'null'
+                description: Summary of the candidate's response to the question.
+              score:
+                type:
+                - number
+                - 'null'
+                description: Score awarded to the candidate's answer.
+              requirementOutcomes:
+                type:
+                - array
+                - 'null'
+                description: Per-requirement evaluation results for the question.
+                items:
+                  type: object
+                  properties:
+                    content:
+                      type: string
+                      description: The requirement content evaluated against the candidate's answer.
+                    evidence:
+                      type:
+                      - string
+                      - 'null'
+                      description: Evidence from the candidate's answer that supported or contradicted the requirement.
+                    isMet:
+                      type: boolean
+                      description: Whether the requirement was met by the candidate's answer.
+                  required:
+                  - content
+                  - isMet
+                  additionalProperties: false
+            required:
+            - question
+            additionalProperties: false
+      required:
+      - id
+      - organizationId
+      - campaignId
+      - participantPhoneNumber
+      - participantFirstName
+      - createdAt
+      - updatedAt
+      - needsReview
+      - isHumanTakeover
+      - messagesCount
+      - repliesCount
+      - conversationStatus
+      additionalProperties: false
+    campaignId:
+      type: string
+  securitySchemes:
+    popp_api_key:
+      description: Your Popp API key for authentication
+      type: apiKey
+      name: x-api-key
+      in: header
+    organization_id:
+      description: Your organization's unique identifier
+      type: apiKey
+      name: x-organization-id
+      in: header
+x-provenance:
+  method: searched
+  source: https://docs.joinpopp.com/reference
+  harvested: '2026-10-14'
+  tool: harvest-readme-openapi.py
+  note: Assembled verbatim from the OpenAPI definition ReadMe embeds in each operation page of the provider's developer portal; paths and components merged by API title, nothing authored.
+  assembled_from:
+  - https://docs.joinpopp.com/reference/add-candidates-to-list-by-external-id.md
+  - https://docs.joinpopp.com/reference/add-candidates-to-list.md
+  - https://docs.joinpopp.com/reference/archive-analysis.md
+  - https://docs.joinpopp.com/reference/archive-document-type.md
+  - https://docs.joinpopp.com/reference/archive-workflow-by-external-id.md
+  - https://docs.joinpopp.com/reference/archive-workflow.md
+  - https://docs.joinpopp.com/reference/bulk-create-conversations.md
+  - https://docs.joinpopp.com/reference/cancel-booking.md
+  - https://docs.joinpopp.com/reference/cancel-workflow-run.md
+  - https://docs.joinpopp.com/reference/create-analysis-candidate.md
+  - https://docs.joinpopp.com/reference/create-analysis.md
+  - https://docs.joinpopp.com/reference/create-campaign.md
+  - https://docs.joinpopp.com/reference/create-candidate-list.md
+  - https://docs.joinpopp.com/reference/create-candidate-note-by-external-id.md
+  - https://docs.joinpopp.com/reference/create-candidate-note.md
+  - https://docs.joinpopp.com/reference/create-candidate.md
+  - https://docs.joinpopp.com/reference/create-conversation.md
+  - https://docs.joinpopp.com/reference/create-custom-field.md
+  - https://docs.joinpopp.com/reference/create-document-credential.md
+  - https://docs.joinpopp.com/reference/create-document-type.md
+  - https://docs.joinpopp.com/reference/create-meeting-template.md
+  - https://docs.joinpopp.com/reference/create-organization-config.md
+  - https://docs.joinpopp.com/reference/create-scheduling-conversation.md
+  - https://docs.joinpopp.com/reference/create-user.md
+  - https://docs.joinpopp.com/reference/create-webhook.md
+  - https://docs.joinpopp.com/reference/create-workflow.md
+  - https://docs.joinpopp.com/reference/deactivate-user-by-email.md
+  - https://docs.joinpopp.com/reference/deactivate-user.md
+  - https://docs.joinpopp.com/reference/delete-candidate-by-email.md
+  - https://docs.joinpopp.com/reference/delete-candidate-by-external-id.md
+  - https://docs.joinpopp.com/reference/delete-candidate-by-phone-number.md
+  - https://docs.joinpopp.com/reference/delete-candidate-list-by-external-id.md
+  - https://docs.joinpopp.com/reference/delete-candidate-list.md
+  - https://docs.joinpopp.com/reference/delete-candidate-note.md
+  - https://docs.joinpopp.com/reference/delete-candidate.md
+  - https://docs.joinpopp.com/reference/delete-custom-field.md
+  - https://docs.joinpopp.com/reference/delete-document-credential.md
+  - https://docs.joinpopp.com/reference/delete-document-type.md
+  - https://docs.joinpopp.com/reference/delete-meeting-template.md
+  - https://docs.joinpopp.com/reference/delete-tag.md
+  - https://docs.joinpopp.com/reference/delete-user-by-email.md
+  - https://docs.joinpopp.com/reference/delete-user.md
+  - https://docs.joinpopp.com/reference/delete-webhook.md
+  - https://docs.joinpopp.com/reference/download-media.md
+  - https://docs.joinpopp.com/reference/generate-preferred-answer-requirements.md
+  - https://docs.joinpopp.com/reference/generate-questions.md
+  - https://docs.joinpopp.com/reference/generate-requirements.md
+  - https://docs.joinpopp.com/reference/get-analysis.md
+  - https://docs.joinpopp.com/reference/get-booking.md
+  - https://docs.joinpopp.com/reference/get-campaign.md
+  - https://docs.joinpopp.com/reference/get-candidate-by-external-id.md
+  - https://docs.joinpopp.com/reference/get-candidate-list-by-external-id.md
+  - https://docs.joinpopp.com/reference/get-candidate-list.md
+  - https://docs.joinpopp.com/reference/get-candidate-profile-by-external-id.md
+  - https://docs.joinpopp.com/reference/get-candidate.md
+  - https://docs.joinpopp.com/reference/get-conversation.md
+  - https://docs.joinpopp.com/reference/get-custom-field.md
+  - https://docs.joinpopp.com/reference/get-document-media.md
+  - https://docs.joinpopp.com/reference/get-document-type.md
+  - https://docs.joinpopp.com/reference/get-document.md
+  - https://docs.joinpopp.com/reference/get-meeting-template.md
+  - https://docs.joinpopp.com/reference/get-organization-config-by-external-id.md
+  - https://docs.joinpopp.com/reference/get-organization-config.md
+  - https://docs.joinpopp.com/reference/get-organization-details.md
+  - https://docs.joinpopp.com/reference/get-user-by-email.md
+  - https://docs.joinpopp.com/reference/get-user-calendar.md
+  - https://docs.joinpopp.com/reference/get-user.md
+  - https://docs.joinpopp.com/reference/get-workflow-analysis-application.md
+  - https://docs.joinpopp.com/reference/get-workflow-analysis.md
+  - https://docs.joinpopp.com/reference/get-workflow-by-external-id.md
+  - https://docs.joinpopp.com/reference/get-workflow-run.md
+  - https://docs.joinpopp.com/reference/get-workflow.md
+  - https://docs.joinpopp.com/reference/hand-conversation-to-agent.md
+  - https://docs.joinpopp.com/reference/invite-calendar-contact.md
+  - https://docs.joinpopp.com/reference/list-agents.md
+  - https://docs.joinpopp.com/reference/list-analyses.md
+  - https://docs.joinpopp.com/reference/list-ats-job-stages.md
+  - https://docs.joinpopp.com/reference/list-ats-jobs.md
+  - https://docs.joinpopp.com/reference/list-ats-rejection-reasons.md
+  - https://docs.joinpopp.com/reference/list-bookings.md
+  - https://docs.joinpopp.com/reference/list-campaigns.md
+  - https://docs.joinpopp.com/reference/list-candidate-lists.md
+  - https://docs.joinpopp.com/reference/list-candidate-notes-by-external-id.md
+  - https://docs.joinpopp.com/reference/list-candidate-notes.md
+  - https://docs.joinpopp.com/reference/list-conversation-documents.md
+  - https://docs.joinpopp.com/reference/list-conversation-messages.md
+  - https://docs.joinpopp.com/reference/list-conversations.md
+  - https://docs.joinpopp.com/reference/list-custom-fields.md
+  - https://docs.joinpopp.com/reference/list-document-credentials.md
+  - https://docs.joinpopp.com/reference/list-document-types.md
+  - https://docs.joinpopp.com/reference/list-meeting-templates.md
+  - https://docs.joinpopp.com/reference/list-organization-users.md
+  - https://docs.joinpopp.com/reference/list-organizations.md
+  - https://docs.joinpopp.com/reference/list-tags.md
+  - https://docs.joinpopp.com/reference/list-templates.md
+  - https://docs.joinpopp.com/reference/list-user-calendars.md
+  - https://docs.joinpopp.com/reference/list-users.md
+  - https://docs.joinpopp.com/reference/list-webhook-events.md
+  - https://docs.joinpopp.com/reference/list-webhooks.md
+  - https://docs.joinpopp.com/reference/list-workflow-analysis-application-history.md
+  - https://docs.joinpopp.com/reference/list-workflow-analysis-applications.md
+  - https://docs.joinpopp.com/reference/list-workflow-runs.md
+  - https://docs.joinpopp.com/reference/list-workflows.md
+  - https://docs.joinpopp.com/reference/parse-availability.md
+  - https://docs.joinpopp.com/reference/pause-workflow-by-external-id.md
+  - https://docs.joinpopp.com/reference/pause-workflow.md
+  - https://docs.joinpopp.com/reference/process-document.md
+  - https://docs.joinpopp.com/reference/publish-workflow-by-external-id.md
+  - https://docs.joinpopp.com/reference/publish-workflow.md
+  - https://docs.joinpopp.com/reference/reactivate-user-by-email.md
+  - https://docs.joinpopp.com/reference/reactivate-user.md
+  - https://docs.joinpopp.com/reference/remove-candidate-document-by-external-id.md
+  - https://docs.joinpopp.com/reference/remove-candidate-document.md
+  - https://docs.joinpopp.com/reference/remove-candidates-from-list-by-external-id.md
+  - https://docs.joinpopp.com/reference/remove-candidates-from-list.md
+  - https://docs.joinpopp.com/reference/reparse-candidate-cv-by-external-id.md
+  - https://docs.joinpopp.com/reference/reparse-candidate-cv.md
+  - https://docs.joinpopp.com/reference/resend-booking-url.md
+  - https://docs.joinpopp.com/reference/resume-workflow-by-external-id.md
+  - https://docs.joinpopp.com/reference/resume-workflow.md
+  - https://docs.joinpopp.com/reference/send-conversation-message.md
+  - https://docs.joinpopp.com/reference/set-user-calendar-availability.md
+  - https://docs.joinpopp.com/reference/sign-out-user-by-email.md
+  - https://docs.joinpopp.com/reference/sign-out-user.md
+  - https://docs.joinpopp.com/reference/start-workflow-runs-by-external-id.md
+  - https://docs.joinpopp.com/reference/start-workflow-runs.md
+  - https://docs.joinpopp.com/reference/stop-campaign.md
+  - https://docs.joinpopp.com/reference/takeover-conversation.md
+  - https://docs.joinpopp.com/reference/update-analysis.md
+  - https://docs.joinpopp.com/reference/update-booking.md
+  - https://docs.joinpopp.com/reference/update-campaign.md
+  - https://docs.joinpopp.com/reference/update-candidate-by-external-id.md
+  - https://docs.joinpopp.com/reference/update-candidate-list-by-external-id.md
+  - https://docs.joinpopp.com/reference/update-candidate-list.md
+  - https://docs.joinpopp.com/reference/update-candidate-note.md
+  - https://docs.joinpopp.com/reference/update-candidate.md
+  - https://docs.joinpopp.com/reference/update-custom-field.md
+  - https://docs.joinpopp.com/reference/update-document-credential.md
+  - https://docs.joinpopp.com/reference/update-document-type.md
+  - https://docs.joinpopp.com/reference/update-meeting-template.md
+  - https://docs.joinpopp.com/reference/update-organization-config-by-external-id.md
+  - https://docs.joinpopp.com/reference/update-organization-config.md
+  - https://docs.joinpopp.com/reference/update-organization-details.md
+  - https://docs.joinpopp.com/reference/update-requirements-and-reanalyse.md
+  - https://docs.joinpopp.com/reference/update-user-by-email.md
+  - https://docs.joinpopp.com/reference/update-user.md
+  - https://docs.joinpopp.com/reference/update-webhook.md
+  - https://docs.joinpopp.com/reference/update-workflow-by-external-id.md
+  - https://docs.joinpopp.com/reference/update-workflow.md
+  merge:
+    pages: 149
+    deduped: 618
+    conflicts_kept_first: 0

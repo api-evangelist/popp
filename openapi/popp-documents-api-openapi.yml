@@ -1,0 +1,1176 @@
+openapi: 3.2.0
+info:
+  title: Popp Documents API
+  description: Popp API documentation
+  version: '1'
+servers:
+- url: https://api.joinpopp.com
+  description: Development server
+security:
+- popp_api_key: []
+  organization_id: []
+tags:
+- name: Documents
+paths:
+  /v1/conversations/{conversationId}/documents:
+    get:
+      summary: List conversation documents
+      description: List documents in a conversation
+      operationId: list-conversation-documents
+      parameters:
+      - name: conversationId
+        in: path
+        description: The ID of the conversation to get
+        required: true
+        schema:
+          $ref: '#/components/schemas/conversationId'
+      - name: limit
+        in: query
+        description: The limit parameter
+        required: false
+        schema:
+          $ref: '#/components/schemas/limit-2d7e26c9-439b-4a91-a511-77cfadeb9b6c'
+      - name: nextToken
+        in: query
+        description: The next token parameter for pagination
+        required: false
+        schema:
+          $ref: '#/components/schemas/nextToken'
+      tags:
+      - Documents
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListConversationDocumentsResponse'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+  /v1/document-types:
+    get:
+      summary: List document types (Beta)
+      description: '**Beta:** this endpoint is still in active development; response shape and filter behaviour may change.
+
+
+        Searches the document types for the caller''s organization. Backed by OpenSearch — supports prefix match on `name`, exact match on `externalId`, and boolean filters on `isArchived` and `isUsedInCampaign`. Results are sorted by `createdAt` (newest first).'
+      operationId: list-document-types
+      parameters:
+      - name: name
+        in: query
+        description: Prefix match on the document type name (case-insensitive).
+        required: false
+        schema:
+          $ref: '#/components/schemas/name'
+      - name: externalId
+        in: query
+        description: Exact match on the customer-controlled external ID.
+        required: false
+        schema:
+          $ref: '#/components/schemas/externalId'
+      - name: isArchived
+        in: query
+        description: Filter by archive state. Pass "true" or "false".
+        required: false
+        schema:
+          $ref: '#/components/schemas/isArchived'
+      - name: isUsedInCampaign
+        in: query
+        description: Filter to types currently referenced by a campaign or workflow. Pass "true" or "false".
+        required: false
+        schema:
+          $ref: '#/components/schemas/isUsedInCampaign'
+      - name: limit
+        in: query
+        description: Maximum number of items to return.
+        required: false
+        schema:
+          $ref: '#/components/schemas/limit'
+      - name: nextToken
+        in: query
+        description: Pagination token returned by a previous list call.
+        required: false
+        schema:
+          $ref: '#/components/schemas/nextToken'
+      tags:
+      - Documents
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListDocumentTypesResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+    post:
+      summary: Create a document type (Beta)
+      description: '**Beta:** this endpoint is still in active development; payload shape and validation rules may change.
+
+
+        Creates a document type in the caller''s organization. The name is required; everything else is optional. `externalId` must be unique per organization. `validationSettings` is a JSON-encoded string whose only recognised keys today are `validFor` and `issuedAfter` (each `{ "value": number, "unit": "DAYS"|"MONTHS"|"YEARS" }`).
+
+
+        Once created, reference the returned `id` from a Campaign `DOCUMENT` question via `documentItems: [{ documentTypeId }]`. The server populates a readable `documentTypeName` copy on each reference so the Campaign payload is greppable without a join. See `POST /v1/campaigns` for the per-question shape.'
+      operationId: create-document-type
+      parameters: []
+      tags:
+      - Documents
+      requestBody:
+        description: Document type payload
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDocumentTypeRequest'
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentType'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+  /v1/document-types/{documentTypeId}:
+    get:
+      summary: Get a document type by ID (Beta)
+      description: '**Beta:** this endpoint is still in active development; response shape may change.
+
+
+        Fetches a single document type by its ID. Returns 404 if the document type does not exist or belongs to a different organization.'
+      operationId: get-document-type
+      parameters:
+      - name: documentTypeId
+        in: path
+        description: The ID of the document type
+        required: true
+        schema:
+          $ref: '#/components/schemas/documentTypeId'
+      tags:
+      - Documents
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentType'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+    patch:
+      summary: Update a document type (Beta)
+      description: '**Beta:** this endpoint is still in active development; payload shape and validation rules may change.
+
+
+        Partially updates a document type. Pass only the fields you want to change. To clear a nullable field send an explicit `null`.
+
+
+        Constraints:
+
+        - Cannot update an archived document type (returns 409). Restore is not supported — create a new one.
+
+        - The `name` cannot be changed while the document type is referenced by a campaign or workflow (returns 409). Other fields can still be edited.
+
+        - `externalId` must be unique per organization.'
+      operationId: update-document-type
+      parameters:
+      - name: documentTypeId
+        in: path
+        description: The ID of the document type
+        required: true
+        schema:
+          $ref: '#/components/schemas/documentTypeId'
+      tags:
+      - Documents
+      requestBody:
+        description: Fields to update
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateDocumentTypeRequest'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentType'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+    delete:
+      summary: Delete a document type (Beta)
+      description: '**Beta:** this endpoint is still in active development.
+
+
+        Hard-deletes a document type. Rejected with 409 if the document type is referenced by any campaign or workflow — archive it instead. Use this only to undo a mistaken create.'
+      operationId: delete-document-type
+      parameters:
+      - name: documentTypeId
+        in: path
+        description: The ID of the document type to delete
+        required: true
+        schema:
+          $ref: '#/components/schemas/documentTypeId'
+      tags:
+      - Documents
+      responses:
+        '204':
+          description: ''
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '409':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+  /v1/document-types/{documentTypeId}/archive:
+    post:
+      summary: Archive a document type (Beta)
+      description: '**Beta:** this endpoint is still in active development.
+
+
+        Soft-deletes a document type by setting `isArchived: true`. Idempotent — archiving an already-archived document type returns 200 with the existing record. Historical references from past campaigns and workflows are preserved.'
+      operationId: archive-document-type
+      parameters:
+      - name: documentTypeId
+        in: path
+        description: The ID of the document type to archive
+        required: true
+        schema:
+          $ref: '#/components/schemas/documentTypeId'
+      tags:
+      - Documents
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentType'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '403':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '404':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+  /v1/documents/process:
+    post:
+      summary: Process Document (Beta)
+      description: '**Beta** — endpoint shape and validation rules may evolve before general availability.
+
+
+        Classify and validate an uploaded document. Two modes are supported and exactly one of the two must be present per request:
+
+
+        - **Stateless** — inline the document type definition on every call via `documentType`. Nothing is fetched server-side; the caller owns the config.
+
+        - **Stateful** — reference a stored DocumentType by id via `documentTypeId`. The server resolves the record and projects its validation / classification rules onto the classifier request; 404 when the id is unknown, 403 when the record belongs to a different organisation.
+
+
+        Response shape is identical across the two modes.'
+      operationId: process-document
+      parameters: []
+      tags:
+      - Documents
+      requestBody:
+        description: Process Document Request
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProcessDocumentRequest'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessDocumentResponse'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '401':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+        '500':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+  /v1/documents/{documentId}:
+    get:
+      summary: Get document
+      description: Get a document
+      operationId: get-document
+      parameters:
+      - name: documentId
+        in: path
+        description: The ID of the document to get
+        required: true
+        schema:
+          $ref: '#/components/schemas/documentId'
+      tags:
+      - Documents
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+  /v1/documents/{documentId}/media:
+    get:
+      summary: Get document media
+      description: Get the media of a document
+      operationId: get-document-media
+      parameters:
+      - name: documentId
+        in: path
+        description: The ID of the document to get the media of
+        required: true
+        schema:
+          $ref: '#/components/schemas/documentId'
+      tags:
+      - Documents
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Media'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+  /v1/documents/{documentId}/media/download:
+    get:
+      summary: Download media
+      description: Download the content of a media
+      operationId: download-media
+      parameters:
+      - name: documentId
+        in: path
+        description: The ID of the document to download
+        required: true
+        schema:
+          $ref: '#/components/schemas/documentId'
+      tags:
+      - Documents
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MediaDownload'
+          headers: {}
+        '400':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          headers: {}
+components:
+  schemas:
+    Media:
+      type: object
+      properties:
+        fileName:
+          type: string
+          minLength: 1
+        tempUrl:
+          type: string
+          format: uri
+        contentType:
+          type: string
+        size:
+          type: integer
+          minimum: 0
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+      - fileName
+      - tempUrl
+      - contentType
+      - size
+      - createdAt
+      - updatedAt
+      additionalProperties: false
+    limit:
+      type: integer
+    CreateDocumentTypeRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Human-readable name shown to recruiters and candidates.
+        validation:
+          type: array
+          items:
+            type: string
+            enum:
+            - CHECK_DOCUMENT_CORNER_INCLUSION
+            - CHECK_NAME_MATCH
+            - CHECK_EXPIRATION_DATE
+            - CHECK_ISSUE_DATE
+            - CHECK_DATE_OF_BIRTH_INCLUSION
+            - CHECK_HOME_ADDRESS_INCLUSION
+          description: Validation checks to apply to documents of this type.
+        classificationRules:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+                enum:
+                - INCLUDES_FIELD
+              value:
+                type: string
+            required:
+            - type
+            - value
+          description: Rules used to recognise documents of this type.
+        validationSettings:
+          type: string
+          description: 'JSON-encoded settings that tune the validation checks. Example: {"validFor":{"value":6,"unit":"MONTHS"}}.'
+        externalId:
+          type: string
+          description: 'Stable customer-controlled identifier. Must be unique per organization. Allowed characters: [A-Za-z0-9._-]+'
+      required:
+      - name
+    ProcessDocumentResponse:
+      description: Result of a /v1/documents/process call.
+      type: object
+      required:
+      - passedValidation
+      - documentTypes
+      properties:
+        passedValidation:
+          type: boolean
+          description: True if every requested validation passed.
+        documentTypes:
+          type: array
+          items:
+            type: string
+          description: Document types this upload covers. Usually a single-element list; multi-document submissions (e.g. a blood-test panel) may return more than one.
+        validationErrors:
+          type: array
+          description: One entry per failed validation. Empty when passedValidation is true.
+          items:
+            type: object
+            required:
+            - error
+            - message
+            properties:
+              error:
+                type: string
+                description: Validation code that failed (e.g. CHECK_NAME_MATCH).
+              message:
+                type: string
+                description: Human-readable explanation of the failure.
+        failedClassificationRules:
+          type: array
+          description: 'Classification short-circuit: the classificationRules from the request that the document did not satisfy. Echoes the rules exactly as submitted. Present only when classification failed on required fields.'
+          items:
+            type: object
+            required:
+            - type
+            - value
+            properties:
+              type:
+                type: string
+                description: Rule kind, e.g. INCLUDES_FIELD.
+              value:
+                type: string
+                description: The rule argument, e.g. the field name that was missing.
+    UpdateDocumentTypeRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Human-readable name. Cannot be changed once the document type is referenced by a campaign or workflow.
+        validation:
+          type: array
+          items:
+            type: string
+            enum:
+            - CHECK_DOCUMENT_CORNER_INCLUSION
+            - CHECK_NAME_MATCH
+            - CHECK_EXPIRATION_DATE
+            - CHECK_ISSUE_DATE
+            - CHECK_DATE_OF_BIRTH_INCLUSION
+            - CHECK_HOME_ADDRESS_INCLUSION
+          description: Validation checks to apply to documents of this type. Pass null to clear.
+        classificationRules:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+                enum:
+                - INCLUDES_FIELD
+              value:
+                type: string
+            required:
+            - type
+            - value
+          description: Rules used to recognise documents of this type. Pass null to clear.
+        validationSettings:
+          type: string
+          description: JSON-encoded settings that tune the validation checks. Pass null to clear.
+        externalId:
+          type: string
+          description: Stable customer-controlled identifier. Must be unique per organization. Pass null to clear.
+    ProcessDocumentRequest:
+      description: 'Request to classify and validate a document. Beta endpoint. Two modes: supply the definition inline via `documentType` (stateless), or reference a stored DocumentType via `documentTypeId` (stateful) — exactly one of the two is required. Supply the document itself via `documentBase64` (inline) or `documentUrl` (server downloads); again, exactly one of the two is required. Supported formats: PDF, JPEG, PNG, GIF, WebP, DOC, DOCX. The format is detected server-side from the file''s magic bytes, and non-image inputs are converted to an image before classification.'
+      type: object
+      properties:
+        documentBase64:
+          type: string
+          minLength: 1
+          description: Base64-encoded document. API Gateway caps the request body at ~6 MB. Required when documentUrl is not supplied; do not send both.
+        documentUrl:
+          type: string
+          format: uri
+          description: Publicly accessible URL the server can GET the document from. Required when documentBase64 is not supplied; do not send both.
+        candidateName:
+          type: string
+          minLength: 1
+          description: Candidate name. Required when the validation list contains CHECK_NAME_MATCH; safe to omit otherwise.
+        documentTypeId:
+          type: string
+          format: uuid
+          description: Id of a stored DocumentType to resolve server-side. Mutually exclusive with `documentType` — exactly one of the two is required. Returns 404 if the id is unknown, 403 if the record belongs to a different organisation.
+        documentType:
+          type: object
+          required:
+          - name
+          description: Inline document type definition. Mirrors the DocumentType resource shape. Supply at least one of validation or classificationRules so the classifier has something to evaluate against. Mutually exclusive with `documentTypeId` — exactly one of the two is required.
+          properties:
+            name:
+              type: string
+              minLength: 1
+              description: Display name of the document type (e.g. "Passport").
+            validation:
+              type: array
+              items:
+                type: string
+                enum:
+                - CHECK_DOCUMENT_CORNER_INCLUSION
+                - CHECK_NAME_MATCH
+                - CHECK_EXPIRATION_DATE
+                - CHECK_ISSUE_DATE
+                - CHECK_DATE_OF_BIRTH_INCLUSION
+                - CHECK_HOME_ADDRESS_INCLUSION
+              description: Validation checks to run against the uploaded document.
+            classificationRules:
+              type: array
+              description: Rules that determine whether the document qualifies as this type.
+              items:
+                type: object
+                required:
+                - type
+                - value
+                properties:
+                  type:
+                    type: string
+                    enum:
+                    - INCLUDES_FIELD
+                    description: Rule kind. Only INCLUDES_FIELD is supported today.
+                  value:
+                    type: string
+                    minLength: 1
+                    description: Argument for the rule. For INCLUDES_FIELD, the field name that must appear on the document.
+            validationSettings:
+              type: object
+              description: Parameters tuning the configured validations. Currently supports validFor (paired with CHECK_EXPIRATION_DATE) and issuedAfter (paired with CHECK_ISSUE_DATE). Each is a relative DateRange.
+              properties:
+                validFor:
+                  type: object
+                  required:
+                  - value
+                  - unit
+                  properties:
+                    value:
+                      type: integer
+                      minimum: 1
+                    unit:
+                      type: string
+                      enum:
+                      - DAYS
+                      - MONTHS
+                      - YEARS
+                issuedAfter:
+                  type: object
+                  required:
+                  - value
+                  - unit
+                  properties:
+                    value:
+                      type: integer
+                      minimum: 1
+                    unit:
+                      type: string
+                      enum:
+                      - DAYS
+                      - MONTHS
+                      - YEARS
+      additionalProperties: false
+    ListDocumentTypesResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              organizationId:
+                type: string
+              name:
+                type: string
+              validation:
+                type: array
+                items:
+                  type: string
+                  enum:
+                  - CHECK_DOCUMENT_CORNER_INCLUSION
+                  - CHECK_NAME_MATCH
+                  - CHECK_EXPIRATION_DATE
+                  - CHECK_ISSUE_DATE
+                  - CHECK_DATE_OF_BIRTH_INCLUSION
+                  - CHECK_HOME_ADDRESS_INCLUSION
+              classificationRules:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                      enum:
+                      - INCLUDES_FIELD
+                    value:
+                      type: string
+                  required:
+                  - type
+                  - value
+              validationSettings:
+                type: string
+                description: JSON-encoded settings that tune the validation checks.
+              externalId:
+                type: string
+              isArchived:
+                type: boolean
+              isUsedInCampaign:
+                type: boolean
+              createdAt:
+                type: string
+                format: date-time
+              updatedAt:
+                type: string
+                format: date-time
+            required:
+            - id
+            - organizationId
+            - name
+            - isArchived
+            - isUsedInCampaign
+            - createdAt
+            - updatedAt
+        nextToken:
+          type:
+          - string
+          - 'null'
+          description: Pagination token. Pass on subsequent requests to fetch the next page.
+      required:
+      - data
+    externalId:
+      type: string
+    limit-2d7e26c9-439b-4a91-a511-77cfadeb9b6c:
+      type: string
+    isUsedInCampaign:
+      type: string
+      enum:
+      - 'true'
+      - 'false'
+    isArchived:
+      type: string
+      enum:
+      - 'true'
+      - 'false'
+    nextToken:
+      type: string
+    documentTypeId:
+      type: string
+    ErrorResponse:
+      type: object
+    name:
+      type: string
+    ListConversationDocumentsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+                description: Unique identifier for the document
+              fileName:
+                type: string
+                minLength: 1
+                description: Name of the file including extension
+              classifiedDocumentType:
+                type: string
+                description: Document type classified by Popp document classifier
+              contentType:
+                type: string
+                description: MIME type of the file
+              size:
+                type: integer
+                minimum: 0
+                description: Size of the file in bytes
+            required:
+            - id
+            - fileName
+            - classifiedDocumentType
+            - contentType
+            - size
+            additionalProperties: false
+        nextToken:
+          type:
+          - string
+          - 'null'
+      required:
+      - data
+      additionalProperties: false
+    Document:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the document
+        fileName:
+          type: string
+          minLength: 1
+          description: Name of the file including extension
+        classifiedDocumentType:
+          type: string
+          description: Document type classified by Popp document classifier
+        contentType:
+          type: string
+          description: MIME type of the file
+        size:
+          type: integer
+          minimum: 0
+          description: Size of the file in bytes
+      required:
+      - id
+      - fileName
+      - classifiedDocumentType
+      - contentType
+      - size
+      additionalProperties: false
+    conversationId:
+      type: string
+    MediaDownload:
+      type: string
+    documentId:
+      type: string
+    DocumentType:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the document type.
+        organizationId:
+          type: string
+          description: Identifier of the organization that owns this document type.
+        name:
+          type: string
+          description: Human-readable name shown to recruiters and candidates.
+        validation:
+          type: array
+          items:
+            type: string
+            enum:
+            - CHECK_DOCUMENT_CORNER_INCLUSION
+            - CHECK_NAME_MATCH
+            - CHECK_EXPIRATION_DATE
+            - CHECK_ISSUE_DATE
+            - CHECK_DATE_OF_BIRTH_INCLUSION
+            - CHECK_HOME_ADDRESS_INCLUSION
+          description: Validation checks applied to documents of this type.
+        classificationRules:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+                enum:
+                - INCLUDES_FIELD
+              value:
+                type: string
+            required:
+            - type
+            - value
+          description: Rules used to recognise documents of this type.
+        validationSettings:
+          type: string
+          description: 'JSON-encoded settings that tune the validation checks. Example: {"validFor":{"value":6,"unit":"MONTHS"}}.'
+        externalId:
+          type: string
+          description: Customer-controlled stable identifier. Must be unique per organization.
+        isArchived:
+          type: boolean
+          description: Soft-delete flag. Archived types are not shown in pickers but historical references remain valid.
+        isUsedInCampaign:
+          type: boolean
+          description: Set when at least one campaign or workflow references this type. Hard delete is blocked while this is true.
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+      - id
+      - organizationId
+      - name
+      - isArchived
+      - isUsedInCampaign
+      - createdAt
+      - updatedAt
+  securitySchemes:
+    popp_api_key:
+      description: Your Popp API key for authentication
+      type: apiKey
+      name: x-api-key
+      in: header
+    organization_id:
+      description: Your organization's unique identifier
+      type: apiKey
+      name: x-organization-id
+      in: header
+x-provenance:
+  method: searched
+  source: https://docs.joinpopp.com/reference
+  harvested: '2026-10-14'
+  tool: harvest-readme-openapi.py
+  note: Assembled verbatim from the OpenAPI definition ReadMe embeds in each operation page of the provider's developer portal; paths and components merged by API title, nothing authored.
+  assembled_from:
+  - https://docs.joinpopp.com/reference/add-candidates-to-list-by-external-id.md
+  - https://docs.joinpopp.com/reference/add-candidates-to-list.md
+  - https://docs.joinpopp.com/reference/archive-analysis.md
+  - https://docs.joinpopp.com/reference/archive-document-type.md
+  - https://docs.joinpopp.com/reference/archive-workflow-by-external-id.md
+  - https://docs.joinpopp.com/reference/archive-workflow.md
+  - https://docs.joinpopp.com/reference/bulk-create-conversations.md
+  - https://docs.joinpopp.com/reference/cancel-booking.md
+  - https://docs.joinpopp.com/reference/cancel-workflow-run.md
+  - https://docs.joinpopp.com/reference/create-analysis-candidate.md
+  - https://docs.joinpopp.com/reference/create-analysis.md
+  - https://docs.joinpopp.com/reference/create-campaign.md
+  - https://docs.joinpopp.com/reference/create-candidate-list.md
+  - https://docs.joinpopp.com/reference/create-candidate-note-by-external-id.md
+  - https://docs.joinpopp.com/reference/create-candidate-note.md
+  - https://docs.joinpopp.com/reference/create-candidate.md
+  - https://docs.joinpopp.com/reference/create-conversation.md
+  - https://docs.joinpopp.com/reference/create-custom-field.md
+  - https://docs.joinpopp.com/reference/create-document-credential.md
+  - https://docs.joinpopp.com/reference/create-document-type.md
+  - https://docs.joinpopp.com/reference/create-meeting-template.md
+  - https://docs.joinpopp.com/reference/create-organization-config.md
+  - https://docs.joinpopp.com/reference/create-scheduling-conversation.md
+  - https://docs.joinpopp.com/reference/create-user.md
+  - https://docs.joinpopp.com/reference/create-webhook.md
+  - https://docs.joinpopp.com/reference/create-workflow.md
+  - https://docs.joinpopp.com/reference/deactivate-user-by-email.md
+  - https://docs.joinpopp.com/reference/deactivate-user.md
+  - https://docs.joinpopp.com/reference/delete-candidate-by-email.md
+  - https://docs.joinpopp.com/reference/delete-candidate-by-external-id.md
+  - https://docs.joinpopp.com/reference/delete-candidate-by-phone-number.md
+  - https://docs.joinpopp.com/reference/delete-candidate-list-by-external-id.md
+  - https://docs.joinpopp.com/reference/delete-candidate-list.md
+  - https://docs.joinpopp.com/reference/delete-candidate-note.md
+  - https://docs.joinpopp.com/reference/delete-candidate.md
+  - https://docs.joinpopp.com/reference/delete-custom-field.md
+  - https://docs.joinpopp.com/reference/delete-document-credential.md
+  - https://docs.joinpopp.com/reference/delete-document-type.md
+  - https://docs.joinpopp.com/reference/delete-meeting-template.md
+  - https://docs.joinpopp.com/reference/delete-tag.md
+  - https://docs.joinpopp.com/reference/delete-user-by-email.md
+  - https://docs.joinpopp.com/reference/delete-user.md
+  - https://docs.joinpopp.com/reference/delete-webhook.md
+  - https://docs.joinpopp.com/reference/download-media.md
+  - https://docs.joinpopp.com/reference/generate-preferred-answer-requirements.md
+  - https://docs.joinpopp.com/reference/generate-questions.md
+  - https://docs.joinpopp.com/reference/generate-requirements.md
+  - https://docs.joinpopp.com/reference/get-analysis.md
+  - https://docs.joinpopp.com/reference/get-booking.md
+  - https://docs.joinpopp.com/reference/get-campaign.md
+  - https://docs.joinpopp.com/reference/get-candidate-by-external-id.md
+  - https://docs.joinpopp.com/reference/get-candidate-list-by-external-id.md
+  - https://docs.joinpopp.com/reference/get-candidate-list.md
+  - https://docs.joinpopp.com/reference/get-candidate-profile-by-external-id.md
+  - https://docs.joinpopp.com/reference/get-candidate.md
+  - https://docs.joinpopp.com/reference/get-conversation.md
+  - https://docs.joinpopp.com/reference/get-custom-field.md
+  - https://docs.joinpopp.com/reference/get-document-media.md
+  - https://docs.joinpopp.com/reference/get-document-type.md
+  - https://docs.joinpopp.com/reference/get-document.md
+  - https://docs.joinpopp.com/reference/get-meeting-template.md
+  - https://docs.joinpopp.com/reference/get-organization-config-by-external-id.md
+  - https://docs.joinpopp.com/reference/get-organization-config.md
+  - https://docs.joinpopp.com/reference/get-organization-details.md
+  - https://docs.joinpopp.com/reference/get-user-by-email.md
+  - https://docs.joinpopp.com/reference/get-user-calendar.md
+  - https://docs.joinpopp.com/reference/get-user.md
+  - https://docs.joinpopp.com/reference/get-workflow-analysis-application.md
+  - https://docs.joinpopp.com/reference/get-workflow-analysis.md
+  - https://docs.joinpopp.com/reference/get-workflow-by-external-id.md
+  - https://docs.joinpopp.com/reference/get-workflow-run.md
+  - https://docs.joinpopp.com/reference/get-workflow.md
+  - https://docs.joinpopp.com/reference/hand-conversation-to-agent.md
+  - https://docs.joinpopp.com/reference/invite-calendar-contact.md
+  - https://docs.joinpopp.com/reference/list-agents.md
+  - https://docs.joinpopp.com/reference/list-analyses.md
+  - https://docs.joinpopp.com/reference/list-ats-job-stages.md
+  - https://docs.joinpopp.com/reference/list-ats-jobs.md
+  - https://docs.joinpopp.com/reference/list-ats-rejection-reasons.md
+  - https://docs.joinpopp.com/reference/list-bookings.md
+  - https://docs.joinpopp.com/reference/list-campaigns.md
+  - https://docs.joinpopp.com/reference/list-candidate-lists.md
+  - https://docs.joinpopp.com/reference/list-candidate-notes-by-external-id.md
+  - https://docs.joinpopp.com/reference/list-candidate-notes.md
+  - https://docs.joinpopp.com/reference/list-conversation-documents.md
+  - https://docs.joinpopp.com/reference/list-conversation-messages.md
+  - https://docs.joinpopp.com/reference/list-conversations.md
+  - https://docs.joinpopp.com/reference/list-custom-fields.md
+  - https://docs.joinpopp.com/reference/list-document-credentials.md
+  - https://docs.joinpopp.com/reference/list-document-types.md
+  - https://docs.joinpopp.com/reference/list-meeting-templates.md
+  - https://docs.joinpopp.com/reference/list-organization-users.md
+  - https://docs.joinpopp.com/reference/list-organizations.md
+  - https://docs.joinpopp.com/reference/list-tags.md
+  - https://docs.joinpopp.com/reference/list-templates.md
+  - https://docs.joinpopp.com/reference/list-user-calendars.md
+  - https://docs.joinpopp.com/reference/list-users.md
+  - https://docs.joinpopp.com/reference/list-webhook-events.md
+  - https://docs.joinpopp.com/reference/list-webhooks.md
+  - https://docs.joinpopp.com/reference/list-workflow-analysis-application-history.md
+  - https://docs.joinpopp.com/reference/list-workflow-analysis-applications.md
+  - https://docs.joinpopp.com/reference/list-workflow-runs.md
+  - https://docs.joinpopp.com/reference/list-workflows.md
+  - https://docs.joinpopp.com/reference/parse-availability.md
+  - https://docs.joinpopp.com/reference/pause-workflow-by-external-id.md
+  - https://docs.joinpopp.com/reference/pause-workflow.md
+  - https://docs.joinpopp.com/reference/process-document.md
+  - https://docs.joinpopp.com/reference/publish-workflow-by-external-id.md
+  - https://docs.joinpopp.com/reference/publish-workflow.md
+  - https://docs.joinpopp.com/reference/reactivate-user-by-email.md
+  - https://docs.joinpopp.com/reference/reactivate-user.md
+  - https://docs.joinpopp.com/reference/remove-candidate-document-by-external-id.md
+  - https://docs.joinpopp.com/reference/remove-candidate-document.md
+  - https://docs.joinpopp.com/reference/remove-candidates-from-list-by-external-id.md
+  - https://docs.joinpopp.com/reference/remove-candidates-from-list.md
+  - https://docs.joinpopp.com/reference/reparse-candidate-cv-by-external-id.md
+  - https://docs.joinpopp.com/reference/reparse-candidate-cv.md
+  - https://docs.joinpopp.com/reference/resend-booking-url.md
+  - https://docs.joinpopp.com/reference/resume-workflow-by-external-id.md
+  - https://docs.joinpopp.com/reference/resume-workflow.md
+  - https://docs.joinpopp.com/reference/send-conversation-message.md
+  - https://docs.joinpopp.com/reference/set-user-calendar-availability.md
+  - https://docs.joinpopp.com/reference/sign-out-user-by-email.md
+  - https://docs.joinpopp.com/reference/sign-out-user.md
+  - https://docs.joinpopp.com/reference/start-workflow-runs-by-external-id.md
+  - https://docs.joinpopp.com/reference/start-workflow-runs.md
+  - https://docs.joinpopp.com/reference/stop-campaign.md
+  - https://docs.joinpopp.com/reference/takeover-conversation.md
+  - https://docs.joinpopp.com/reference/update-analysis.md
+  - https://docs.joinpopp.com/reference/update-booking.md
+  - https://docs.joinpopp.com/reference/update-campaign.md
+  - https://docs.joinpopp.com/reference/update-candidate-by-external-id.md
+  - https://docs.joinpopp.com/reference/update-candidate-list-by-external-id.md
+  - https://docs.joinpopp.com/reference/update-candidate-list.md
+  - https://docs.joinpopp.com/reference/update-candidate-note.md
+  - https://docs.joinpopp.com/reference/update-candidate.md
+  - https://docs.joinpopp.com/reference/update-custom-field.md
+  - https://docs.joinpopp.com/reference/update-document-credential.md
+  - https://docs.joinpopp.com/reference/update-document-type.md
+  - https://docs.joinpopp.com/reference/update-meeting-template.md
+  - https://docs.joinpopp.com/reference/update-organization-config-by-external-id.md
+  - https://docs.joinpopp.com/reference/update-organization-config.md
+  - https://docs.joinpopp.com/reference/update-organization-details.md
+  - https://docs.joinpopp.com/reference/update-requirements-and-reanalyse.md
+  - https://docs.joinpopp.com/reference/update-user-by-email.md
+  - https://docs.joinpopp.com/reference/update-user.md
+  - https://docs.joinpopp.com/reference/update-webhook.md
+  - https://docs.joinpopp.com/reference/update-workflow-by-external-id.md
+  - https://docs.joinpopp.com/reference/update-workflow.md
+  merge:
+    pages: 149
+    deduped: 618
+    conflicts_kept_first: 0
